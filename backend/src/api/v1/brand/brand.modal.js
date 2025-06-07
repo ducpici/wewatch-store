@@ -2,7 +2,7 @@ import { connection } from "../../../config/database";
 
 const getDataPaginated = async (limit, offset) => {
     const sql = `
-        SELECT * FROM positions LIMIT ? OFFSET ?
+        SELECT * FROM brands LIMIT ? OFFSET ?
     `;
     const values = [limit, offset];
     const [result] = await connection.execute(sql, values);
@@ -11,7 +11,7 @@ const getDataPaginated = async (limit, offset) => {
 
 const getDataById = async (id) => {
     const sql = `
-        SELECT * FROM positions WHERE id_position = ?
+        SELECT * FROM brands WHERE id_brand = ?
     `;
     const values = [id];
     const [result] = await connection.execute(sql, values);
@@ -20,7 +20,7 @@ const getDataById = async (id) => {
 
 const countItem = async () => {
     const sql = `
-        SELECT COUNT(*) AS total FROM positions;
+        SELECT COUNT(*) AS total FROM brands;
     `;
     const [result] = await connection.execute(sql);
     return result[0].total;
@@ -28,25 +28,31 @@ const countItem = async () => {
 
 const createData = async (data) => {
     const sql = `
-        INSERT INTO positions (name_position, description) values (?,?)
+        INSERT INTO brands (brand_name, description, email, phone_num) values (?,?,?,?)
     `;
-    const values = [data.name, data.description];
+    const values = [data.name, data.description, data.email, data.phone_num];
     const [result] = await connection.execute(sql, values);
     return result;
 };
 
 const updateData = async (data) => {
     const sql = `
-        UPDATE positions SET name_position = ?, description = ? WHERE id_position = ?
+        UPDATE brands SET brand_name = ?, description = ?, email = ?, phone_num = ? WHERE id_brand = ?
     `;
-    const values = [data.name, data.description, data.id];
+    const values = [
+        data.name,
+        data.description,
+        data.email,
+        data.phone_num,
+        data.id,
+    ];
     const [result] = await connection.execute(sql, values);
     return result;
 };
 
 const deleteData = async (id) => {
     const sql = `
-        DELETE FROM positions WHERE id_position = ?
+        DELETE FROM brands WHERE id_brand = ?
     `;
     const values = [id];
     const [result] = await connection.execute(sql, values);
@@ -55,12 +61,25 @@ const deleteData = async (id) => {
 
 const searchData = async (keyword) => {
     const sql = `
-            SELECT * FROM positions
-            WHERE name_position LIKE ?
+            SELECT * FROM brands
+            WHERE brand_name LIKE ? OR email LIKE ? OR phone_num LIKE ?
         `;
 
     const value = `%${keyword}%`;
-    const values = [value];
+    const values = [value, value, value];
+    const [result] = await connection.execute(sql, values);
+    return result;
+};
+
+const checkEmailExists = async (email, idToExclude = null) => {
+    let sql = `SELECT id_brand FROM brands WHERE email = ?`;
+    const values = [email];
+
+    if (idToExclude) {
+        sql += ` AND id_brand != ?`;
+        values.push(idToExclude);
+    }
+
     const [result] = await connection.execute(sql, values);
     return result;
 };
@@ -73,4 +92,5 @@ module.exports = {
     getDataById,
     deleteData,
     searchData,
+    checkEmailExists,
 };

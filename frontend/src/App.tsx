@@ -30,6 +30,10 @@ import EditEmployee from "./pages/Employee/EditEmployee";
 import Positions from "./pages/Position/Positions";
 import AddPosition from "./pages/Position/AddPossition";
 import EditPosition from "./pages/Position/EditPosition";
+
+import Brands from "./pages/Brand/Brands";
+import AddBrand from "./pages/Brand/AddBrand";
+import EditBrand from "./pages/Brand/EditBrand";
 export default function App() {
     return (
         <>
@@ -94,6 +98,14 @@ export default function App() {
                         <Route
                             path="/positions/edit/:id"
                             element={<EditPosition />}
+                        />
+
+                        {/* Brands */}
+                        <Route path="/brands" element={<Brands />} />
+                        <Route path="/brands/add-new" element={<AddBrand />} />
+                        <Route
+                            path="/brands/edit/:id"
+                            element={<EditBrand />}
                         />
                     </Route>
 

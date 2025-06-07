@@ -7,9 +7,11 @@ import {
     editPosition,
     getPositionsById,
     deletePosition,
+    searchPosition,
 } from "../../api/v1/position/position.controller";
 
 routes.get("/positions", getPositions);
+routes.get("/positions/search", searchPosition);
 routes.get("/positions/:id", getPositionsById);
 routes.post("/positions", addPosition);
 routes.put("/positions/:id", editPosition);
