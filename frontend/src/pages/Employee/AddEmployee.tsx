@@ -5,111 +5,102 @@ import Input from "../../components/form/input/InputField";
 import ComponentCard from "../../components/common/ComponentCard";
 import DatePicker from "../../components/form/date-picker";
 import Radio from "../../components/form/input/Radio";
+import Select from "../../components/form/Select";
 import Button from "../../components/ui/button/Button";
 import Switch from "../../components/form/switch/Switch";
 import axios from "../../lib/axiosConfig";
 import { toast } from "react-toastify";
-import { useParams } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import formatDate from "../../lib/formatDate";
-import { format } from "date-fns";
-export default function UpdateUser() {
-    const initialUser: User = {
-        id_user: BigInt(0),
+
+export default function AddEmployee() {
+    const initialEmployee: Employee = {
         name: "",
         dob: "",
         gender: "",
         email: "",
         address: "",
         phone_number: "",
+        position_id: null,
         username: "",
         password: "",
         state: true,
     };
-    type User = {
-        id_user: BigInt;
+    type Employee = {
         name: string;
         dob: string;
         gender: string;
         email: string;
         address: string;
         phone_number: string;
+        position_id: number | null;
         username: string;
         password: string;
         state: boolean;
     };
 
-    const navigate = useNavigate();
-    const { id } = useParams();
-
-    const [userData, setUserData] = useState<User>(initialUser);
-    const [isEnabled, setIsEnabled] = useState(false);
-    const [selectedValue, setSelectedValue] = useState<string>("1");
-
-    useEffect(() => {
-        if (!id) return;
-        axios
-            .get(`/users/${id}`)
-            .then((response) => {
-                const user = response.data[0];
-                setUserData(user);
-                setSelectedValue(String(user.gender));
-                setIsEnabled(user.state);
-            })
-            .catch((err) => {
-                console.error(err);
-            })
-            .finally(() => {});
-    }, [id]); // chỉ gọi lại khi id thay đổi
+    const [employeeData, setEmployeeData] = useState<Employee>(initialEmployee);
+    const [positionData, setPositionData] = useState([]);
+    const [isEnabled, setIsEnabled] = useState(true);
+    const [selectedValue, setSelectedValue] = useState<string>();
 
     const breadcrumbItems = [
         { label: "Trang chủ", path: "/" },
-        { label: "Khách hàng", path: "/users" },
-        { label: "Cập nhật thông tin" }, // Không có path => là trang hiện tại
+        { label: "Nhân viên", path: "/employees" },
+        { label: "Thêm mới" }, // Không có path => là trang hiện tại
     ];
+
+    const navigate = useNavigate();
 
     const handleRadioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSelectedValue(e.target.value);
-        setUserData({
-            ...userData,
+        setEmployeeData({
+            ...employeeData,
             gender: e.target.value,
         });
     };
 
     const handleSwitchChange = (checked: boolean) => {
         setIsEnabled(checked);
-        setUserData({
-            ...userData,
+        setEmployeeData({
+            ...employeeData,
             state: checked,
         });
     };
 
-    const handleUpdateUser = async () => {
+    const handleSelectChange = (value: string) => {
+        const num = parseInt(value);
+        setEmployeeData({
+            ...employeeData,
+            position_id: num,
+        });
+    };
+
+    const handleCreateEmployee = async () => {
         if (
-            !userData.name ||
-            !userData.dob ||
-            userData.gender === undefined ||
-            userData.gender === "" ||
-            !userData.email ||
-            !userData.address ||
-            !userData.phone_number ||
-            !userData.username ||
-            !userData.password ||
-            userData.state === null ||
-            userData.state === undefined
+            !employeeData.name ||
+            !employeeData.dob ||
+            !employeeData.gender ||
+            !employeeData.email ||
+            !employeeData.address ||
+            !employeeData.phone_number ||
+            !employeeData.position_id ||
+            !employeeData.username ||
+            !employeeData.password ||
+            employeeData.state === null ||
+            employeeData.state === undefined
         ) {
             toast.error("Các trường không được để trống!");
             return;
         }
         try {
             // 👇 Gọi API kiểm tra email và username
-            const { email, username, id_user } = userData;
-
-            const { data } = await axios.get("/users/check", {
+            const { email, username } = employeeData;
+            console.log(email, username);
+            const { data } = await axios.get("/employees/check", {
                 params: {
                     email,
                     username,
-                    id_user,
                 },
             });
 
@@ -123,17 +114,31 @@ export default function UpdateUser() {
                 return;
             }
 
-            await axios.put(`/users/${userData.id_user}`, userData);
-
-            toast.success("Cập nhật thành công!");
-            navigate("/users");
+            await axios.post(`/employees`, employeeData);
+            toast.success("Thêm thành công!");
+            navigate("/employees");
         } catch (error) {
-            console.error("Lỗi khi cập nhật:", error);
-            toast.error("Cập nhật thất bại.");
+            console.error("Lỗi khi thêm:", error);
+            toast.error("Thêm thất bại.");
         }
     };
 
-    if (!userData) return <div>Đang tải...</div>;
+    const getPositions = () => {
+        let res = axios
+            .get("/positions")
+            .then((response) => {
+                const data = response.data.data;
+                setPositionData(data);
+            })
+            .catch((err) => {
+                console.error(err);
+            })
+            .finally(() => {});
+    };
+
+    useEffect(() => {
+        getPositions();
+    }, []);
 
     return (
         <>
@@ -145,10 +150,9 @@ export default function UpdateUser() {
                         <Input
                             type="text"
                             id="name"
-                            value={userData.name}
                             onChange={(e) =>
-                                setUserData({
-                                    ...userData,
+                                setEmployeeData({
+                                    ...employeeData,
                                     name: e.target.value,
                                 })
                             }
@@ -160,13 +164,13 @@ export default function UpdateUser() {
                             label="Ngày sinh:"
                             placeholder="Select a date"
                             defaultDate={formatDate(
-                                userData.dob,
+                                employeeData.dob,
                                 "yyyy-MM-dd",
                                 "dd-MM-yyyy"
                             )}
                             onChange={(dates, currentDateString) => {
-                                setUserData({
-                                    ...userData,
+                                setEmployeeData({
+                                    ...employeeData,
                                     dob: formatDate(
                                         currentDateString,
                                         "dd-MM-yyyy",
@@ -195,6 +199,16 @@ export default function UpdateUser() {
                             label="Nữ"
                         />
                     </div>
+                    <div>
+                        <Label>Chức vụ:</Label>
+                        <Select
+                            options={positionData}
+                            placeholder="Chọn chức vụ"
+                            onChange={handleSelectChange}
+                            className="dark:bg-dark-900"
+                            value=""
+                        />
+                    </div>
                 </ComponentCard>
                 <ComponentCard title="Tài khoản">
                     <div>
@@ -202,10 +216,9 @@ export default function UpdateUser() {
                         <Input
                             type="text"
                             id="username"
-                            value={userData.username}
                             onChange={(e) =>
-                                setUserData({
-                                    ...userData,
+                                setEmployeeData({
+                                    ...employeeData,
                                     username: e.target.value,
                                 })
                             }
@@ -216,10 +229,9 @@ export default function UpdateUser() {
                         <Input
                             type="password"
                             id="password"
-                            value={userData.password}
                             onChange={(e) =>
-                                setUserData({
-                                    ...userData,
+                                setEmployeeData({
+                                    ...employeeData,
                                     password: e.target.value,
                                 })
                             }
@@ -244,12 +256,11 @@ export default function UpdateUser() {
                     <div>
                         <Label htmlFor="email">Email:</Label>
                         <Input
-                            type="text"
+                            type="email"
                             id="email"
-                            value={userData.email}
                             onChange={(e) =>
-                                setUserData({
-                                    ...userData,
+                                setEmployeeData({
+                                    ...employeeData,
                                     email: e.target.value,
                                 })
                             }
@@ -260,10 +271,9 @@ export default function UpdateUser() {
                         <Input
                             type="text"
                             id="phone_num"
-                            value={userData.phone_number}
                             onChange={(e) =>
-                                setUserData({
-                                    ...userData,
+                                setEmployeeData({
+                                    ...employeeData,
                                     phone_number: e.target.value,
                                 })
                             }
@@ -274,10 +284,9 @@ export default function UpdateUser() {
                         <Input
                             type="text"
                             id="address"
-                            value={userData.address}
                             onChange={(e) =>
-                                setUserData({
-                                    ...userData,
+                                setEmployeeData({
+                                    ...employeeData,
                                     address: e.target.value,
                                 })
                             }
@@ -290,7 +299,7 @@ export default function UpdateUser() {
                     className="mt-6"
                     size="sm"
                     variant="primary"
-                    onClick={handleUpdateUser}
+                    onClick={handleCreateEmployee}
                 >
                     Lưu
                 </Button>

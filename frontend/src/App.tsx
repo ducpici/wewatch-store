@@ -22,6 +22,10 @@ import Home from "./pages/Dashboard/Home";
 import Users from "./pages/Users";
 import AddUser from "./pages/User/AddUser";
 import UpdateUser from "./pages/User/UpdateUser";
+
+import Employees from "./pages/Employee/Employees";
+import AddEmployee from "./pages/Employee/AddEmployee";
+import EditEmployee from "./pages/Employee/EditEmployee";
 export default function App() {
     return (
         <>
@@ -64,6 +68,17 @@ export default function App() {
                         <Route
                             path="/users/edit-user/:id"
                             element={<UpdateUser />}
+                        />
+
+                        {/* Employees */}
+                        <Route path="/employees" element={<Employees />} />
+                        <Route
+                            path="/employees/add-new"
+                            element={<AddEmployee />}
+                        />
+                        <Route
+                            path="/employees/edit/:id"
+                            element={<EditEmployee />}
                         />
                     </Route>
 

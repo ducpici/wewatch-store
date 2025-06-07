@@ -1,40 +1,43 @@
-import PageBreadcrumb from "../components/common/PageBreadCrumb";
+import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import { useNavigate } from "react-router-dom";
-// import axios from "axios";
-import axios from "../lib/axiosConfig";
+import axios from "../../lib/axiosConfig";
 import {
     Table,
     TableBody,
     TableCell,
     TableHeader,
     TableRow,
-} from "../components/ui/table";
+} from "../../components/ui/table";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Actions from "../components/common/Actions";
-import { SearchAndAddBar } from "../components/common/SearchAndAdd";
+import Actions from "../../components/common/Actions";
+import { SearchAndAddBar } from "../../components/common/SearchAndAdd";
 import { useEffect, useState } from "react";
 import ReactPaginate from "react-paginate";
 
-interface User {
-    id_user: number; // bigint(20)
-    name: string; // varchar(255)
-    dob: string; // varchar(100), có thể là ngày sinh dạng string
+interface Employee {
+    id: number;
+    name: string;
+    dob: string;
     gender: string;
-    email: string; // varchar(255)
-    address: string; // varchar(255)
-    phone_number: string; // varchar(100)
-    username: string; // varchar(255)
-    password: string; // varchar(255)
-    state: string; //
+    email: string;
+    address: string;
+    phone_number: string;
+    position: {
+        id: number;
+        name: string;
+        description: string;
+    };
+    username: string;
+    password: string;
+    state: string;
 }
 
-export default function Users() {
+export default function Employees() {
     const navigate = useNavigate();
-    const [users, setUsers] = useState<User[]>([]);
+    const [employees, setEmployees] = useState<Employee[]>([]);
     const [searchValue, setSearchValue] = useState("");
     const [loading, setLoading] = useState(false);
-
     const [totalUser, setTotalUser] = useState(0);
     const [totalPage, setTotalPage] = useState(0);
     const [page, setPage] = useState(1);
@@ -42,26 +45,28 @@ export default function Users() {
 
     const breadcrumbItems = [
         { label: "Trang chủ", path: "/" },
-        { label: "Khách hàng", path: "/users" },
+        { label: "Nhân viên", path: "/employees" },
     ];
 
-    const fetchAllUsers = async (page: number, limit: number) => {
+    const fetchEmployees = async (page: number, limit: number) => {
         setLoading(true);
         try {
-            const res = await axios.get(`/users?page=${page}&limit=${limit}`);
-            setUsers(res.data.data);
+            const res = await axios.get(
+                `/employees?page=${page}&limit=${limit}`
+            );
+            setEmployees(res.data.data);
             setLimitData(res.data.pagination.limit);
             setTotalPage(res.data.pagination.totalPages);
         } catch (err) {
             console.error("Lỗi khi tải danh sách:", err);
-            toast.error("Lỗi khi tải danh sách người dùng");
+            toast.error("Lỗi khi tải danh sách nhân viên");
         } finally {
             setLoading(false);
         }
     };
 
     useEffect(() => {
-        fetchAllUsers(page, limitData);
+        fetchEmployees(page, limitData);
     }, [page, limitData]);
 
     const handleDeleteUser = async (id: number) => {
@@ -69,43 +74,43 @@ export default function Users() {
         if (!confirmDelete) return;
 
         try {
-            await axios.delete(`/users/${id}`);
-            toast.success("Xóa người dùng thành công!");
-            fetchAllUsers(page, limitData); // Gọi lại danh sách sau khi xóa
+            await axios.delete(`/employees/${id}`);
+            toast.success("Xóa nhân viên thành công!");
+            fetchEmployees(page, limitData); // Gọi lại danh sách sau khi xóa
         } catch (error) {
             console.error("Lỗi khi xóa:", error);
-            toast.error("Xóa người dùng thất bại!");
+            toast.error("Xóa nhân viên thất bại!");
         }
     };
 
     const handlePageClick = (selectedItem: { selected: number }) => {
-        fetchAllUsers(selectedItem.selected + 1, limitData);
+        fetchEmployees(selectedItem.selected + 1, limitData);
     };
 
     const handleSearch = async (value: string) => {
         if (!value.trim()) {
             // Nếu rỗng thì load lại toàn bộ danh sách
-            fetchAllUsers(1, limitData);
+            fetchEmployees(1, limitData);
             return;
         }
 
         try {
-            const res = await axios.get(`/users/search`, {
+            const res = await axios.get(`/employees/search`, {
                 params: {
                     keyword: value,
                 },
             });
             if (Array.isArray(res.data.data)) {
-                setUsers(res.data.data);
+                setEmployees(res.data.data);
             } else {
-                // Nếu data không phải mảng thì reset state users về mảng rỗng
-                setUsers([]);
+                // Nếu data không phải mảng thì reset state employees về mảng rỗng
+                setEmployees([]);
             }
-            // setUsers(res.data.data);
+            // setEmployees(res.data.data);
             setTotalPage(1); // Khi tìm kiếm, không cần phân trang
         } catch (err) {
             console.error("Lỗi khi tìm kiếm:", err);
-            toast.error("Lỗi khi tìm kiếm người dùng");
+            toast.error("Lỗi khi tìm kiếm nhân viên");
         }
     };
 
@@ -119,78 +124,84 @@ export default function Users() {
                         onChange={setSearchValue}
                         value={searchValue}
                         onAdd={() => {
-                            navigate("/users/add-user");
+                            navigate("/employees/add-new");
                         }}
                         onSearch={() => {
                             handleSearch(searchValue);
                         }}
                     />
                     {/* {loading ? (
-                        <div>Đang tải danh sách người dùng...</div>
+                        <div>Đang tải danh sách nhân viên...</div>
                     ) : ( */}
                     <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
                         <div className="max-w-full overflow-x-auto">
                             <Table>
                                 {/* Table Header */}
-                                <TableHeader className="text-center border-b border-gray-100 dark:border-white/[0.05]">
+                                <TableHeader className="text-left border-b border-gray-100 dark:border-white/[0.05]">
                                     <TableRow>
                                         <TableCell
                                             isHeader
-                                            className="px-5 py-3 font-medium text-gray-500 text-center text-theme-xs dark:text-gray-400"
+                                            className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
                                         >
                                             #
                                         </TableCell>
                                         <TableCell
                                             isHeader
-                                            className="px-5 py-3 font-medium text-gray-500 text-center text-theme-xs dark:text-gray-400"
+                                            className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
                                         >
-                                            Mã khách hàng
+                                            Mã nhân viên
                                         </TableCell>
                                         <TableCell
                                             isHeader
-                                            className="px-5 py-3 font-medium text-gray-500 text-center text-theme-xs dark:text-gray-400"
+                                            className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
                                         >
-                                            Tên khách hàng
+                                            Tên nhân viên
                                         </TableCell>
                                         <TableCell
                                             isHeader
-                                            className="px-5 py-3 font-medium text-gray-500 text-center text-theme-xs dark:text-gray-400"
+                                            className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
                                         >
                                             Ngày sinh
                                         </TableCell>
                                         <TableCell
                                             isHeader
-                                            className="px-5 py-3 font-medium text-gray-500 text-center text-theme-xs dark:text-gray-400"
+                                            className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
                                         >
                                             Giới tính
                                         </TableCell>
                                         <TableCell
                                             isHeader
-                                            className="px-5 py-3 font-medium text-gray-500 text-center text-theme-xs dark:text-gray-400"
+                                            className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
                                         >
                                             Email
                                         </TableCell>
                                         <TableCell
                                             isHeader
-                                            className="px-5 py-3 font-medium text-gray-500 text-center text-theme-xs dark:text-gray-400"
+                                            className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
                                         >
                                             Địa chỉ
                                         </TableCell>
                                         <TableCell
                                             isHeader
-                                            className="px-5 py-3 font-medium text-gray-500 text-center text-theme-xs dark:text-gray-400"
+                                            className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
                                         >
                                             Số điện thoại
                                         </TableCell>
                                         <TableCell
                                             isHeader
-                                            className="px-5 py-3 font-medium text-gray-500 text-center text-theme-xs dark:text-gray-400"
+                                            className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
+                                        >
+                                            Chức vụ
+                                        </TableCell>
+                                        <TableCell
+                                            isHeader
+                                            className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
                                         >
                                             Trạng thái tài khoản
                                         </TableCell>
                                         <TableCell
                                             isHeader
-                                            className="px-5 py-3 font-medium text-gray-500 text-center text-theme-xs dark:text-gray-400"
+                                            className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
                                         >
                                             Thao tác
                                         </TableCell>
@@ -199,50 +210,53 @@ export default function Users() {
 
                                 {/* Table Body */}
                                 <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
-                                    {users.map((user, index) => (
-                                        <TableRow key={user.id_user}>
+                                    {employees.map((employee, index) => (
+                                        <TableRow key={employee.id}>
                                             <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
                                                 {index + 1}
                                             </TableCell>
                                             <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                {user.id_user}
+                                                {employee.id}
                                             </TableCell>
                                             <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                {user.name}
+                                                {employee.name}
                                             </TableCell>
                                             <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                {user.dob}
+                                                {employee.dob}
                                             </TableCell>
                                             <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                {user.gender}
+                                                {employee.gender}
                                             </TableCell>
                                             <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                {user.email}
+                                                {employee.email}
                                             </TableCell>
                                             <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                {user.address}
+                                                {employee.address}
                                             </TableCell>
                                             <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                {user.phone_number}
+                                                {employee.phone_number}
                                             </TableCell>
                                             <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                {user.state}
+                                                {employee.position.name}
+                                            </TableCell>
+                                            <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                                {employee.state}
                                             </TableCell>
                                             <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
                                                 <Actions
                                                     // onView={() =>
                                                     //     navigate(
-                                                    //         `/users/${user.id_user}`
+                                                    //         `/employees/${employee.id_user}`
                                                     //     )
                                                     // }
                                                     onEdit={() =>
                                                         navigate(
-                                                            `/users/edit-user/${user.id_user}`
+                                                            `/employees/edit/${employee.id}`
                                                         )
                                                     }
                                                     onDelete={() =>
                                                         handleDeleteUser(
-                                                            user.id_user
+                                                            employee.id
                                                         )
                                                     }
                                                 />

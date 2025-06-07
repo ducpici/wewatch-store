@@ -7,7 +7,7 @@ import DatePicker from "../../components/form/date-picker";
 import Radio from "../../components/form/input/Radio";
 import Button from "../../components/ui/button/Button";
 import Switch from "../../components/form/switch/Switch";
-import axios from "axios";
+import axios from "../../lib/axiosConfig";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router";
 import formatDate from "../../lib/formatDate";
@@ -75,7 +75,9 @@ export default function AddUser() {
             !userData.address ||
             !userData.phone_number ||
             !userData.username ||
-            !userData.password
+            !userData.password ||
+            userData.state === null ||
+            userData.state === undefined
         ) {
             toast.error("Các trường không được để trống!");
             return;
@@ -84,15 +86,12 @@ export default function AddUser() {
             // 👇 Gọi API kiểm tra email và username
             const { email, username } = userData;
             console.log(email, username);
-            const { data } = await axios.get(
-                "http://localhost:4090/api/v1/users/check",
-                {
-                    params: {
-                        email,
-                        username,
-                    },
-                }
-            );
+            const { data } = await axios.get("/users/check", {
+                params: {
+                    email,
+                    username,
+                },
+            });
 
             if (data.emailExists) {
                 toast.error("Email đã được sử dụng!");
@@ -104,7 +103,7 @@ export default function AddUser() {
                 return;
             }
 
-            await axios.post(`http://localhost:4090/api/v1/users`, userData);
+            await axios.post(`/users`, userData);
             toast.success("Thêm thành công!");
             navigate("/users");
         } catch (error) {
@@ -119,7 +118,7 @@ export default function AddUser() {
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
                 <ComponentCard title="Thông tin cá nhân">
                     <div>
-                        <Label htmlFor="input">Họ tên:</Label>
+                        <Label htmlFor="name">Họ tên:</Label>
                         <Input
                             type="text"
                             id="name"
@@ -175,7 +174,7 @@ export default function AddUser() {
                 </ComponentCard>
                 <ComponentCard title="Tài khoản">
                     <div>
-                        <Label htmlFor="input">Tên đăng nhập:</Label>
+                        <Label htmlFor="username">Tên đăng nhập:</Label>
                         <Input
                             type="text"
                             id="username"
@@ -188,7 +187,7 @@ export default function AddUser() {
                         />
                     </div>
                     <div>
-                        <Label htmlFor="input">Mật khẩu:</Label>
+                        <Label htmlFor="password">Mật khẩu:</Label>
                         <Input
                             type="password"
                             id="password"
@@ -201,9 +200,7 @@ export default function AddUser() {
                         />
                     </div>
                     <div className="flex items-center">
-                        <Label className="mb-0" htmlFor="input">
-                            Trạng thái:
-                        </Label>
+                        <Label className="mb-0">Trạng thái:</Label>
                         <div className="ml-6">
                             <Switch
                                 label={
@@ -219,7 +216,7 @@ export default function AddUser() {
                 </ComponentCard>
                 <ComponentCard title="Thông tin liên hệ">
                     <div>
-                        <Label htmlFor="input">Email:</Label>
+                        <Label htmlFor="email">Email:</Label>
                         <Input
                             type="email"
                             id="email"
@@ -232,7 +229,7 @@ export default function AddUser() {
                         />
                     </div>
                     <div>
-                        <Label htmlFor="input">Số điện thoại:</Label>
+                        <Label htmlFor="phone_num">Số điện thoại:</Label>
                         <Input
                             type="text"
                             id="phone_num"
@@ -245,7 +242,7 @@ export default function AddUser() {
                         />
                     </div>
                     <div>
-                        <Label htmlFor="input">Địa chỉ:</Label>
+                        <Label htmlFor="address">Địa chỉ:</Label>
                         <Input
                             type="text"
                             id="address"

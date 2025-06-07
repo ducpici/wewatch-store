@@ -39,20 +39,21 @@ const navItems: NavItem[] = [
     {
         icon: <UserCircleIcon />,
         name: "Nhân viên",
-        path: "/profile",
+        // path: "/employees",
         subItems: [
-            { name: "Nhân viên", path: "/line-chart", pro: false },
-            { name: "Chức vụ", path: "/bar-chart", pro: false },
+            { name: "Nhân viên", path: "/employees", pro: false },
+            { name: "Chức vụ", path: "/positions", pro: false },
+            { name: "Quyền", path: "/positions", pro: false },
         ],
     },
     {
         icon: <UserCircleIcon />,
         name: "Sản phẩm",
-        path: "/profile",
+        // path: "/products",
         subItems: [
-            { name: "Sản phẩm", path: "/line-chart", pro: false },
-            { name: "Loại sản phẩm", path: "/bar-chart", pro: false },
-            { name: "Nhà cung cấp", path: "/bar-chart", pro: false },
+            { name: "Sản phẩm", path: "/products", pro: false },
+            { name: "Loại sản phẩm", path: "/categories", pro: false },
+            { name: "Nhà cung cấp", path: "/brands", pro: false },
         ],
     },
 
