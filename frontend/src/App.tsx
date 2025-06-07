@@ -26,6 +26,10 @@ import UpdateUser from "./pages/User/UpdateUser";
 import Employees from "./pages/Employee/Employees";
 import AddEmployee from "./pages/Employee/AddEmployee";
 import EditEmployee from "./pages/Employee/EditEmployee";
+
+import Positions from "./pages/Position/Positions";
+import AddPosition from "./pages/Position/AddPossition";
+import EditPosition from "./pages/Position/EditPosition";
 export default function App() {
     return (
         <>
@@ -79,6 +83,17 @@ export default function App() {
                         <Route
                             path="/employees/edit/:id"
                             element={<EditEmployee />}
+                        />
+
+                        {/* Positions */}
+                        <Route path="/positions" element={<Positions />} />
+                        <Route
+                            path="/positions/add-new"
+                            element={<AddPosition />}
+                        />
+                        <Route
+                            path="/positions/edit/:id"
+                            element={<EditPosition />}
                         />
                     </Route>
 

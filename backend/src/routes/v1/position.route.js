@@ -1,8 +1,18 @@
 import express from "express";
 const routes = express.Router();
 
-import { getPositions } from "../../api/v1/position/position.controller";
+import {
+    getPositions,
+    addPosition,
+    editPosition,
+    getPositionsById,
+    deletePosition,
+} from "../../api/v1/position/position.controller";
 
 routes.get("/positions", getPositions);
+routes.get("/positions/:id", getPositionsById);
+routes.post("/positions", addPosition);
+routes.put("/positions/:id", editPosition);
+routes.delete("/positions/:id", deletePosition);
 
 module.exports = routes;
