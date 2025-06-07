@@ -43,6 +43,10 @@ import Functions from "./pages/Function/Functions";
 import AddFunction from "./pages/Function/AddFunction";
 import EditFunction from "./pages/Function/EditFunction";
 
+import Roles from "./pages/Role/Roles";
+import AddRole from "./pages/Role/AddRole";
+import EditRole from "./pages/Role/EditRole";
+
 export default function App() {
     return (
         <>
@@ -138,6 +142,11 @@ export default function App() {
                             path="/functions/edit/:id"
                             element={<EditFunction />}
                         />
+
+                        {/* Roles */}
+                        <Route path="/roles" element={<Roles />} />
+                        <Route path="/roles/add-new" element={<AddRole />} />
+                        <Route path="/roles/edit/:id" element={<EditRole />} />
                     </Route>
 
                     {/* Auth Layout */}

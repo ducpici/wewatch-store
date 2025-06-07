@@ -26,7 +26,7 @@ export default function EditFunction() {
 
     const breadcrumbItems = [
         { label: "Trang chủ", path: "/" },
-        { label: "Chức vụ", path: "/functions" },
+        { label: "Chức năng", path: "/functions" },
         { label: "Cập nhật" }, // Không có path => là trang hiện tại
     ];
 
