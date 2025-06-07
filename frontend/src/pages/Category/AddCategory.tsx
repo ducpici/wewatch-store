@@ -9,34 +9,34 @@ import axios from "../../lib/axiosConfig";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router";
 
-export default function AddPosition() {
-    type Position = {
+export default function AddCategory() {
+    type Category = {
         name: string;
         description: string;
     };
-    const initPosition: Position = {
+    const initBrand: Category = {
         name: "",
         description: "",
     };
-    const [positionData, setPositionData] = useState<Position>(initPosition);
+    const [categoryData, setCategoryData] = useState<Category>(initBrand);
 
     const breadcrumbItems = [
         { label: "Trang chủ", path: "/" },
-        { label: "Chức vụ", path: "/positions" },
+        { label: "Loại sản phẩm", path: "/categories" },
         { label: "Thêm mới" }, // Không có path => là trang hiện tại
     ];
 
     const navigate = useNavigate();
 
-    const handleCreatePosition = async () => {
-        if (!positionData.name || !positionData.description) {
+    const handleCreateBrand = async () => {
+        if (!categoryData.name || !categoryData.description) {
             toast.error("Các trường không được để trống!");
             return;
         }
         try {
-            await axios.post(`/positions`, positionData);
+            await axios.post(`/categories`, categoryData);
             toast.success("Thêm thành công!");
-            navigate("/positions");
+            navigate("/categories");
         } catch (error) {
             console.error("Lỗi khi thêm:", error);
             toast.error("Thêm thất bại.");
@@ -49,15 +49,15 @@ export default function AddPosition() {
         <>
             <PageBreadcrumb items={breadcrumbItems} />
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-                <ComponentCard title="Thông tin chức vụ">
+                <ComponentCard title="Thông tin loại sản phẩm">
                     <div>
-                        <Label htmlFor="name">Tên chức vụ:</Label>
+                        <Label htmlFor="name">Tên loại sản phẩm:</Label>
                         <Input
                             type="text"
                             id="name"
                             onChange={(e) =>
-                                setPositionData({
-                                    ...positionData,
+                                setCategoryData({
+                                    ...categoryData,
                                     name: e.target.value,
                                 })
                             }
@@ -66,12 +66,12 @@ export default function AddPosition() {
                     <div>
                         <Label>Mô tả:</Label>
                         <TextArea
-                            placeholder="Nhập mô tả chức vụ"
+                            // placeholder="Nhập mô tả chức vụ"
                             rows={6}
-                            value={positionData.description}
+                            value={categoryData.description}
                             onChange={(e) =>
-                                setPositionData({
-                                    ...positionData,
+                                setCategoryData({
+                                    ...categoryData,
                                     description: e.target.value,
                                 })
                             }
@@ -84,7 +84,7 @@ export default function AddPosition() {
                     className="mt-6"
                     size="sm"
                     variant="primary"
-                    onClick={handleCreatePosition}
+                    onClick={handleCreateBrand}
                 >
                     Lưu
                 </Button>

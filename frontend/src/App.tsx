@@ -34,6 +34,15 @@ import EditPosition from "./pages/Position/EditPosition";
 import Brands from "./pages/Brand/Brands";
 import AddBrand from "./pages/Brand/AddBrand";
 import EditBrand from "./pages/Brand/EditBrand";
+
+import Categories from "./pages/Category/Categories";
+import AddCategory from "./pages/Category/AddCategory";
+import EditCategory from "./pages/Category/EditCategory";
+
+import Functions from "./pages/Function/Functions";
+import AddFunction from "./pages/Function/AddFunction";
+import EditFunction from "./pages/Function/EditFunction";
+
 export default function App() {
     return (
         <>
@@ -106,6 +115,28 @@ export default function App() {
                         <Route
                             path="/brands/edit/:id"
                             element={<EditBrand />}
+                        />
+
+                        {/* Categories */}
+                        <Route path="/categories" element={<Categories />} />
+                        <Route
+                            path="/categories/add-new"
+                            element={<AddCategory />}
+                        />
+                        <Route
+                            path="/categories/edit/:id"
+                            element={<EditCategory />}
+                        />
+
+                        {/* Functions */}
+                        <Route path="/functions" element={<Functions />} />
+                        <Route
+                            path="/functions/add-new"
+                            element={<AddFunction />}
+                        />
+                        <Route
+                            path="/functions/edit/:id"
+                            element={<EditFunction />}
                         />
                     </Route>
 

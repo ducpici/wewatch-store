@@ -9,34 +9,34 @@ import axios from "../../lib/axiosConfig";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router";
 
-export default function AddPosition() {
-    type Position = {
+export default function AddFunction() {
+    type Function = {
         name: string;
         description: string;
     };
-    const initPosition: Position = {
+    const initFunction: Function = {
         name: "",
         description: "",
     };
-    const [positionData, setPositionData] = useState<Position>(initPosition);
+    const [functionData, setFunctionData] = useState<Function>(initFunction);
 
     const breadcrumbItems = [
         { label: "Trang chủ", path: "/" },
-        { label: "Chức vụ", path: "/positions" },
+        { label: "Chức vụ", path: "/functions" },
         { label: "Thêm mới" }, // Không có path => là trang hiện tại
     ];
 
     const navigate = useNavigate();
 
-    const handleCreatePosition = async () => {
-        if (!positionData.name || !positionData.description) {
+    const handleCreateFunction = async () => {
+        if (!functionData.name || !functionData.description) {
             toast.error("Các trường không được để trống!");
             return;
         }
         try {
-            await axios.post(`/positions`, positionData);
+            await axios.post(`/functions`, functionData);
             toast.success("Thêm thành công!");
-            navigate("/positions");
+            navigate("/functions");
         } catch (error) {
             console.error("Lỗi khi thêm:", error);
             toast.error("Thêm thất bại.");
@@ -49,15 +49,15 @@ export default function AddPosition() {
         <>
             <PageBreadcrumb items={breadcrumbItems} />
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-                <ComponentCard title="Thông tin chức vụ">
+                <ComponentCard title="Thông tin chức năng">
                     <div>
-                        <Label htmlFor="name">Tên chức vụ:</Label>
+                        <Label htmlFor="name">Tên chức năng:</Label>
                         <Input
                             type="text"
                             id="name"
                             onChange={(e) =>
-                                setPositionData({
-                                    ...positionData,
+                                setFunctionData({
+                                    ...functionData,
                                     name: e.target.value,
                                 })
                             }
@@ -66,12 +66,12 @@ export default function AddPosition() {
                     <div>
                         <Label>Mô tả:</Label>
                         <TextArea
-                            placeholder="Nhập mô tả chức vụ"
+                            placeholder=""
                             rows={6}
-                            value={positionData.description}
+                            value={functionData.description}
                             onChange={(e) =>
-                                setPositionData({
-                                    ...positionData,
+                                setFunctionData({
+                                    ...functionData,
                                     description: e.target.value,
                                 })
                             }
@@ -84,7 +84,7 @@ export default function AddPosition() {
                     className="mt-6"
                     size="sm"
                     variant="primary"
-                    onClick={handleCreatePosition}
+                    onClick={handleCreateFunction}
                 >
                     Lưu
                 </Button>

@@ -29,7 +29,7 @@ export default function EditPosition() {
     const breadcrumbItems = [
         { label: "Trang chủ", path: "/" },
         { label: "Chức vụ", path: "/positions" },
-        { label: "Chỉnh sửa" }, // Không có path => là trang hiện tại
+        { label: "Cập nhật" }, // Không có path => là trang hiện tại
     ];
 
     const navigate = useNavigate();
