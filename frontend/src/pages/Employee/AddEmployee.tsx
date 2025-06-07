@@ -21,7 +21,7 @@ export default function AddEmployee() {
         email: "",
         address: "",
         phone_number: "",
-        position_id: null,
+        position_id: 1,
         username: "",
         password: "",
         state: true,
@@ -206,7 +206,7 @@ export default function AddEmployee() {
                             placeholder="Chọn chức vụ"
                             onChange={handleSelectChange}
                             className="dark:bg-dark-900"
-                            value=""
+                            // value=""
                         />
                     </div>
                 </ComponentCard>

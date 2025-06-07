@@ -242,6 +242,7 @@ export default function EditEmployee() {
                         <Input
                             type="text"
                             id="username"
+                            disabled
                             value={employeeData.username}
                             onChange={(e) =>
                                 setEmployeeData({
@@ -256,6 +257,7 @@ export default function EditEmployee() {
                         <Input
                             type="password"
                             id="password"
+                            disabled
                             value={employeeData.password}
                             onChange={(e) =>
                                 setEmployeeData({

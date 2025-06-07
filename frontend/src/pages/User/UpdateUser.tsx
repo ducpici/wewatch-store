@@ -200,6 +200,7 @@ export default function UpdateUser() {
                     <div>
                         <Label htmlFor="username">Tên đăng nhập:</Label>
                         <Input
+                            disabled
                             type="text"
                             id="username"
                             value={userData.username}
@@ -214,6 +215,7 @@ export default function UpdateUser() {
                     <div>
                         <Label htmlFor="password">Mật khẩu:</Label>
                         <Input
+                            disabled
                             type="password"
                             id="password"
                             value={userData.password}

@@ -57,25 +57,19 @@ const navItems: NavItem[] = [
             { name: "Chức năng đồng hồ", path: "/functions", pro: false },
         ],
     },
-
     {
         icon: <UserCircleIcon />,
-        name: "Danh mục",
+        name: "Đơn hàng",
+        path: "/orders",
+    },
+    {
+        icon: <UserCircleIcon />,
+        name: "Danh mục khác",
         path: "/profile",
         subItems: [
             { name: "Banner", path: "/line-chart", pro: false },
             { name: "Voucher", path: "/bar-chart", pro: false },
         ],
-    },
-    {
-        icon: <UserCircleIcon />,
-        name: "Đơn hàng",
-        path: "/profile",
-    },
-    {
-        icon: <UserCircleIcon />,
-        name: "User Profile",
-        path: "/profile",
     },
 ];
 
@@ -386,7 +380,7 @@ const AppSidebar: React.FC = () => {
                                 }`}
                             >
                                 {isExpanded || isHovered || isMobileOpen ? (
-                                    "Menu"
+                                    "Quản lý"
                                 ) : (
                                     <HorizontaLDots className="size-6" />
                                 )}
@@ -402,7 +396,7 @@ const AppSidebar: React.FC = () => {
                                 }`}
                             >
                                 {isExpanded || isHovered || isMobileOpen ? (
-                                    "Others"
+                                    "Khác"
                                 ) : (
                                     <HorizontaLDots />
                                 )}
