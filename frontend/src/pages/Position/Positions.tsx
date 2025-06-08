@@ -183,6 +183,11 @@ export default function Positions() {
                                                     //         `/positions/${position.id_user}`
                                                     //     )
                                                     // }
+                                                    onEditRole={() =>
+                                                        navigate(
+                                                            `/positions/edit/${position.id}`
+                                                        )
+                                                    }
                                                     onEdit={() =>
                                                         navigate(
                                                             `/positions/edit/${position.id}`

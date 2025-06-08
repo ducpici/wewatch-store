@@ -67,8 +67,8 @@ const navItems: NavItem[] = [
         name: "Danh mục khác",
         path: "/profile",
         subItems: [
-            { name: "Banner", path: "/line-chart", pro: false },
-            { name: "Voucher", path: "/bar-chart", pro: false },
+            { name: "Banner", path: "/banners", pro: false },
+            { name: "Voucher", path: "/vouchers", pro: false },
         ],
     },
 ];

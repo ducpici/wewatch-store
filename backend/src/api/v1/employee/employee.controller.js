@@ -11,6 +11,7 @@ import {
     search,
 } from "./employee.modal";
 import { formatDate, formatDate2 } from "../../../utils/formatDate";
+import { hashPass } from "../../../utils/hashPass";
 
 const getEmployees = async (req, res) => {
     try {
@@ -89,7 +90,10 @@ const findEmployeeById = async (req, res) => {
 };
 
 const postAddEmployee = async (req, res) => {
-    const data = req.body;
+    const data = {
+        ...req.body,
+        password: await hashPass(req.body.password),
+    };
     try {
         const result = await createEmployee(data);
         res.status(201).json({ message: "Employee created successfully" });

@@ -47,6 +47,9 @@ import Roles from "./pages/Role/Roles";
 import AddRole from "./pages/Role/AddRole";
 import EditRole from "./pages/Role/EditRole";
 
+import Vouchers from "./pages/Voucher/Vouchers";
+import AddVoucher from "./pages/Voucher/AddVoucher";
+import EditVoucher from "./pages/Voucher/EditVoucher";
 export default function App() {
     return (
         <>
@@ -147,6 +150,17 @@ export default function App() {
                         <Route path="/roles" element={<Roles />} />
                         <Route path="/roles/add-new" element={<AddRole />} />
                         <Route path="/roles/edit/:id" element={<EditRole />} />
+
+                        {/* Vouchers */}
+                        <Route path="/vouchers" element={<Vouchers />} />
+                        <Route
+                            path="/vouchers/add-new"
+                            element={<AddVoucher />}
+                        />
+                        <Route
+                            path="/vouchers/edit/:id"
+                            element={<EditVoucher />}
+                        />
                     </Route>
 
                     {/* Auth Layout */}
