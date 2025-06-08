@@ -46,6 +46,7 @@ import EditFunction from "./pages/Function/EditFunction";
 import Roles from "./pages/Role/Roles";
 import AddRole from "./pages/Role/AddRole";
 import EditRole from "./pages/Role/EditRole";
+import AuthorPosition from "./pages/Position/AuthPossition";
 
 import Vouchers from "./pages/Voucher/Vouchers";
 import AddVoucher from "./pages/Voucher/AddVoucher";
@@ -114,6 +115,10 @@ export default function App() {
                         <Route
                             path="/positions/edit/:id"
                             element={<EditPosition />}
+                        />
+                        <Route
+                            path="/positions/authorization/:id"
+                            element={<AuthorPosition />}
                         />
 
                         {/* Brands */}

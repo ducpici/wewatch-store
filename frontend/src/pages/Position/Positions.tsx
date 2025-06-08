@@ -185,7 +185,7 @@ export default function Positions() {
                                                     // }
                                                     onEditRole={() =>
                                                         navigate(
-                                                            `/positions/edit/${position.id}`
+                                                            `/positions/authorization/${position.id}`
                                                         )
                                                     }
                                                     onEdit={() =>

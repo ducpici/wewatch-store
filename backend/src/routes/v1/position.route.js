@@ -14,6 +14,7 @@ routes.get("/positions", getPositions);
 routes.get("/positions/search", searchPosition);
 routes.get("/positions/:id", getPositionsById);
 routes.post("/positions", addPosition);
+// routes.post("/positions/authorization/:id");
 routes.put("/positions/:id", editPosition);
 routes.delete("/positions/:id", deletePosition);
 
