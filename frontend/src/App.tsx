@@ -51,6 +51,10 @@ import AuthorPosition from "./pages/Position/AuthPossition";
 import Vouchers from "./pages/Voucher/Vouchers";
 import AddVoucher from "./pages/Voucher/AddVoucher";
 import EditVoucher from "./pages/Voucher/EditVoucher";
+
+import Banners from "./pages/Banner/Banners";
+import AddBanner from "./pages/Banner/AddBanner";
+import EditBanner from "./pages/Banner/EditBanner";
 export default function App() {
     return (
         <>
@@ -165,6 +169,17 @@ export default function App() {
                         <Route
                             path="/vouchers/edit/:id"
                             element={<EditVoucher />}
+                        />
+
+                        {/* Banners */}
+                        <Route path="/banners" element={<Banners />} />
+                        <Route
+                            path="/banners/add-new"
+                            element={<AddBanner />}
+                        />
+                        <Route
+                            path="/banners/edit/:id"
+                            element={<EditBanner />}
                         />
                     </Route>
 

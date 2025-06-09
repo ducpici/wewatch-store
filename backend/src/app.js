@@ -1,9 +1,14 @@
 import express from "express";
-import configViewEngine from "./config/configViewEngine";
+import configViewEngine from "./config/configViewEngine.js";
 import cors from "cors";
-import { checkConnection } from "./config/database";
+import path from "path";
+import { checkConnection } from "./config/database.js";
 
 const app = express();
+
+// app.use("/uploads", express.static(path.join(__dirname, "public", "uploads")));
+app.use(express.static("./public/"));
+
 app.use(
     cors({
         origin: "http://localhost:5173",

@@ -27,4 +27,4 @@ const checkConnection = async () => {
     }
 };
 
-module.exports = { connection, checkConnection };
+export { connection, checkConnection };
