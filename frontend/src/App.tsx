@@ -55,6 +55,10 @@ import EditVoucher from "./pages/Voucher/EditVoucher";
 import Banners from "./pages/Banner/Banners";
 import AddBanner from "./pages/Banner/AddBanner";
 import EditBanner from "./pages/Banner/EditBanner";
+
+import Products from "./pages/Product/Products";
+import AddProduct from "./pages/Product/AddProduct";
+import EditProduct from "./pages/Product/EditProduct";
 export default function App() {
     return (
         <>
@@ -180,6 +184,17 @@ export default function App() {
                         <Route
                             path="/banners/edit/:id"
                             element={<EditBanner />}
+                        />
+
+                        {/* Products */}
+                        <Route path="/products" element={<Products />} />
+                        <Route
+                            path="/products/add-new"
+                            element={<AddProduct />}
+                        />
+                        <Route
+                            path="/products/edit/:id"
+                            element={<EditProduct />}
                         />
                     </Route>
 

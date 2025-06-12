@@ -146,8 +146,8 @@ export default function AuthorPosition() {
                         />
                     </div>
                     <div>
+                        <Label htmlFor="roles">Quyền:</Label>
                         <MultiSelect
-                            label="Quyền:"
                             options={roleData}
                             defaultSelected={selectedValues}
                             onChange={(values) => setSelectedValues(values)}

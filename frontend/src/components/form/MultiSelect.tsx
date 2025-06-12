@@ -8,7 +8,7 @@ interface Option {
 }
 
 interface MultiSelectProps {
-    label: string;
+    // label: string;
     options: Option[];
     defaultSelected?: string[];
     onChange?: (selected: string[]) => void;
@@ -16,7 +16,7 @@ interface MultiSelectProps {
 }
 
 const MultiSelect: React.FC<MultiSelectProps> = ({
-    label,
+    // label,
     options,
     defaultSelected = [],
     onChange,
@@ -55,9 +55,9 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
 
     return (
         <div className="w-full">
-            <label className="mb-1.5 block name-sm font-medium name-gray-700 dark:name-gray-400">
+            {/* <label className="mb-1.5 block name-sm font-medium name-gray-700 dark:name-gray-400">
                 {label}
-            </label>
+            </label> */}
 
             <div className="relative z-20 inline-block w-full">
                 <div className="relative flex flex-col items-center">
@@ -105,10 +105,10 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
                                     ))
                                 ) : (
                                     <input
-                                        placeholder="Select option"
+                                        placeholder="Nhập lựa chọn"
                                         className="w-full h-full p-1 pr-2 name-sm bg-transparent border-0 outline-hidden appearance-none placeholder:name-gray-800 focus:border-0 focus:outline-hidden focus:ring-0 dark:placeholder:name-white/90"
                                         readOnly
-                                        id="Select option"
+                                        id="Nhập lựa chọn"
                                     />
                                 )}
                             </div>

@@ -105,10 +105,6 @@ const editBanner = async (req, res) => {
             return res.status(404).json({ message: "Banner not found" });
         }
 
-        // if (file) {
-        //     // Nếu có file upload, thêm ảnh vào update
-        //     dataToUpdate.image_name = "/uploads/banners/" + file.filename;
-        // }
         if (file) {
             const oldImagePath = path.join(
                 process.cwd(),

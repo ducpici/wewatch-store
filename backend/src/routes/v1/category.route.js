@@ -11,7 +11,6 @@ import {
 } from "../../api/v1/category/category.controller";
 
 routes.get("/categories/search", searchCategory);
-
 routes.get("/categories", getCategories);
 routes.get("/categories/:id", getCategoriesById);
 routes.post("/categories", addCategory);
