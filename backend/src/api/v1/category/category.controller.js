@@ -8,6 +8,8 @@ import {
     searchData,
 } from "./category.modal";
 
+import slugify from "../../../utils/toSlug";
+
 const getCategories = async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 1;
@@ -21,6 +23,7 @@ const getCategories = async (req, res) => {
             id: data.id_category,
             name: data.category_name,
             description: data.description,
+            slug: data.slug,
         }));
 
         res.status(200).json({
@@ -59,8 +62,12 @@ const getCategoriesById = async (req, res) => {
 
 const addCategory = async (req, res) => {
     const data = req.body;
+    const dataInsert = {
+        ...data,
+        slug: slugify(data.name),
+    };
     try {
-        const result = await createData(data);
+        const result = await createData(dataInsert);
         if (result.affectedRows === 0 || !result.insertId) {
             return res.status(400).json({ message: "Fail create data" });
         }
@@ -73,8 +80,12 @@ const addCategory = async (req, res) => {
 
 const editCategory = async (req, res) => {
     const data = req.body;
+    const dataUpdate = {
+        ...data,
+        slug: slugify(data.name),
+    };
     try {
-        const result = await updateData(data);
+        const result = await updateData(dataUpdate);
         if (result.affectedRows === 0) {
             return res
                 .status(404)

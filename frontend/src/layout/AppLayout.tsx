@@ -14,7 +14,6 @@ const LayoutContent: React.FC = () => {
                 <AppSidebar />
                 <Backdrop />
             </div>
-            <ToastContainer style={{ top: "80px" }} />
             <div
                 className={`flex-1 transition-all duration-300 ease-in-out ${
                     isExpanded || isHovered ? "lg:ml-[290px]" : "lg:ml-[90px]"

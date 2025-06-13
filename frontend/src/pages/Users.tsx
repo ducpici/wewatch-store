@@ -17,7 +17,7 @@ import { useEffect, useState } from "react";
 import ReactPaginate from "react-paginate";
 
 interface User {
-    id_user: number; // bigint(20)
+    id: number; // bigint(20)
     name: string; // varchar(255)
     dob: string; // varchar(100), có thể là ngày sinh dạng string
     gender: string;
@@ -200,12 +200,12 @@ export default function Users() {
                                 {/* Table Body */}
                                 <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
                                     {users.map((user, index) => (
-                                        <TableRow key={user.id_user}>
+                                        <TableRow key={user.id}>
                                             <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
                                                 {index + 1}
                                             </TableCell>
                                             <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                {user.id_user}
+                                                {user.id}
                                             </TableCell>
                                             <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
                                                 {user.name}
@@ -232,17 +232,17 @@ export default function Users() {
                                                 <Actions
                                                     // onView={() =>
                                                     //     navigate(
-                                                    //         `/users/${user.id_user}`
+                                                    //         `/users/${user.id}`
                                                     //     )
                                                     // }
                                                     onEdit={() =>
                                                         navigate(
-                                                            `/users/edit-user/${user.id_user}`
+                                                            `/users/edit-user/${user.id}`
                                                         )
                                                     }
                                                     onDelete={() =>
                                                         handleDeleteUser(
-                                                            user.id_user
+                                                            user.id
                                                         )
                                                     }
                                                 />

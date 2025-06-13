@@ -15,7 +15,7 @@ import formatDate from "../../lib/formatDate";
 import { format } from "date-fns";
 export default function UpdateUser() {
     const initialUser: User = {
-        id_user: BigInt(0),
+        id: BigInt(0),
         name: "",
         dob: "",
         gender: "",
@@ -27,7 +27,7 @@ export default function UpdateUser() {
         state: true,
     };
     type User = {
-        id_user: BigInt;
+        id: BigInt;
         name: string;
         dob: string;
         gender: string;
@@ -103,13 +103,13 @@ export default function UpdateUser() {
         }
         try {
             // 👇 Gọi API kiểm tra email và username
-            const { email, username, id_user } = userData;
+            const { email, username, id } = userData;
 
             const { data } = await axios.get("/users/check", {
                 params: {
                     email,
                     username,
-                    id_user,
+                    id,
                 },
             });
 
@@ -123,7 +123,7 @@ export default function UpdateUser() {
                 return;
             }
 
-            await axios.put(`/users/${userData.id_user}`, userData);
+            await axios.put(`/users/${userData.id}`, userData);
 
             toast.success("Cập nhật thành công!");
             navigate("/users");

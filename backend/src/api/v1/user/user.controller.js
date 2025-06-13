@@ -113,8 +113,8 @@ const deleleAUser = async (req, res) => {
 };
 
 const checkDuplicate = async (req, res) => {
-    const { email, username, id_user } = req.query;
-    const userId = parseInt(id_user);
+    const { email, username, id } = req.query;
+    const userId = parseInt(id);
     try {
         const emailResult = await checkEmailExists(email, userId);
         const usernameResult = await checkUsernameExists(username, userId);

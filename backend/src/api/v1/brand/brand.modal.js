@@ -28,22 +28,29 @@ const countItem = async () => {
 
 const createData = async (data) => {
     const sql = `
-        INSERT INTO brands (brand_name, description, email, phone_num) values (?,?,?,?)
-    `;
-    const values = [data.name, data.description, data.email, data.phone_num];
-    const [result] = await connection.execute(sql, values);
-    return result;
-};
-
-const updateData = async (data) => {
-    const sql = `
-        UPDATE brands SET brand_name = ?, description = ?, email = ?, phone_num = ? WHERE id_brand = ?
+        INSERT INTO brands (brand_name, description, email, phone_num, slug) values (?,?,?,?,?)
     `;
     const values = [
         data.name,
         data.description,
         data.email,
         data.phone_num,
+        data.slug,
+    ];
+    const [result] = await connection.execute(sql, values);
+    return result;
+};
+
+const updateData = async (data) => {
+    const sql = `
+        UPDATE brands SET brand_name = ?, description = ?, email = ?, phone_num = ?, slug = ? WHERE id_brand = ?
+    `;
+    const values = [
+        data.name,
+        data.description,
+        data.email,
+        data.phone_num,
+        data.slug,
         data.id,
     ];
     const [result] = await connection.execute(sql, values);

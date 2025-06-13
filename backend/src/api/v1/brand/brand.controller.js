@@ -8,6 +8,7 @@ import {
     searchData,
     checkEmailExists,
 } from "./brand.modal";
+import slugify from "../../../utils/toSlug";
 
 const getBrands = async (req, res) => {
     try {
@@ -24,6 +25,7 @@ const getBrands = async (req, res) => {
             description: data.description,
             email: data.email,
             phone_num: data.phone_num,
+            slug: data.slug,
         }));
 
         res.status(200).json({
@@ -64,8 +66,12 @@ const getBrandsById = async (req, res) => {
 
 const addBrand = async (req, res) => {
     const data = req.body;
+    const dataIsert = {
+        ...data,
+        slug: slugify(data.name),
+    };
     try {
-        const result = await createData(data);
+        const result = await createData(dataIsert);
         if (result.affectedRows === 0 || !result.insertId) {
             return res.status(400).json({ message: "Fail create data" });
         }
@@ -78,8 +84,12 @@ const addBrand = async (req, res) => {
 
 const editBrand = async (req, res) => {
     const data = req.body;
+    const dataUpdate = {
+        ...data,
+        slug: slugify(data.name),
+    };
     try {
-        const result = await updateData(data);
+        const result = await updateData(dataUpdate);
         if (result.affectedRows === 0) {
             return res
                 .status(404)

@@ -27,7 +27,7 @@ const getAllUser = async () => {
 
 const findById = async (id) => {
     const sql = `
-        select * from users where id_user = ? 
+        select * from users where id = ? 
     `;
     const values = [id];
     const [result] = await connection.execute(sql, values);
@@ -57,7 +57,7 @@ const updateUser = async (id, data) => {
     const sql = `
         UPDATE users
         SET name = ?, dob = ?, gender = ?, email = ?, address = ?, phone_number = ?, username = ?, password = ?, state = ?
-        WHERE id_user = ?
+        WHERE id = ?
     `;
     const values = [
         data.name,
@@ -77,7 +77,7 @@ const updateUser = async (id, data) => {
 
 const deleteUser = async (id) => {
     const sql = `
-        delete from users where id_user = ? 
+        delete from users where id = ? 
     `;
     const values = [id];
     const [result] = await connection.execute(sql, values);
@@ -85,11 +85,11 @@ const deleteUser = async (id) => {
 };
 
 const checkEmailExists = async (email, userIdToExclude = null) => {
-    let sql = `SELECT id_user FROM users WHERE email = ?`;
+    let sql = `SELECT id FROM users WHERE email = ?`;
     const values = [email];
 
     if (userIdToExclude) {
-        sql += ` AND id_user != ?`;
+        sql += ` AND id != ?`;
         values.push(userIdToExclude);
     }
 
@@ -98,11 +98,11 @@ const checkEmailExists = async (email, userIdToExclude = null) => {
 };
 
 const checkUsernameExists = async (username, userIdToExclude = null) => {
-    let sql = `SELECT id_user FROM users WHERE username = ?`;
+    let sql = `SELECT id FROM users WHERE username = ?`;
     const values = [username];
 
     if (userIdToExclude) {
-        sql += ` AND id_user != ?`;
+        sql += ` AND id != ?`;
         values.push(userIdToExclude);
     }
 

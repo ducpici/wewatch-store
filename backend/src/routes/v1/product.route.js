@@ -11,7 +11,8 @@ import {
     getProductFunction,
     checkDuplicate,
     getProductByCategory,
-    getProductByBrandName,
+    getProductByBrand,
+    getProductBySlug,
 } from "../../api/v1/product/product.controller";
 
 routes.get("/products", getProducts);
@@ -24,7 +25,8 @@ routes.put("/products/:id", uploadTo("products").single("file"), editProduct);
 routes.delete("/products/:id", deleteProduct);
 
 //api user side
-routes.get("/categories/:categoryId/products", getProductByCategory);
-routes.get("/brand/:brandName", getProductByBrandName);
+routes.get("/danh-muc/:slug", getProductByCategory);
+routes.get("/thuong-hieu/:slug", getProductByBrand);
+routes.get("/san-pham/:slug", getProductBySlug);
 
 module.exports = routes;

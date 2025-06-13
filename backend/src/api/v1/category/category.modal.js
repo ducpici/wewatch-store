@@ -28,18 +28,18 @@ const countItem = async () => {
 
 const createData = async (data) => {
     const sql = `
-        INSERT INTO categories (category_name, description) values (?,?)
+        INSERT INTO categories (category_name, description, slug) values (?,?,?)
     `;
-    const values = [data.name, data.description];
+    const values = [data.name, data.description, data.slug];
     const [result] = await connection.execute(sql, values);
     return result;
 };
 
 const updateData = async (data) => {
     const sql = `
-        UPDATE categories SET category_name = ?, description = ? WHERE id_category = ?
+        UPDATE categories SET category_name = ?, description = ?, slug = ? WHERE id_category = ?
     `;
-    const values = [data.name, data.description, data.id];
+    const values = [data.name, data.description, data.slug, data.id];
     const [result] = await connection.execute(sql, values);
     return result;
 };

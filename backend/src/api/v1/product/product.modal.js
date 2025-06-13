@@ -45,6 +45,24 @@ const getAllData = async () => {
     return result;
 };
 
+const countProductByCategory = async (slug) => {
+    const sql = `
+        select COUNT(*) AS total from products p JOIN categories c ON p.category_id = c.id_category WHERE c.slug = ? and p.state = 1
+    `;
+    const value = [slug];
+    const [result] = await connection.execute(sql, value);
+    return result[0].total;
+};
+
+const countProductByBrand = async (slug) => {
+    const sql = `
+        select COUNT(*) AS total from products p JOIN brands b ON p.brand_id = b.id_brand WHERE b.slug = ? AND p.state = 1
+    `;
+    const value = [slug];
+    const [result] = await connection.execute(sql, value);
+    return result[0].total;
+};
+
 // const findById = async (id) => {
 //     const sql = `
 //         SELECT * FROM products where id_product = ?
@@ -70,48 +88,54 @@ const findById = async (id) => {
     return result;
 };
 
-const getDataByCategory = async (id) => {
+const findProductBySlug = async (slug) => {
     const sql = `
         SELECT 
-    p.id_product,
-    p.modal_num,
-    p.origin,
-    p.crystal_material,
-    p.movement_type,
-    p.dial_diameter,
-    p.case_thickness,
-    p.strap_material,
-    p.water_resistance,
-    p.quantity,
-    p.price,
-    p.image,
-    p.state,
-    b.id_brand,
-    b.brand_name,
-    c.id_category,
-    c.category_name
-FROM products p
-JOIN brands b ON p.brand_id = b.id_brand
-JOIN categories c ON p.category_id = c.id_category 
-WHERE id_category = ? AND p.state = 1
+        *
+        FROM products p
+        JOIN categories c ON p.category_id = c.id_category
+        JOIN brands b ON p.brand_id = b.id_brand
+        JOIN product_function pf ON p.id_product = pf.product_id 
+        JOIN functions f ON f.id_function = pf.function_id
+        WHERE p.slug = ? AND p.state = 1
     `;
-    const values = [id];
+    const values = [slug];
     const [result] = await connection.execute(sql, values);
     return result;
 };
 
-const getDataByBrandName = async (brandName) => {
+const getDataByCategory = async (slug, limit, offset) => {
     const sql = `
-            SELECT 
-                *
-            FROM products p
-            JOIN brands b ON p.brand_id = b.id_brand
-            JOIN categories c ON p.category_id = c.id_category
-            JOIN product_function fs ON fs.product_id = p.id_product
-            JOIN functions f ON f.id_function = fs.function_id
-            where b.brand_name = ? 
+        SELECT 
+        *
+        FROM products p
+        JOIN categories c ON p.category_id = c.id_category
+        JOIN brands b ON p.brand_id = b.id_brand
+        WHERE c.slug = ? AND p.state = 1
+        LIMIT ? OFFSET ?
     `;
-    const values = [brandName];
+    const values = [slug, limit, offset];
+    const [result] = await connection.execute(sql, values);
+    return result;
+};
+
+const getDataByBrand = async (slug, limit, offset) => {
+    const sql = `
+        SELECT 
+            p.*, 
+            b.*, 
+            c.*, 
+            p.slug AS product_slug, 
+            b.slug AS brand_slug, 
+            c.slug AS category_slug
+        FROM products p 
+        JOIN brands b ON p.brand_id = b.id_brand
+        JOIN categories c ON p.category_id = c.id_category
+        WHERE b.slug = ?
+        AND p.state = 1
+        LIMIT ? OFFSET ?
+    `;
+    const values = [slug, limit, offset];
     const [result] = await connection.execute(sql, values);
     return result;
 };
@@ -127,7 +151,7 @@ const findProductFunction = async (id) => {
 
 const createData = async (data) => {
     const sql = `
-        insert into products (modal_num, brand_id, origin, crystal_material, movement_type, dial_diameter, case_thickness, strap_material, water_resistance, category_id, quantity, price, state, image) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+        insert into products (modal_num, brand_id, origin, crystal_material, movement_type, dial_diameter, case_thickness, strap_material, water_resistance, category_id, quantity, price, state, image, slug) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
     `;
     const values = [
         data.modal_num,
@@ -144,6 +168,7 @@ const createData = async (data) => {
         data.price,
         data.state,
         data.image,
+        data.slug,
     ];
     const [result] = await connection.execute(sql, values);
     return result;
@@ -265,5 +290,8 @@ module.exports = {
     findProductFunction,
     deleteProductFunction,
     getDataByCategory,
-    getDataByBrandName,
+    getDataByBrand,
+    countProductByCategory,
+    countProductByBrand,
+    findProductBySlug,
 };

@@ -27,10 +27,10 @@ const getAllEmployee = async () => {
 
 const findById = async (id) => {
     const sql = `
-        SELECT * FROM employees where id_employee = ? 
+        SELECT * FROM employees where id = ? 
     `;
     //     const sql = `
-    //     SELECT * FROM employees, positions where employees.position_id = positions.id_position and id_employee = ?
+    //     SELECT * FROM employees, positions where employees.position_id = positions.id_position and id = ?
     // `;
     const values = [id];
     const [result] = await connection.execute(sql, values);
@@ -61,7 +61,7 @@ const updateEmployee = async (id, data) => {
     const sql = `
         UPDATE employees
         SET name = ?, dob = ?, gender = ?, email = ?, address = ?, phone_number = ?, position_id=?, username = ?, password = ?, state = ?
-        WHERE id_employee = ?
+        WHERE id = ?
     `;
     const values = [
         data.name,
@@ -82,7 +82,7 @@ const updateEmployee = async (id, data) => {
 
 const deleteEmployee = async (id) => {
     const sql = `
-        delete from employees where id_employee = ? 
+        delete from employees where id = ? 
     `;
     const values = [id];
     const [result] = await connection.execute(sql, values);
@@ -90,11 +90,11 @@ const deleteEmployee = async (id) => {
 };
 
 const checkEmailExists = async (email, userIdToExclude = null) => {
-    let sql = `SELECT id_employee FROM employees WHERE email = ?`;
+    let sql = `SELECT id FROM employees WHERE email = ?`;
     const values = [email];
 
     if (userIdToExclude) {
-        sql += ` AND id_employee != ?`;
+        sql += ` AND id != ?`;
         values.push(userIdToExclude);
     }
 
@@ -103,11 +103,11 @@ const checkEmailExists = async (email, userIdToExclude = null) => {
 };
 
 const checkUsernameExists = async (username, userIdToExclude = null) => {
-    let sql = `SELECT id_employee FROM employees WHERE username = ?`;
+    let sql = `SELECT id FROM employees WHERE username = ?`;
     const values = [username];
 
     if (userIdToExclude) {
-        sql += ` AND id_employee != ?`;
+        sql += ` AND id != ?`;
         values.push(userIdToExclude);
     }
 

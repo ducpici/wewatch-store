@@ -12,8 +12,12 @@ import {
     findProductFunction,
     deleteProductFunction,
     getDataByCategory,
-    getDataByBrandName,
+    getDataByBrand,
+    countProductByCategory,
+    countProductByBrand,
+    findProductBySlug,
 } from "./product.modal";
+import slugify from "../../../utils/toSlug";
 const path = require("path");
 const fs = require("fs");
 import { connection } from "../../../config/database";
@@ -115,12 +119,12 @@ const getProductById = async (req, res) => {
             name: item.name_function,
         }));
 
-        const rawName = `${first.brand_name} ${first.modal_num} ${first.crystal_material} ${first.movement_type}`;
+        // const rawName = `${first.brand_name} ${first.modal_num} ${first.crystal_material} ${first.movement_type}`;
 
         const parsedProduct = {
             id: first.id_product,
             modal_num: first.modal_num,
-            name: rawName,
+            // name: rawName,
             brand: {
                 id: first.id_brand,
                 name: first.brand_name,
@@ -152,23 +156,30 @@ const getProductById = async (req, res) => {
 
 const getProductBySlug = async (req, res) => {
     const { slug } = req.params;
+    console.log(slug);
     try {
-        const result = await findById(slug);
+        const result = await findProductBySlug(slug);
 
         if (!result) {
             return res.status(404).json({ message: "Product not found" });
         }
+
+        console.log(result);
+
+        const functions = result.map((item) => ({
+            id: item.id_function,
+            name: item.name_function,
+        }));
         const parsedProducts = result.map((data) => {
-            const rawName = `${data.brand_name} ${data.modal_num} ${data.product_name} ${data.crystal_material} ${data.movement_type}`;
-            const slug = slugify(rawName, { lower: true, strict: true });
+            const rawName = `${data.brand_name} - ${data.modal_num} - ${data.crystal_material} - ${data.movement_type} - Mặt số ${data.dial_diameter} mm`;
             return {
                 id: data.id_product,
                 modal_num: data.modal_num,
                 name: rawName,
-                slug: slug,
                 brand: {
                     id: data.id_brand,
                     name: data.brand_name,
+                    slug: data.brand_slug,
                 },
                 origin: data.origin,
                 crystal_material: data.crystal_material,
@@ -180,14 +191,18 @@ const getProductBySlug = async (req, res) => {
                 category: {
                     id: data.id_category,
                     name: data.category_name,
+                    slug: data.category_slug,
                 },
                 quantity: data.quantity,
                 price: data.price,
+                image: data.image,
+                slug: data.product_slug,
                 state: data.state?.[0] === 1 ? "Hoạt động" : "Vô hiệu hóa",
+                functions,
             };
         });
 
-        res.status(200).json(parsedProducts);
+        res.status(200).json(parsedProducts[0]);
     } catch (error) {
         console.error("Lỗi khi lấy employee:", error);
         res.status(500).json({ message: "Internal Server Error" });
@@ -198,6 +213,7 @@ const addProduct = async (req, res) => {
     const data = req.body;
     const file = req.file;
     const imagePath = `/uploads/products/${file.filename}`;
+    const rawName = `${data.modal_num} ${data.crystal_material} ${data.movement_type} ${data.dial_diameter} mm`;
     const dataCreate = {
         modal_num: data.modal_num,
         product_name: data.product_name,
@@ -214,6 +230,7 @@ const addProduct = async (req, res) => {
         price: parseInt(data.price),
         image: imagePath,
         state: data.state == "true" ? 1 : 0,
+        slug: slugify(rawName),
     };
 
     const functionsId = data.functions;
@@ -233,12 +250,12 @@ const editProduct = async (req, res) => {
     const { functions, ...restData } = req.body;
 
     const file = req.file;
-
-    console.log("File: ", file);
+    const rawName = `${restData.modal_num} ${restData.crystal_material} ${restData.movement_type} ${restData.dial_diameter} mm`;
 
     const dataToUpdate = {
         ...restData,
         state: restData.state == "true" ? 1 : 0,
+        slug: slugify(rawName),
     };
     try {
         const product = await findById(id);
@@ -408,61 +425,27 @@ const getProductFunction = async (req, res) => {
 };
 
 const getProductByCategory = async (req, res) => {
-    const { categoryId } = req.params;
     try {
-        const result = await getDataByCategory(categoryId);
+        const { slug } = req.params;
+        let page = parseInt(req.query.page) || 1;
+        let limit = parseInt(req.query.limit) || 10;
+        const totalProducts = await countProductByCategory(slug);
+        if (totalProducts < limit) {
+            limit = totalProducts;
+        }
+        const offset = (page - 1) * limit;
+        const result = await getDataByCategory(slug, limit, offset);
 
         if (!result) {
             return res.status(404).json({ message: "Product not found" });
         }
-        const parsedProducts = result.map((data) => ({
-            id: data.id_product,
-            modal_num: data.modal_num,
-            product_name: data.product_name,
-            brand: {
-                id: data.id_brand,
-                name: data.brand_name,
-            },
-            origin: data.origin,
-            crystal_material: data.crystal_material,
-            movement_type: data.movement_type,
-            dial_diameter: data.dial_diameter + "mm",
-            case_thickness: data.case_thickness + "mm",
-            strap_material: data.strap_material,
-            water_resistance: data.water_resistance,
-            category: {
-                id: data.id_category,
-                name: data.category_name,
-            },
-            quantity: data.quantity,
-            price: data.price,
-            image: data.image,
-            state: data.state?.[0] === 1 ? "Hoạt động" : "Vô hiệu hóa",
-        }));
 
-        res.status(200).json(parsedProducts);
-    } catch (error) {
-        console.error("Lỗi khi lấy:", error);
-        res.status(500).json({ message: "Internal Server Error" });
-    }
-};
-
-const getProductByBrandName = async (req, res) => {
-    const { brandName } = req.params;
-    try {
-        const result = await getDataByBrandName(brandName);
-
-        if (!result) {
-            return res.status(404).json({ message: "Product not found" });
-        }
         const parsedProducts = result.map((data) => {
-            const rawName = `${data.brand_name} ${data.modal_num} ${data.product_name} ${data.crystal_material} ${data.movement_type}`;
-            // const slug = slugify(rawName, { lower: true, strict: true });
+            const rawName = `${data.brand_name} - ${data.modal_num} - ${data.crystal_material} - ${data.movement_type} - Mặt số ${data.dial_diameter} mm`;
             return {
                 id: data.id_product,
                 modal_num: data.modal_num,
                 name: rawName,
-                // slug: slug,
                 brand: {
                     id: data.id_brand,
                     name: data.brand_name,
@@ -477,15 +460,86 @@ const getProductByBrandName = async (req, res) => {
                 category: {
                     id: data.id_category,
                     name: data.category_name,
+                    slug: data.slug,
                 },
                 quantity: data.quantity,
                 price: data.price,
                 image: data.image,
                 state: data.state?.[0] === 1 ? "Hoạt động" : "Vô hiệu hóa",
+                slug: data.slug,
             };
         });
 
-        res.status(200).json(parsedProducts);
+        res.status(200).json({
+            data: parsedProducts,
+            pagination: {
+                total: totalProducts,
+                page,
+                limit,
+                totalPages: Math.ceil(totalProducts / limit),
+            },
+        });
+    } catch (error) {
+        console.error("Lỗi khi lấy:", error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+};
+
+const getProductByBrand = async (req, res) => {
+    const { slug } = req.params;
+    try {
+        let page = parseInt(req.query.page) || 1;
+        let limit = parseInt(req.query.limit) || 10;
+        const totalProducts = await countProductByBrand(slug);
+        if (totalProducts < limit) {
+            limit = totalProducts;
+        }
+        const offset = (page - 1) * limit;
+        const result = await getDataByBrand(slug, limit, offset);
+
+        if (!result) {
+            return res.status(404).json({ message: "Product not found" });
+        }
+        const parsedProducts = result.map((data) => {
+            const rawName = `${data.brand_name} - ${data.modal_num} - ${data.crystal_material} - ${data.movement_type} - Mặt số ${data.dial_diameter} mm`;
+            return {
+                id: data.id_product,
+                modal_num: data.modal_num,
+                name: rawName,
+                brand: {
+                    id: data.id_brand,
+                    name: data.brand_name,
+                    slug: data.brand_slug,
+                },
+                origin: data.origin,
+                crystal_material: data.crystal_material,
+                movement_type: data.movement_type,
+                dial_diameter: data.dial_diameter + " " + "mm",
+                case_thickness: data.case_thickness + " " + "mm",
+                strap_material: data.strap_material,
+                water_resistance: data.water_resistance,
+                category: {
+                    id: data.id_category,
+                    name: data.category_name,
+                    slug: data.category_slug,
+                },
+                quantity: data.quantity,
+                price: data.price,
+                image: data.image,
+                slug: data.product_slug,
+                state: data.state?.[0] === 1 ? "Hoạt động" : "Vô hiệu hóa",
+            };
+        });
+
+        res.status(200).json({
+            data: parsedProducts,
+            pagination: {
+                total: totalProducts,
+                page,
+                limit,
+                totalPages: Math.ceil(totalProducts / limit),
+            },
+        });
     } catch (error) {
         console.error("Lỗi khi lấy:", error);
         res.status(500).json({ message: "Internal Server Error" });
@@ -503,5 +557,6 @@ module.exports = {
     getProductFunction,
     updateProductFunction,
     getProductByCategory,
-    getProductByBrandName,
+    getProductByBrand,
+    getProductBySlug,
 };

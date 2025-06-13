@@ -5,10 +5,55 @@ import Label from "../form/Label";
 import Input from "../form/input/InputField";
 import Checkbox from "../form/input/Checkbox";
 import Button from "../ui/button/Button";
+import axios from "../../lib/axiosConfig";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 export default function SignInForm() {
+    const navigate = useNavigate();
     const [showPassword, setShowPassword] = useState(false);
     const [isChecked, setIsChecked] = useState(false);
+    type Account = {
+        username: string;
+        password: string;
+        type: string;
+    };
+    const [data, setData] = useState<Account>({
+        username: "",
+        password: "",
+        type: "employee",
+    });
+
+    const authLogin = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!data.username) {
+            toast.error("Vui lòng nhập tên đăng nhập");
+            return;
+        }
+
+        if (!data.password) {
+            toast.error("Vui lòng nhập mật khẩu");
+            return;
+        }
+
+        try {
+            let res = await axios.post("/login", data);
+            console.log(res);
+            toast.success(res.data.message);
+            navigate("/");
+        } catch (err: any) {
+            if (err.response) {
+                // Khi server trả về mã lỗi như 401, 403, 500...
+                const msg = err.response.data?.message || "Đã có lỗi xảy ra";
+                toast.error(msg);
+                console.error("Lỗi server:", err.response);
+            } else {
+                toast.error("Không thể kết nối tới máy chủ");
+                console.error("Lỗi kết nối:", err);
+            }
+        } finally {
+        }
+    };
     return (
         <div className="flex flex-col flex-1">
             <div className="w-full max-w-md pt-10 mx-auto">
@@ -29,7 +74,7 @@ export default function SignInForm() {
                     </div>
                     <div>
                         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-5"></div>
-                        <form>
+                        <form onSubmit={authLogin}>
                             <div className="space-y-6">
                                 <div>
                                     <Label>
@@ -38,7 +83,15 @@ export default function SignInForm() {
                                             *
                                         </span>{" "}
                                     </Label>
-                                    <Input placeholder="info@gmail.com" />
+                                    <Input
+                                        placeholder="info@gmail.com"
+                                        onChange={(e) =>
+                                            setData({
+                                                ...data,
+                                                username: e.target.value,
+                                            })
+                                        }
+                                    />
                                 </div>
                                 <div>
                                     <Label>
@@ -55,6 +108,12 @@ export default function SignInForm() {
                                                     : "password"
                                             }
                                             placeholder="Enter your password"
+                                            onChange={(e) =>
+                                                setData({
+                                                    ...data,
+                                                    password: e.target.value,
+                                                })
+                                            }
                                         />
                                         <span
                                             onClick={() =>

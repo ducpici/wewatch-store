@@ -24,7 +24,7 @@ const getEmployees = async (req, res) => {
         const totalEmployees = await countAllEmployees();
 
         const parsedEmployees = employees.map((employee) => ({
-            id: employee.id_employee,
+            id: employee.id,
             name: employee.name,
             dob: formatDate(employee.dob),
             gender: employee.gender === 1 ? "Nam" : "Nữ",
@@ -64,7 +64,7 @@ const findEmployeeById = async (req, res) => {
             return res.status(404).json({ message: "Employee not found" });
         }
         const parsedEmployees = employee.map((employee) => ({
-            id: employee.id_employee,
+            id: employee.id,
             name: employee.name,
             dob: formatDate2(employee.dob),
             gender: employee.gender === 1 ? 1 : 0,
@@ -156,7 +156,7 @@ const searchEmployees = async (req, res) => {
     try {
         const employees = await search(keyword);
         const parsedEmployees = employees.map((employee) => ({
-            id: employee.id_employee,
+            id: employee.id,
             name: employee.name,
             dob: formatDate(employee.dob),
             gender: employee.gender === 1 ? "Nam" : "Nữ",
