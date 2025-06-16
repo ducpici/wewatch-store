@@ -106,14 +106,15 @@ const getProducts = async (req, res) => {
 //     }
 // };
 const getProductById = async (req, res) => {
-    const { id } = req.params;
     try {
+        const { id } = req.params;
         const result = await findById(id);
 
         if (!result) {
             return res.status(404).json({ message: "Product not found" });
         }
         const first = result[0];
+        console.log(first);
         const functions = result.map((item) => ({
             id: item.id_function,
             name: item.name_function,
@@ -156,15 +157,12 @@ const getProductById = async (req, res) => {
 
 const getProductBySlug = async (req, res) => {
     const { slug } = req.params;
-    console.log(slug);
     try {
         const result = await findProductBySlug(slug);
 
         if (!result) {
             return res.status(404).json({ message: "Product not found" });
         }
-
-        console.log(result);
 
         const functions = result.map((item) => ({
             id: item.id_function,
@@ -449,6 +447,7 @@ const getProductByCategory = async (req, res) => {
                 brand: {
                     id: data.id_brand,
                     name: data.brand_name,
+                    slug: data.brand_slug,
                 },
                 origin: data.origin,
                 crystal_material: data.crystal_material,
@@ -460,13 +459,13 @@ const getProductByCategory = async (req, res) => {
                 category: {
                     id: data.id_category,
                     name: data.category_name,
-                    slug: data.slug,
+                    slug: data.category_slug,
                 },
                 quantity: data.quantity,
                 price: data.price,
                 image: data.image,
                 state: data.state?.[0] === 1 ? "Hoạt động" : "Vô hiệu hóa",
-                slug: data.slug,
+                slug: data.product_slug,
             };
         });
 

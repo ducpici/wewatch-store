@@ -60,6 +60,9 @@ import Products from "./pages/Product/Products";
 import AddProduct from "./pages/Product/AddProduct";
 import EditProduct from "./pages/Product/EditProduct";
 
+import Orders from "./pages/Order/Orders";
+import OrderDetail from "./pages/Order/OrderDetail";
+
 import { ToastContainer } from "react-toastify";
 import PrivateRoute from "./components/PrivateRoute";
 
@@ -221,6 +224,11 @@ export default function App() {
                                 element={<EditProduct />}
                             />
                             <Route path="/profile" element={<UserProfiles />} />
+                            <Route path="/orders" element={<Orders />} />
+                            <Route
+                                path="/orders/detail/:id"
+                                element={<OrderDetail />}
+                            />
                         </Route>
                     </Route>
 

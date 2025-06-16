@@ -40,7 +40,7 @@ routes.post("/login", async (req, res) => {
             phone_number: account.phone_number,
         };
 
-        res.json({ message: "Đăng nhập thành công!" });
+        res.json({ message: "Đăng nhập thành công!", user: req.session.user });
     } catch (err) {
         console.error("Lỗi khi so sánh mật khẩu:", err);
         res.status(500).json({ message: "Lỗi máy chủ" });

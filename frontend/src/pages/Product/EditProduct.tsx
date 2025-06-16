@@ -391,7 +391,7 @@ export default function EditProduct() {
                                     Ảnh hiện tại:
                                 </p>
                                 <img
-                                    src={`http://localhost:4090${productData.image}`}
+                                    src={`https://admin.wewatch.com:4090${productData.image}`}
                                     alt="Ảnh banner hiện tại"
                                     className="w-64 rounded border"
                                 />

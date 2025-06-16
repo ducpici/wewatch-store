@@ -81,7 +81,7 @@ const findById = async (id) => {
             JOIN categories c ON p.category_id = c.id_category
             JOIN product_function fs ON fs.product_id = p.id_product
             JOIN functions f ON f.id_function = fs.function_id
-            where id_product = ? 
+            where p.id_product = ? 
     `;
     const values = [id];
     const [result] = await connection.execute(sql, values);
@@ -107,11 +107,17 @@ const findProductBySlug = async (slug) => {
 const getDataByCategory = async (slug, limit, offset) => {
     const sql = `
         SELECT 
-        *
-        FROM products p
-        JOIN categories c ON p.category_id = c.id_category
+            p.*, 
+            b.*, 
+            c.*, 
+            p.slug AS product_slug, 
+            b.slug AS brand_slug, 
+            c.slug AS category_slug
+        FROM products p 
         JOIN brands b ON p.brand_id = b.id_brand
-        WHERE c.slug = ? AND p.state = 1
+        JOIN categories c ON p.category_id = c.id_category
+        WHERE c.slug = ?
+        AND p.state = 1
         LIMIT ? OFFSET ?
     `;
     const values = [slug, limit, offset];
