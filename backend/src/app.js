@@ -37,53 +37,53 @@ app.use(
 );
 
 // Session config
-const sessionShop = session({
-    name: "shop.sid",
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-        httpOnly: true,
-        secure: true, // Bắt buộc khi dùng HTTPS
-        sameSite: "none", // Cần cho cross-site
-        domain: ".wewatch.com", // Cho phép chia sẻ giữa subdomain
-        maxAge: 24 * 60 * 60 * 1000, // 1 ngày
-    },
-});
+// const sessionShop = session({
+//     name: "shop.sid",
+//     secret: process.env.SESSION_SECRET,
+//     resave: false,
+//     saveUninitialized: false,
+//     cookie: {
+//         httpOnly: true,
+//         secure: true, // Bắt buộc khi dùng HTTPS
+//         sameSite: "none", // Cần cho cross-site
+//         domain: ".wewatch.com", // Cho phép chia sẻ giữa subdomain
+//         maxAge: 24 * 60 * 60 * 1000, // 1 ngày
+//     },
+// });
 
-const sessionAdmin = session({
-    name: "admin.sid",
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-        httpOnly: true,
-        secure: true,
-        sameSite: "none",
-        domain: ".wewatch.com",
-        maxAge: 24 * 60 * 60 * 1000,
-    },
-});
+// const sessionAdmin = session({
+//     name: "admin.sid",
+//     secret: process.env.SESSION_SECRET,
+//     resave: false,
+//     saveUninitialized: false,
+//     cookie: {
+//         httpOnly: true,
+//         secure: true,
+//         sameSite: "none",
+//         domain: ".wewatch.com",
+//         maxAge: 24 * 60 * 60 * 1000,
+//     },
+// });
 
-// Middleware chọn session phù hợp
-app.use((req, res, next) => {
-    const origin = req.headers.origin || req.hostname;
+// // Middleware chọn session phù hợp
+// app.use((req, res, next) => {
+//     const origin = req.headers.origin || req.hostname;
 
-    if (
-        origin?.includes("shop.wewatch.com") ||
-        origin?.includes("localhost:5174")
-    ) {
-        sessionShop(req, res, next);
-    } else if (
-        origin?.includes("admin.wewatch.com") ||
-        origin?.includes("localhost:5173")
-    ) {
-        sessionAdmin(req, res, next);
-    } else {
-        console.warn("Unknown origin for session:", origin);
-        next();
-    }
-});
+//     if (
+//         origin?.includes("shop.wewatch.com") ||
+//         origin?.includes("localhost:5174")
+//     ) {
+//         sessionShop(req, res, next);
+//     } else if (
+//         origin?.includes("admin.wewatch.com") ||
+//         origin?.includes("localhost:5173")
+//     ) {
+//         sessionAdmin(req, res, next);
+//     } else {
+//         console.warn("Unknown origin for session:", origin);
+//         next();
+//     }
+// });
 
 app.use(require("./routes"));
 

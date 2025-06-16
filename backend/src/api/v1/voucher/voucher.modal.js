@@ -45,7 +45,7 @@ const createData = async (data) => {
     return result;
 };
 
-const updateData = async (data) => {
+const updateData = async (data, id) => {
     const sql = `
         UPDATE vouchers SET code = ?, discount_type = ?, discount_value = ?, description = ?, quantity = ?, used_count = ?, start_date = ? , end_date = ? WHERE id_voucher = ?
     `;
@@ -58,6 +58,7 @@ const updateData = async (data) => {
         data.used_count,
         data.start_date,
         data.end_date,
+        id,
     ];
     const [result] = await connection.execute(sql, values);
     return result;

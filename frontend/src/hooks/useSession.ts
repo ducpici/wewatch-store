@@ -1,34 +1,24 @@
 import { useEffect, useState } from "react";
-import axios from "../lib/axiosConfig";
-
-export interface User {
-    id: number;
-    name: string;
-    dob: string;
-    gender: string;
-    email: string;
-    address: string;
-    phone_number: string;
-}
 
 export default function useSession() {
-    const [user, setUser] = useState<User | null>(null);
-    const [loading, setLoading] = useState(true);
+    const [user, setUser] = useState<{
+        id?: number;
+        username: string;
+        name: string;
+        email: string;
+    } | null>(null);
 
     useEffect(() => {
-        const fetchSession = async () => {
+        const userStr = localStorage.getItem("user");
+        if (userStr) {
             try {
-                const res = await axios.get<User>("/session");
-                setUser(res.data);
-            } catch {
+                setUser(JSON.parse(userStr));
+            } catch (err) {
+                console.error("Lỗi parse user:", err);
                 setUser(null);
-            } finally {
-                setLoading(false);
             }
-        };
-
-        fetchSession();
+        }
     }, []);
 
-    return { user, loading };
+    return { user };
 }

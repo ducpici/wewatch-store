@@ -126,7 +126,7 @@ export default function EditVoucher() {
                 toast.error("Mã code đã được sử dụng!");
                 return;
             }
-            await axios.put(`/vouchers`, cleanData);
+            await axios.put(`/vouchers/${id}`, cleanData);
             toast.success("Cập nhật thành công!");
             navigate("/vouchers");
         } catch (error) {

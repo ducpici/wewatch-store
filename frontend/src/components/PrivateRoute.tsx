@@ -1,13 +1,11 @@
+import { useAuth } from "../context/AuthContext";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
-import useSession from "../hooks/useSession";
 
 export default function PrivateRoute() {
-    const { user, loading } = useSession();
+    const { user } = useAuth();
     const location = useLocation();
 
-    if (loading) return <p>Đang kiểm tra đăng nhập...</p>;
     if (!user)
-        return <Navigate to="/signin" replace state={{ from: location }} />;
-
+        return <Navigate to="/signin" state={{ from: location }} replace />;
     return <Outlet />;
 }

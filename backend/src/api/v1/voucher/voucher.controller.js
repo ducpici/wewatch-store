@@ -101,8 +101,9 @@ const addVoucher = async (req, res) => {
 
 const editVoucher = async (req, res) => {
     const data = req.body;
+    const idVoucher = data.id_voucher;
     try {
-        const result = await updateData(data);
+        const result = await updateData(data, idVoucher);
         if (result.affectedRows === 0) {
             return res
                 .status(404)

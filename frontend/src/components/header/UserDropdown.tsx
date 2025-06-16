@@ -5,8 +5,10 @@ import { Link } from "react-router";
 import axios from "../../lib/axiosConfig";
 import { useNavigate } from "react-router-dom";
 import useSession from "../../hooks/useSession";
+import { useAuth } from "../../context/AuthContext";
 
 export default function UserDropdown() {
+    const { logout } = useAuth();
     const { user } = useSession();
     const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(false);
@@ -19,9 +21,9 @@ export default function UserDropdown() {
         setIsOpen(false);
     }
 
-    const logout = async () => {
+    const handleLogout = async () => {
         try {
-            await axios.post("/logout");
+            logout(); //Xóa user + token
             navigate("/signin");
         } catch (err) {
             console.error("Lỗi đăng xuất:", err);
@@ -104,7 +106,7 @@ export default function UserDropdown() {
                     </li>
                 </ul>
                 <Link
-                    onClick={logout}
+                    onClick={handleLogout}
                     to=""
                     className="flex items-center gap-3 px-3 py-2 mt-3 font-medium text-gray-700 rounded-lg group text-theme-sm hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
                 >

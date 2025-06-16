@@ -8,8 +8,10 @@ import Button from "../ui/button/Button";
 import axios from "../../lib/axiosConfig";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 
 export default function SignInForm() {
+    const { login } = useAuth();
     const navigate = useNavigate();
     const [showPassword, setShowPassword] = useState(false);
     const [isChecked, setIsChecked] = useState(false);
@@ -38,12 +40,11 @@ export default function SignInForm() {
 
         try {
             let res = await axios.post("/login", data);
-            console.log(res);
+            login(res.data.user, res.data.token);
             toast.success(res.data.message);
             navigate("/");
         } catch (err: any) {
             if (err.response) {
-                // Khi server trả về mã lỗi như 401, 403, 500...
                 const msg = err.response.data?.message || "Đã có lỗi xảy ra";
                 toast.error(msg);
                 console.error("Lỗi server:", err.response);
