@@ -42,49 +42,52 @@ export default function OrderDetail() {
         price: number;
     };
 
-    type dataDetail = {
-        id: 123;
+    type orderDetail = {
+        id: number;
         user: {
-            id: 45;
-            name: "Nguyễn Văn A";
-            email: "a@example.com";
-            phone: "0912345678";
+            id: number;
+            name: string;
+            email: string;
+            phone_number: string;
+            address: string;
         };
         shipping_address: {
-            street: "123 Đường ABC";
-            city: "Hà Nội";
-            province: "Hà Nội";
-            zip_code: "100000";
+            full_name: string;
+            phone_num: string;
+            street: string;
+            distric: string;
+            province: string;
         };
-        payment: {
-            method: "COD"; // hoặc "Chuyển khoản", "Ví điện tử"
-            status: "pending"; // pending, paid, failed...
+        payment_method: {
+            code: number;
+            text: string;
         };
         items: [
             {
-                id_product: 9;
-                name: "Casio AE-1200WHD-1AVDF";
-                image: "/uploads/casio1.jpg";
-                price: 350000;
-                quantity: 2;
-                subtotal: 700000;
-            },
-            {
-                id_product: 17;
-                name: "Orient Bambino Gen 5";
-                image: "/uploads/orient5.jpg";
-                price: 1200000;
-                quantity: 1;
-                subtotal: 1200000;
+                id: number;
+                name: string;
+                modal_num: string;
+                brand: {
+                    id: number;
+                    name: string;
+                    description: string;
+                };
+                category: {
+                    id: number;
+                    name: string;
+                    description: string;
+                };
+                quantity: number;
+                price: number;
             }
         ];
         order_state: {
-            code: 2; // 0–4 như bạn mapping
-            text: "Đang giao hàng";
+            code: number;
+            text: string;
         };
-        total_price: 1930000; // tổng tiền hàng + phí
-        created_at: "2025-06-14T10:00:00Z";
-        updated_at: "2025-06-14T11:30:00Z";
+        total_price: number;
+        created_at: string;
+        updated_at: string;
     };
 
     const { id } = useParams();
@@ -95,7 +98,8 @@ export default function OrderDetail() {
     const [page, setPage] = useState(1);
     const [limitData, setLimitData] = useState(10);
     const [orderId, setOrderId] = useState(BigInt(0));
-    const [products, setProducts] = useState<Product[]>([]);
+    const [productItems, setProductItems] = useState<Product[]>([]);
+    const [dataOrderDetail, setDataOrderDetail] = useState<orderDetail>();
 
     const breadcrumbItems = [
         { label: "Trang chủ", path: "/" },
@@ -107,7 +111,9 @@ export default function OrderDetail() {
         setLoading(true);
         try {
             const res = await axios.get(`/orders/detail/${id}`);
-            setProducts(res.data.orders);
+            console.log(res);
+            setDataOrderDetail(res.data);
+            setProductItems(res.data.items);
         } catch (err) {
             console.error("Lỗi khi tải danh sách:", err);
             toast.error("Lỗi khi tải danh ");
@@ -128,133 +134,187 @@ export default function OrderDetail() {
                     {/* {loading ? (
                         <div>Đang tải danh sách nhân viên...</div>
                     ) : ( */}
-                    <div className="infoUser grid grid-cols-2 gap-4">
+                    <div className="infoUser grid grid-cols-3 gap-4">
                         <ComponentCard title="Thông tin khách hàng">
                             <div className="space-y-0">
                                 <Label htmlFor="name">
                                     Họ tên:
-                                    <span className="ml-2">Phạm Đức</span>
+                                    <span className="ml-2">
+                                        {dataOrderDetail?.user.name}
+                                    </span>
+                                </Label>
+                                <Label htmlFor="phone">
+                                    Số điện thoại:
+                                    <span className="ml-2">
+                                        {dataOrderDetail?.user.phone_number}
+                                    </span>
                                 </Label>
                                 <Label htmlFor="address">
-                                    Họ tên:
-                                    <span className="ml-2">Phạm Đức</span>
+                                    Email:
+                                    <span className="ml-2">
+                                        {dataOrderDetail?.user.email}
+                                    </span>
+                                </Label>
+                                <Label htmlFor="address">
+                                    Địa chỉ:
+                                    <span className="ml-2">
+                                        {dataOrderDetail?.user.address}
+                                    </span>
                                 </Label>
                             </div>
                         </ComponentCard>
                         <ComponentCard title="Thông tin địa chỉ nhận hàng">
-                            <div>
-                                <Label htmlFor="email">Email:</Label>
-                            </div>
-                            <div>
-                                <Label htmlFor="phone_num">
+                            <div className="space-y-0">
+                                <Label htmlFor="name">
+                                    Họ tên:
+                                    <span className="ml-2">
+                                        {dataOrderDetail?.user.name}
+                                    </span>
+                                </Label>
+                                <Label htmlFor="phone">
                                     Số điện thoại:
+                                    <span className="ml-2">
+                                        {dataOrderDetail?.user.phone_number}
+                                    </span>
+                                </Label>
+                                <Label htmlFor="address">
+                                    Email:
+                                    <span className="ml-2">
+                                        {dataOrderDetail?.user.email}
+                                    </span>
+                                </Label>
+                                <Label htmlFor="address">
+                                    Địa chỉ:
+                                    <span className="ml-2">
+                                        {dataOrderDetail?.user.address}
+                                    </span>
                                 </Label>
                             </div>
-                            <div>
-                                <Label htmlFor="address">Địa chỉ:</Label>
+                        </ComponentCard>
+                        <ComponentCard title="Thông tin đơn hàng">
+                            <div className="space-y-0">
+                                <Label htmlFor="address">
+                                    Tổng tiền:
+                                    <span className="ml-2">
+                                        {dataOrderDetail?.total_price.toLocaleString(
+                                            "vi-VN"
+                                        )}{" "}
+                                        VNĐ
+                                    </span>
+                                </Label>
+                                <Label htmlFor="name">
+                                    Hình thức thanh toán:
+                                    <span className="ml-2">
+                                        {dataOrderDetail?.payment_method.text}
+                                    </span>
+                                </Label>
+                                <Label htmlFor="phone">
+                                    Trạng thái đơn hàng:
+                                    <span className="ml-2">
+                                        {dataOrderDetail?.order_state.text}
+                                    </span>
+                                </Label>
                             </div>
                         </ComponentCard>
                     </div>
-                    <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
-                        <div className="max-w-full overflow-x-auto">
-                            <Table>
-                                {/* Table Header */}
-                                <TableHeader className="text-left border-b border-gray-100 dark:border-white/[0.05]">
-                                    <TableRow>
-                                        <TableCell
-                                            isHeader
-                                            className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
-                                        >
-                                            #
-                                        </TableCell>
-                                        <TableCell
-                                            isHeader
-                                            className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
-                                        >
-                                            Mã sản phẩm
-                                        </TableCell>
-                                        <TableCell
-                                            isHeader
-                                            className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
-                                        >
-                                            Số hiệu sản phẩm
-                                        </TableCell>
-                                        <TableCell
-                                            isHeader
-                                            className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
-                                        >
-                                            Loại sản phẩm
-                                        </TableCell>
-                                        <TableCell
-                                            isHeader
-                                            className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
-                                        >
-                                            Thương hiệu
-                                        </TableCell>
-                                        <TableCell
-                                            isHeader
-                                            className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
-                                        >
-                                            Số lượng
-                                        </TableCell>
-                                        <TableCell
-                                            isHeader
-                                            className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
-                                        >
-                                            Đơn giá
-                                        </TableCell>
-                                        <TableCell
-                                            isHeader
-                                            className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
-                                        >
-                                            Thành tiền
-                                        </TableCell>
-                                    </TableRow>
-                                </TableHeader>
+                    <div className="overflow-hidden rounded-xl dark:border-white/[0.05] dark:bg-white/[0.03]">
+                        <ComponentCard title="Danh sách sản phẩm">
+                            <div className="max-w-full overflow-x-auto">
+                                <Table>
+                                    {/* Table Header */}
+                                    <TableHeader className="text-left border-b border-gray-100 dark:border-white/[0.05]">
+                                        <TableRow>
+                                            <TableCell
+                                                isHeader
+                                                className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
+                                            >
+                                                #
+                                            </TableCell>
 
-                                {/* Table Body */}
-                                <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
-                                    {products.map((data, index) => (
-                                        <TableRow key={data.id}>
-                                            <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                {index + 1}
+                                            <TableCell
+                                                isHeader
+                                                className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
+                                            >
+                                                Số hiệu sản phẩm
                                             </TableCell>
-                                            <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                {data.id}
+                                            <TableCell
+                                                isHeader
+                                                className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
+                                            >
+                                                Loại sản phẩm
                                             </TableCell>
-                                            <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                {data.modal_num}
-                                            </TableCell>{" "}
-                                            <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                {data.category.name}
+                                            <TableCell
+                                                isHeader
+                                                className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
+                                            >
+                                                Thương hiệu
                                             </TableCell>
-                                            <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                {data.brand.name}
+                                            <TableCell
+                                                isHeader
+                                                className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
+                                            >
+                                                Số lượng
                                             </TableCell>
-                                            <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                {data.quantity}
+                                            <TableCell
+                                                isHeader
+                                                className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
+                                            >
+                                                Đơn giá
                                             </TableCell>
-                                            <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                {data.price}
-                                            </TableCell>
-                                            {/* <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                {data.state_text}
-                                            </TableCell> */}
-                                            <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                <Actions
-                                                    onView={() => {
-                                                        alert("view product");
-                                                    }}
-                                                />
+                                            <TableCell
+                                                isHeader
+                                                className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
+                                            >
+                                                Thành tiền
                                             </TableCell>
                                         </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        </div>
-                        <div className="flex justify-between m-5">
-                            <div></div>
-                        </div>
+                                    </TableHeader>
+
+                                    {/* Table Body */}
+                                    <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
+                                        {productItems.map((data, index) => (
+                                            <TableRow key={data.id}>
+                                                <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                                    {index + 1}
+                                                </TableCell>
+                                                <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                                    {data.modal_num}
+                                                </TableCell>{" "}
+                                                <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                                    {data.category.name}
+                                                </TableCell>
+                                                <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                                    {data.brand.name}
+                                                </TableCell>
+                                                <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                                    {data.quantity}
+                                                </TableCell>
+                                                <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                                    {data.price.toLocaleString(
+                                                        "vi-VN"
+                                                    )}
+                                                </TableCell>
+                                                {/* <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                                {data.state_text}
+                                            </TableCell> */}
+                                                <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                                    <Actions
+                                                        onView={() => {
+                                                            alert(
+                                                                "view product"
+                                                            );
+                                                        }}
+                                                    />
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </div>
+                            <div className="flex justify-between m-5">
+                                <div></div>
+                            </div>
+                        </ComponentCard>
                     </div>
                     {/* )} */}
                 </div>

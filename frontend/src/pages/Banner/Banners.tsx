@@ -171,7 +171,7 @@ export default function Banners() {
                                             <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
                                                 <img
                                                     className="w-100"
-                                                    src={`http://localhost:4090${data.image_name}`}
+                                                    src={`https://admin.wewatch.com:4090${data.image_name}`}
                                                     alt=""
                                                 />
                                             </TableCell>

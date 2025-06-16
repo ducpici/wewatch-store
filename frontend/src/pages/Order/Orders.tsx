@@ -41,7 +41,7 @@ export default function Orders() {
         { id: 2, name: "Đang giao hàng" },
         { id: 3, name: "Hoàn thành" },
         { id: 4, name: "Trả hàng" },
-        { id: 4, name: "Đã hủy" },
+        { id: 5, name: "Đã hủy" },
     ];
 
     const { isOpen, openModal, closeModal } = useModal();
@@ -247,7 +247,9 @@ export default function Orders() {
                                                 {data.user_name}
                                             </TableCell>
                                             <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                {data.total_price}
+                                                {data.total_price?.toLocaleString(
+                                                    "vi-VN"
+                                                )}
                                             </TableCell>
                                             <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
                                                 {data.payment_method_name}

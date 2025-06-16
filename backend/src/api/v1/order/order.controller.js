@@ -6,36 +6,25 @@ import {
     getDataOrderDetail,
     getOrder,
     getOrderItems,
+    getUser,
+    getIdUserByOrderId,
+    getAddress,
 } from "./order.modal";
 import { formatDate } from "../../../utils/formatDate";
 
-// const orderStateMap = {
-//     0: "Chờ xác nhận",
-//     1: "Đã xác nhận",
-//     2: "Đang giao hàng",
-//     3: "Hoàn thành",
-//     4: "Đã hủy",
-// };
+const orderStateMap = {
+    0: "Chờ xác nhận",
+    1: "Đã xác nhận",
+    2: "Đang giao hàng",
+    3: "Hoàn thành",
+    4: "Trả hàng",
+    5: "Đã hủy",
+};
 
-const orderStateMap = [
-    { id: 0, name: "Chờ xác nhận" },
-    { id: 1, name: "Đã xác nhận" },
-    { id: 2, name: "Đang giao hàng" },
-    { id: 3, name: "Hoàn thành" },
-    { id: 4, name: "Trả hàng" },
-    { id: 4, name: "Đã hủy" },
-];
-
-// const paymentMethodMap = {
-//     0: "COD",
-//     1: "Chuyển khoản",
-//     2: "Ví điện tử",
-// };
-
-const paymentMethodMap = [
-    { id: 0, name: "COD" },
-    { id: 1, name: "Chuyển khoản" },
-];
+const paymentMethodMap = {
+    0: "COD",
+    1: "Chuyển khoản",
+};
 
 const getOrders = async (req, res) => {
     try {
@@ -48,24 +37,22 @@ const getOrders = async (req, res) => {
 
         const orders = result.map((order) => {
             const order_state_name =
-                orderStateMap.find(
-                    (state) => state.id === order.order_state_code
-                )?.name || "Không rõ trạng thái";
+                orderStateMap[order.order_state_code] || "Không rõ trạng thái";
 
             const payment_method_name =
-                paymentMethodMap.find(
-                    (pm) => pm.id === order.payment_method_code
-                )?.name || "Không rõ phương thức";
+                paymentMethodMap[order.payment_method_code] ||
+                "Không rõ phương thức";
 
             return {
                 ...order,
                 order_state_name,
-                created_at_text: formatDate(order.created_at),
                 payment_method_name,
+                created_at_text: formatDate(order.created_at),
             };
         });
+
         res.status(200).json({
-            orders: orders,
+            orders,
             pagination: {
                 total: totalData,
                 page,
@@ -74,10 +61,11 @@ const getOrders = async (req, res) => {
             },
         });
     } catch (error) {
-        console.error("Error getting:", error);
+        console.error("Error getting orders:", error);
         res.status(500).json({ error: "Internal Server Error" });
     }
 };
+
 const getOrderById = async (req, res) => {
     try {
         const { id } = req.params;
@@ -90,20 +78,17 @@ const getOrderById = async (req, res) => {
 
         const orderData = result[0];
         // Map state code to name
-        const orderStateName =
-            orderStateMap.find(
-                (state) => state.id === orderData.order_state_code
-            )?.name || "Không rõ trạng thái";
+        const order_state_name =
+            orderStateMap[orderData.order_state_code] || "Không rõ trạng thái";
 
-        const paymentMethodName =
-            paymentMethodMap.find(
-                (state) => state.id === orderData.payment_method_code
-            )?.name || "Không rõ trạng thái";
+        const payment_method_name =
+            paymentMethodMap[orderData.payment_method_code] ||
+            "Không rõ phương thức";
 
         const order = {
-            ...result[0],
-            order_state_name: orderStateName,
-            payment_method_name: paymentMethodName,
+            ...orderData,
+            order_state_name: order_state_name,
+            payment_method_name: payment_method_name,
         };
         return res.status(200).json(order);
     } catch (error) {
@@ -136,9 +121,13 @@ const putUpdateOrder = async (req, res) => {
 
 const getOrderDetail = async (req, res) => {
     try {
-        const { id } = req.params;
-        const order = await getOrder(id);
-        const items = await getOrderItems(id);
+        const { orderId } = req.params;
+        const order = await getOrder(orderId);
+        const items = await getOrderItems(orderId);
+        const idUser = await getIdUserByOrderId(orderId);
+        const address = await getAddress(idUser);
+
+        const user = await getUser(idUser);
 
         if (!order || order.length === 0) {
             return res
@@ -147,23 +136,53 @@ const getOrderDetail = async (req, res) => {
         }
 
         const orderData = order[0];
-        // Map state code to name
-        const orderStateName =
-            orderStateMap.find(
-                (state) => state.id === orderData.order_state_code
-            )?.name || "Không rõ trạng thái";
+
+        // Lấy mã trạng thái đơn
+        const stateCode = orderData.order_state_code || orderData.state || 0;
+        const paymentMethodCode = orderData.payment_method || 0;
+
+        delete orderData.user_id;
+        delete orderData.state;
+        delete orderData.payment_method; // nếu bạn gộp lại rồi
+
+        // Format lại items
+        const formattedItems = items.map((item) => {
+            const rawName = `${item.brand_name} - ${item.modal_num} - ${item.crystal_material} - ${item.movement_type} - Mặt số ${item.dial_diameter} mm`;
+            return {
+                id: item.product_id,
+                name: rawName,
+                modal_num: item.modal_num,
+                quantity: item.quantity,
+                price: item.price,
+                brand: {
+                    id: item.brand_id,
+                    name: item.brand_name,
+                    description: item.brand_description,
+                },
+                category: {
+                    id: item.category_id,
+                    name: item.category_name,
+                    description: item.category_description,
+                },
+            };
+        });
 
         const orderDetail = {
-            ...order[0],
-            order_state_name: orderStateName,
-            items,
+            ...orderData,
+            user,
+            address,
+            items: formattedItems,
+            payment_method: {
+                code: paymentMethodCode,
+                text: paymentMethodMap[paymentMethodCode],
+            },
+            order_state: {
+                code: stateCode,
+                text: orderStateMap[stateCode] || "Không xác định",
+            },
         };
 
-        res.status(200).json({
-            status: true,
-            message: "",
-            orderDetail: orderDetail,
-        });
+        res.status(200).json(orderDetail);
     } catch (error) {
         console.error("Error getting data:", error);
         res.status(500).json({ error: "Internal Server Error" });

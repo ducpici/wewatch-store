@@ -33,15 +33,24 @@ const getVouchers = async (req, res) => {
         const result = await getDataPaginated(limit, offset);
         const totalItem = await countItem();
 
-        const parsedData = result.map((data) => ({
-            ...data,
-            id: data.id_voucher,
-            start_date: formatDate(data.start_date),
-            end_date: formatDate(data.end_date),
-            discount_type:
-                discountTypeMap[data.discount_type] || "Không xác định",
-            status: stateMap[data.status] || "Không xác định",
-        }));
+        const parsedData = result.map((data) => {
+            const discountTypeCode = data.discount_type;
+            const stateCode = data.status;
+            return {
+                ...data,
+                id: data.id_voucher,
+                start_date: formatDate(data.start_date),
+                end_date: formatDate(data.end_date),
+                discount_type: {
+                    code: discountTypeCode,
+                    text: discountTypeMap[discountTypeCode] || "Không xác định",
+                },
+                status: {
+                    code: stateCode,
+                    text: stateMap[stateCode],
+                },
+            };
+        });
 
         res.status(200).json({
             data: parsedData,

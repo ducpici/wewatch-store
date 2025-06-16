@@ -18,6 +18,6 @@ routes.get("/orders/:id", getOrderById);
 routes.put("/orders/:id", putUpdateOrder);
 // routes.delete("/orders/:id", deleleOrder);
 
-routes.get("/orders/detail/:id", getOrderDetail);
+routes.get("/orders/detail/:orderId", getOrderDetail);
 
 module.exports = routes;

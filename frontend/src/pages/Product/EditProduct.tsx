@@ -16,7 +16,6 @@ export default function EditProduct() {
     const { id } = useParams();
 
     type Product = {
-        id: number | null;
         modal_num: string;
         brand: {
             id: number | null;
@@ -42,7 +41,6 @@ export default function EditProduct() {
         functions: string[] | null;
     };
     const initialProduct: Product = {
-        id: null,
         modal_num: "",
         brand: {
             id: null,

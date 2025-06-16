@@ -85,19 +85,7 @@ const getDataOrderDetail = async (id) => {
 };
 
 const getOrder = async (id) => {
-    const sql = `SELECT
-         o.id AS order_id,
-         o.user_id,
-         u.name AS user_name,
-         u.email AS user_email,
-         o.total_price,
-         o.state AS order_state_code,
-         o.payment_method AS payment_method_code,
-         o.created_at,
-         o.updated_at
-       FROM orders o
-       JOIN users u ON o.user_id = u.id
-       WHERE o.id = ?`;
+    const sql = `SELECT * FROM orders o WHERE o.id = ?`;
     const values = [id];
     const [result] = await connection.execute(sql, values);
     return result;
@@ -110,31 +98,58 @@ const getAddress = async (id) => {
          phone_num AS phone,
          province,
          district,
-         street_address
-       FROM shipping_address
-       WHERE user_id = ? AND is_default = 1`;
+         street
+       FROM shipping_address sa JOIN users u ON u.id = sa.user_id
+       WHERE u.id = ? AND is_default = 1`;
     const values = [id];
     const [result] = await connection.execute(sql, values);
-    return result;
+    return result[0];
 };
 
 const getOrderItems = async (id) => {
     const sql = `SELECT
          od.id AS order_detail_id,
          od.product_id,
-         p.modal_num AS product_model,
+         p.modal_num,
          p.price,
+         p.brand_id,
+         p.category_id,
+         p.dial_diameter,
+         p.crystal_material,
+         b.id_brand,
+         b.brand_name,
+         c.id_category,
+         c.category_name,
          od.quantity,
-         (p.price * od.quantity) AS subtotal,
-         pi.image_name AS product_image
+         p.image
        FROM order_details od
        JOIN products p ON od.product_id = p.id_product  
-       LEFT JOIN product_images pi ON pi.product_id = p.id_product
+       JOIN brands b ON b.id_brand = p.brand_id
+       JOIN categories c ON c.id_category = p.category_id
        WHERE od.order_id = ?`;
     const values = [id];
     const [result] = await connection.execute(sql, values);
     return result;
 };
+
+const getUser = async (id) => {
+    const sql = `
+        SELECT u.id, u.name, u.phone_number, u.email, u.address FROM users u WHERE id = ?
+    `;
+    const values = [id];
+    const [result] = await connection.execute(sql, values);
+    return result[0];
+};
+
+const getIdUserByOrderId = async (orderId) => {
+    const sql = `
+        SELECT user_id FROM orders WHERE id = ?
+    `;
+    const values = [orderId];
+    const [result] = await connection.execute(sql, values);
+    return result[0].user_id;
+};
+
 module.exports = {
     getData,
     countAllData,
@@ -144,4 +159,6 @@ module.exports = {
     getDataOrderDetail,
     getOrderItems,
     getAddress,
+    getUser,
+    getIdUserByOrderId,
 };

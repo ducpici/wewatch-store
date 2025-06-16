@@ -23,13 +23,19 @@ interface Voucher {
     description: string;
     quantity: number;
     used_count: number;
-    discount_type: string;
+    discount_type: {
+        code: number;
+        text: string;
+    };
     discount_value: bigint;
     start_date: string;
     end_date: string;
     create_at: Date;
     update_at: Date;
-    status: string;
+    status: {
+        code: number;
+        text: string;
+    };
 }
 
 export default function Vouchers() {
@@ -235,10 +241,14 @@ export default function Vouchers() {
                                                 {data.code}
                                             </TableCell>
                                             <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                {data.discount_type}
+                                                {data.discount_type.text}
                                             </TableCell>
                                             <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                {data.discount_value}
+                                                {data.discount_type.code === 1
+                                                    ? `${data.discount_value}%`
+                                                    : Number(
+                                                          data.discount_value
+                                                      ).toLocaleString("vi-VN")}
                                             </TableCell>
                                             <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
                                                 {data.description}
@@ -256,7 +266,7 @@ export default function Vouchers() {
                                                 {data.end_date}
                                             </TableCell>
                                             <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                {data.status}
+                                                {data.status.text}
                                                 {/* <Badge
                                                     size="sm"
                                                     color={
