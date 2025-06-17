@@ -96,9 +96,10 @@ const getAddress = async (id) => {
          id AS address_id,
          full_name,
          phone_num AS phone,
-         province,
+         city,
          district,
-         street
+         ward,
+         detail
        FROM shipping_address sa JOIN users u ON u.id = sa.user_id
        WHERE u.id = ? AND is_default = 1`;
     const values = [id];
@@ -150,6 +151,29 @@ const getIdUserByOrderId = async (orderId) => {
     return result[0].user_id;
 };
 
+const createOrder = async (data) => {
+    const sql = `
+        INSERT INTO orders (user_id, total_price, state, payment_method, created_at) VALUES (?,?,?,?,?)
+    `;
+    const values = [
+        data.userId,
+        data.total,
+        data.state,
+        data.payment,
+        data.createdAt,
+    ];
+    const [result] = await connection.execute(sql, values);
+    return result;
+};
+
+const createOrderDetail = async (data) => {
+    const sql = `
+        INSERT INTO order_details (order_id, product_id, quantity) VALUES (?,?,?)
+    `;
+    const values = [data.order_id, data.product_id, data.quantity];
+    const [result] = await connection.execute(sql, values);
+    return result;
+};
 module.exports = {
     getData,
     countAllData,
@@ -161,4 +185,6 @@ module.exports = {
     getAddress,
     getUser,
     getIdUserByOrderId,
+    createOrder,
+    createOrderDetail,
 };

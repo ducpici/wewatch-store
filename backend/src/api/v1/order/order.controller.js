@@ -9,8 +9,11 @@ import {
     getUser,
     getIdUserByOrderId,
     getAddress,
+    createOrder,
+    createOrderDetail,
 } from "./order.modal";
 import { formatDate } from "../../../utils/formatDate";
+import { connection } from "../../../config/database";
 
 const orderStateMap = {
     0: "Chờ xác nhận",
@@ -189,11 +192,51 @@ const getOrderDetail = async (req, res) => {
     }
 };
 
+const postAddOrder = async (req, res) => {
+    try {
+        const createdAt = new Date().toISOString().slice(0, 10);
+        const userId = req.user.id;
+        const payload = req.body;
+        const data = {
+            ...payload,
+            createdAt,
+            userId,
+            state: 0,
+        };
+        const orderResult = await createOrder(data);
+
+        const orderId = orderResult.insertId;
+        const items = data.items;
+
+        for (const item of items) {
+            const data = {
+                product_id: item.id,
+                order_id: orderId,
+                quantity: item.quantity,
+            };
+            console.log(data);
+            await createOrderDetail(data);
+
+            // Trừ số lượng sản phẩm
+            await connection.execute(
+                `UPDATE products SET quantity = quantity - ? WHERE id_product = ? AND quantity >= ?`,
+                [item.quantity, item.id, item.quantity]
+            );
+        }
+
+        res.json({ message: "Đặt hàng thành công" });
+    } catch (error) {
+        console.error("Error getting data:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+};
+
 module.exports = {
     getOrders,
     getOrderById,
     putUpdateOrder,
     getOrderDetail,
+    postAddOrder,
     // postAddOrder,
     // putUpdateOrder,
     // deleleOrder,
