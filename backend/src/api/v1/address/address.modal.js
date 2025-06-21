@@ -46,9 +46,25 @@ const updateData = async (data) => {
     return result;
 };
 
+const deleteData = async (idShip) => {
+    const sql = `DELETE FROM shipping_address WHERE id_ship = ?`;
+    const value = [idShip];
+    const [result] = await connection.execute(sql, value);
+    return result;
+};
+
+const setIsDefaultFalse = async (userId) => {
+    const sql = "UPDATE shipping_address SET is_default = 0 WHERE user_id = ?";
+    const value = [userId];
+    const [result] = await connection.execute(sql, value);
+    return result;
+};
+
 module.exports = {
     getDataByUserId,
     getDataById,
     updateData,
     createData,
+    deleteData,
+    setIsDefaultFalse,
 };

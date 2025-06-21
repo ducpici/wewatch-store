@@ -8,6 +8,8 @@ import TextArea from "../../components/form/input/TextArea";
 import axios from "../../lib/axiosConfig";
 import { toast } from "react-toastify";
 import { useNavigate, useParams } from "react-router";
+import { isValidEmail } from "../../lib/validationEmail";
+import { isValidPhoneNum } from "../../lib/validatePhoneNum";
 
 export default function EditBrand() {
     const { id } = useParams();
@@ -62,6 +64,14 @@ export default function EditBrand() {
             !brandData.phone_num
         ) {
             toast.error("Các trường không được để trống!");
+            return;
+        }
+        if (!isValidPhoneNum(brandData.phone_num)) {
+            toast.error("Số điện thoại không hợp lệ!");
+            return;
+        }
+        if (!isValidEmail(brandData.email)) {
+            toast.error("Email không hợp lệ!");
             return;
         }
         try {
@@ -143,7 +153,7 @@ export default function EditBrand() {
                     <div>
                         <Label htmlFor="phone_num">Số điện thoại:</Label>
                         <Input
-                            type="text"
+                            type="number"
                             id="phone_num"
                             value={brandData.phone_num}
                             onChange={(e) =>

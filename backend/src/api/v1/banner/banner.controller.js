@@ -6,19 +6,22 @@ import {
     getDataById,
     deleteData,
     searchData,
+    setStateFalse,
 } from "./banner.modal";
 const path = require("path");
 const fs = require("fs");
 
 const getBanners = async (req, res) => {
     try {
-        const page = parseInt(req.query.page) || 1;
-        const limit = parseInt(req.query.limit) || 10;
-        const offset = (page - 1) * limit;
+        const page = parseInt(req.query.page);
+        const limit = parseInt(req.query.limit);
+        const offset = page && limit ? (page - 1) * limit : null;
+
+        const filterState = req.query.state ? parseInt(req.query.state) : null;
 
         // Truy vấn dữ liệu người dùng với giới hạn & phân trang
-        const result = await getDataPaginated(limit, offset);
-        const totalItem = await countItem();
+        const result = await getDataPaginated(limit, offset, filterState);
+        const totalItem = await countItem(filterState);
 
         const parsedData = result.map((data) => ({
             id_banner: data.id_banner,
@@ -26,15 +29,29 @@ const getBanners = async (req, res) => {
             state: data.state?.[0] === 1 ? "Hoạt động" : "Vô hiệu hóa",
         }));
 
-        res.status(200).json({
-            data: parsedData,
-            pagination: {
+        // res.status(200).json({
+        //     data: parsedData,
+        //     pagination: {
+        //         total: totalItem,
+        //         page,
+        //         limit,
+        //         totalPages: Math.ceil(totalItem / limit),
+        //     },
+        // });
+        // Chỉ trả pagination nếu có page/limit
+        const response = { data: parsedData };
+
+        // Chỉ trả pagination nếu có page/limit
+        if (page && limit) {
+            response.pagination = {
                 total: totalItem,
                 page,
                 limit,
                 totalPages: Math.ceil(totalItem / limit),
-            },
-        });
+            };
+        }
+
+        res.status(200).json(response);
     } catch (error) {
         console.error("Error getting:", error);
         res.status(500).json({ error: "Internal Server Error" });
@@ -63,9 +80,6 @@ const getBannersById = async (req, res) => {
 const addBanner = async (req, res) => {
     const state = req.body.state === "1" ? 1 : 0;
     const file = req.file;
-
-    console.log(file);
-
     if (!file) {
         return res.status(400).json({ message: "Ảnh banner là bắt buộc" });
     }
@@ -80,6 +94,9 @@ const addBanner = async (req, res) => {
     console.log(newData);
 
     try {
+        if (state === 1) {
+            await setStateFalse();
+        }
         const result = await createData(newData);
         if (result.affectedRows === 0 || !result.insertId) {
             return res.status(400).json({ message: "Fail create" });
@@ -122,7 +139,9 @@ const editBanner = async (req, res) => {
                 }
             });
         }
-
+        if (state === 1) {
+            await setStateFalse();
+        }
         const result = await updateData(id, dataToUpdate);
         if (result.affectedRows === 0) {
             return res
@@ -193,6 +212,20 @@ const searchBanner = async (req, res) => {
     }
 };
 
+const getActiveBanner = async (req, res) => {
+    try {
+        const banners = await db.query(`
+            SELECT * FROM banners 
+            WHERE state = 1 
+            ORDER BY created_at DESC
+        `);
+        return res.status(200).json({ data: banners });
+    } catch (error) {
+        console.error("Error fetching banners:", error);
+        return res.status(500).json({ message: "Internal Server Error" });
+    }
+};
+
 module.exports = {
     getBanners,
     addBanner,
@@ -200,4 +233,5 @@ module.exports = {
     getBannersById,
     deleteBanner,
     searchBanner,
+    getActiveBanner,
 };

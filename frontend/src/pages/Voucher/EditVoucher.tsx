@@ -25,7 +25,6 @@ export default function EditVoucher() {
         discount_value: "",
         start_date: "",
         end_date: "",
-        status: 0,
     };
 
     type Voucher = {
@@ -38,7 +37,6 @@ export default function EditVoucher() {
         discount_value: string;
         start_date: string;
         end_date: string;
-        status: number;
     };
 
     const [voucherData, setVoucherData] = useState<Voucher>(initialVoucher);
@@ -98,6 +96,11 @@ export default function EditVoucher() {
                 "yyyy-MM-dd"
             );
 
+            if (new Date(endDate) < new Date(startDate)) {
+                toast.error("Ngày kết thúc không được nhỏ hơn ngày bắt đầu");
+                return;
+            }
+
             const cleanData = {
                 ...voucherData,
                 discount_type: parseInt(voucherData.discount_type),
@@ -106,12 +109,6 @@ export default function EditVoucher() {
                 used_count: Number(voucherData.used_count),
                 start_date: startDate,
                 end_date: endDate,
-                status: getVoucherStatus(
-                    startDate,
-                    endDate,
-                    parseInt(voucherData.quantity),
-                    voucherData.used_count
-                ),
             };
 
             const { code, id } = voucherData;
@@ -145,6 +142,41 @@ export default function EditVoucher() {
     useEffect(() => {
         getDataById();
     }, [id]);
+    // useEffect(() => {
+    //     if (
+    //         voucherData.start_date &&
+    //         voucherData.end_date &&
+    //         voucherData.quantity
+    //     ) {
+    //         const start = formatDate(
+    //             voucherData.start_date,
+    //             "dd-MM-yyyy",
+    //             "yyyy-MM-dd"
+    //         );
+    //         const end = formatDate(
+    //             voucherData.end_date,
+    //             "dd-MM-yyyy",
+    //             "yyyy-MM-dd"
+    //         );
+
+    //         const status = getVoucherStatus(
+    //             start,
+    //             end,
+    //             parseInt(voucherData.quantity),
+    //             voucherData.used_count
+    //         );
+
+    //         setVoucherData((prev) => ({
+    //             ...prev,
+    //             status,
+    //         }));
+    //     }
+    // }, [
+    //     voucherData.start_date,
+    //     voucherData.end_date,
+    //     voucherData.quantity,
+    //     voucherData.used_count,
+    // ]);
 
     return (
         <>

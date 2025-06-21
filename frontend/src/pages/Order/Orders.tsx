@@ -68,8 +68,10 @@ export default function Orders() {
         openModal();
         setOrderId(order_id);
         const res = await axios.get(`/orders/${order_id}`);
-        setOrderState(String(res.data.order_state_code));
+        setOrderState(String(res.data.state));
+        console.log(res);
     };
+
     const handleSave = async () => {
         console.log({
             state: orderState,
@@ -145,7 +147,7 @@ export default function Orders() {
             setTotalPage(1); // Khi tìm kiếm, không cần phân trang
         } catch (err) {
             console.error("Lỗi khi tìm kiếm:", err);
-            toast.error("Lỗi khi tìm kiếm nhân viên");
+            toast.error("Lỗi khi tìm kiếm đơn hàng");
         }
     };
 
@@ -318,7 +320,7 @@ export default function Orders() {
                                         <Select
                                             options={orderStateMap}
                                             value={orderState}
-                                            defaultValue={orderState}
+                                            // defaultValue={orderState}
                                             placeholder="Chọn tình trạng"
                                             onChange={handleSelectChange}
                                             className="dark:bg-dark-900"

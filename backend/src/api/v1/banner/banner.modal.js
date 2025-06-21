@@ -1,10 +1,20 @@
 import { connection } from "../../../config/database";
 
-const getDataPaginated = async (limit, offset) => {
-    const sql = `
-        SELECT * FROM banners LIMIT ? OFFSET ?
+const getDataPaginated = async (limit, offset, state) => {
+    let sql = `
+        SELECT * FROM banners
     `;
-    const values = [limit, offset];
+    const values = [];
+    if (state !== null) {
+        sql += ` WHERE state = ?`;
+        values.push(state);
+    }
+
+    if (limit && offset !== null) {
+        sql += ` LIMIT ? OFFSET ?`;
+        values.push(limit, offset);
+    }
+
     const [result] = await connection.execute(sql, values);
     return result;
 };
@@ -18,11 +28,16 @@ const getDataById = async (id) => {
     return result;
 };
 
-const countItem = async () => {
-    const sql = `
-        SELECT COUNT(*) AS total FROM banners;
-    `;
-    const [result] = await connection.execute(sql);
+const countItem = async (state) => {
+    let sql = `SELECT COUNT(*) AS total FROM banners`;
+    const values = [];
+
+    if (state !== null) {
+        sql += ` WHERE state = ?`;
+        values.push(state);
+    }
+
+    const [result] = await connection.execute(sql, values);
     return result[0].total;
 };
 
@@ -71,6 +86,14 @@ const searchData = async (keyword) => {
     return result;
 };
 
+const setStateFalse = async () => {
+    const sql = `
+            UPDATE banners SET state = 0 WHERE state = 1
+        `;
+    const [result] = await connection.execute(sql);
+    return result;
+};
+
 module.exports = {
     getDataPaginated,
     countItem,
@@ -79,4 +102,5 @@ module.exports = {
     getDataById,
     deleteData,
     searchData,
+    setStateFalse,
 };

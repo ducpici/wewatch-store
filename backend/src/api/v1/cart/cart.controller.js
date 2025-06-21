@@ -19,6 +19,7 @@ const getCart = async (req, res) => {
             return {
                 id: data.id_product,
                 name: rawName,
+                modal_num: data.modal_num,
                 quantity: data.quantity,
                 price: data.price,
                 image: data.image,
@@ -93,13 +94,30 @@ const applyVoucher = async (req, res) => {
         const startDate = new Date(voucher.start_date);
         const endDate = new Date(voucher.end_date);
 
-        if (now < startDate) {
+        // So sánh chỉ theo ngày (bỏ qua giờ phút giây)
+        const nowDate = new Date(
+            now.getFullYear(),
+            now.getMonth(),
+            now.getDate()
+        );
+        const startOnlyDate = new Date(
+            startDate.getFullYear(),
+            startDate.getMonth(),
+            startDate.getDate()
+        );
+        const endOnlyDate = new Date(
+            endDate.getFullYear(),
+            endDate.getMonth(),
+            endDate.getDate()
+        );
+
+        if (nowDate < startOnlyDate) {
             return res
                 .status(400)
                 .json({ message: "Mã giảm giá chưa bắt đầu hoạt động" });
         }
 
-        if (now > endDate) {
+        if (nowDate > endOnlyDate) {
             return res.status(400).json({ message: "Mã giảm giá đã hết hạn" });
         }
 
@@ -130,9 +148,50 @@ const applyVoucher = async (req, res) => {
     }
 };
 
+const checkProductAvailability = async (req, res) => {
+    try {
+        const items = req.body;
+        const results = [];
+
+        for (const item of items) {
+            const [rows] = await connection.query(
+                "SELECT quantity, modal_num FROM products WHERE id_product = ?",
+                [item.id]
+            );
+
+            if (!rows[0]) {
+                results.push({
+                    id: item.id,
+                    ok: false,
+                    message: "Sản phẩm không tồn tại",
+                });
+            } else if (rows[0].quantity < item.quantity) {
+                results.push({
+                    id: item.id,
+                    modal_num: rows[0].modal_num,
+                    ok: false,
+                    message: `Sản phẩm mã ${rows[0].modal_num} chỉ còn ${rows[0].quantity} sản phẩm`,
+                });
+            } else {
+                results.push({
+                    id: item.id,
+                    modal_num: rows[0].modal_num,
+                    ok: true,
+                });
+            }
+        }
+
+        const allOk = results.every((item) => item.ok);
+        res.json({ success: allOk, results });
+    } catch (err) {
+        console.error("Lỗi kiểm tra sản phẩm:", err);
+        res.status(500).json({ success: false, message: "Server error" });
+    }
+};
 module.exports = {
     getCart,
     postAddCart,
     putEditCart,
     applyVoucher,
+    checkProductAvailability,
 };

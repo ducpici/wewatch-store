@@ -91,7 +91,7 @@ const findById = async (id) => {
 const findProductBySlug = async (slug) => {
     const sql = `
         SELECT 
-        *
+        *,b.slug as brand_slug
         FROM products p
         JOIN categories c ON p.category_id = c.id_category
         JOIN brands b ON p.brand_id = b.id_brand

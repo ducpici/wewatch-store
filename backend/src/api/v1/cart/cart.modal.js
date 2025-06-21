@@ -6,6 +6,7 @@ const getUserCart = async (userId) => {
         c.id_cart,
         c.quantity,
         p.id_product,
+        p.modal_num,
         p.crystal_material,
         p.movement_type,
         p.dial_diameter,
@@ -59,7 +60,7 @@ const deleteCartItems = async (userId, productIds) => {
 
 const getVoucherByCode = async (code) => {
     const [rows] = await connection.query(
-        "SELECT * FROM vouchers WHERE code = ? AND status = 1",
+        "SELECT * FROM vouchers WHERE code = ?",
         [code]
     );
     return rows[0] || null;

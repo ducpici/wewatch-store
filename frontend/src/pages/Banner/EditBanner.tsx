@@ -117,7 +117,7 @@ export default function EditBanner() {
                                     Ảnh hiện tại:
                                 </p>
                                 <img
-                                    src={`http://localhost:4090${bannerData.image_name}`}
+                                    src={`https://admin.wewatch.com:4090${bannerData.image_name}`}
                                     alt="Ảnh banner hiện tại"
                                     className="w-64 rounded border"
                                 />

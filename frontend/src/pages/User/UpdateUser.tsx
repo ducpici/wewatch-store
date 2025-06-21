@@ -12,6 +12,9 @@ import { toast } from "react-toastify";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import formatDate from "../../lib/formatDate";
+import { isValidEmail } from "../../lib/validationEmail";
+import { isValidName } from "../../lib/validateName";
+import { isValidPhoneNum } from "../../lib/validatePhoneNum";
 import { format } from "date-fns";
 export default function UpdateUser() {
     const initialUser: User = {
@@ -99,6 +102,18 @@ export default function UpdateUser() {
             userData.state === undefined
         ) {
             toast.error("Các trường không được để trống!");
+            return;
+        }
+        if (!isValidName(userData.name)) {
+            toast.error("Họ tên không hợp lệ!");
+            return;
+        }
+        if (!isValidPhoneNum(userData.phone_number)) {
+            toast.error("Số điện thoại không hợp lệ!");
+            return;
+        }
+        if (!isValidEmail(userData.email)) {
+            toast.error("Email không hợp lệ!");
             return;
         }
         try {

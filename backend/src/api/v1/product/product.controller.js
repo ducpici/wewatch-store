@@ -108,13 +108,13 @@ const getProducts = async (req, res) => {
 const getProductById = async (req, res) => {
     try {
         const { id } = req.params;
+        console.log(id);
         const result = await findById(id);
 
         if (!result) {
             return res.status(404).json({ message: "Product not found" });
         }
         const first = result[0];
-        console.log(first);
         const functions = result.map((item) => ({
             id: item.id_function,
             name: item.name_function,
@@ -246,13 +246,19 @@ const addProduct = async (req, res) => {
 const editProduct = async (req, res) => {
     const { id } = req.params;
     const { functions, ...restData } = req.body;
-
+    console.log("Functions received:", functions);
+    console.log(restData);
     const file = req.file;
     const rawName = `${restData.modal_num} ${restData.crystal_material} ${restData.movement_type} ${restData.dial_diameter} mm`;
+    const normalizeState = (val) => {
+        if (val === true || val === "true" || val === 1 || val === "1")
+            return 1;
+        return 0;
+    };
 
     const dataToUpdate = {
         ...restData,
-        state: restData.state == "true" ? 1 : 0,
+        state: normalizeState(restData.state),
         slug: slugify(rawName),
     };
     try {
@@ -459,6 +465,7 @@ const getProductByCategory = async (req, res) => {
                 category: {
                     id: data.id_category,
                     name: data.category_name,
+                    description: data.description,
                     slug: data.category_slug,
                 },
                 quantity: data.quantity,
@@ -509,6 +516,7 @@ const getProductByBrand = async (req, res) => {
                     id: data.id_brand,
                     name: data.brand_name,
                     slug: data.brand_slug,
+                    description: data.description,
                 },
                 origin: data.origin,
                 crystal_material: data.crystal_material,

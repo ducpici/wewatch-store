@@ -16,5 +16,6 @@ routes.use("/api/v1", require("./v1/order.route"));
 routes.use("/api/v1", require("./v1/auth.route"));
 routes.use("/api/v1", require("./v1/cart.route"));
 routes.use("/api/v1", require("./v1/address.route"));
+routes.use("/api/v1", require("./v1/metrics.route"));
 
 module.exports = routes;

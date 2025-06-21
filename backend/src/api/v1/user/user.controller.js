@@ -12,6 +12,8 @@ import {
 } from "./user.modal";
 import { formatDate, formatDate2 } from "../../../utils/formatDate";
 import { hashPass } from "../../../utils/hashPass";
+import { connection } from "../../../config/database";
+import bcrypt from "bcrypt";
 
 const getUsers = async (req, res) => {
     try {
@@ -146,6 +148,44 @@ const searchUsers = async (req, res) => {
     }
 };
 
+const changePassword = async (req, res) => {
+    console.log("change pass");
+    try {
+        const { id, old_pass, new_pass } = req.body;
+        console.log(id, old_pass, new_pass);
+        const [user] = await connection.execute(
+            "SELECT password FROM users WHERE id = ?",
+            [id]
+        );
+
+        if (!user || user.length === 0) {
+            return res
+                .status(404)
+                .json({ message: "Người dùng không tồn tại" });
+        }
+
+        const hashedPassword = user[0].password;
+
+        const isMatch = await bcrypt.compare(old_pass, hashedPassword);
+        if (!isMatch) {
+            return res.status(400).json({ message: "Mật khẩu cũ không đúng" });
+        }
+
+        const newHashed = await bcrypt.hash(new_pass, 10);
+        await connection.execute("UPDATE users SET password = ? WHERE id = ?", [
+            newHashed,
+            id,
+        ]);
+
+        return res
+            .status(200)
+            .json({ message: "Cập nhật mật khẩu thành công" });
+    } catch (error) {
+        console.error("Lỗi khi cập nhật mật khẩu:", error);
+        return res.status(500).json({ message: "Lỗi server" });
+    }
+};
+
 module.exports = {
     getUsers,
     findUserById,
@@ -154,4 +194,5 @@ module.exports = {
     putUpdateUser,
     checkDuplicate,
     searchUsers,
+    changePassword,
 };

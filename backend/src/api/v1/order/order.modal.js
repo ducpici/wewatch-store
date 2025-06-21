@@ -30,6 +30,15 @@ const countAllData = async () => {
     return result[0].total;
 };
 
+const countOrderByUser = async (userId) => {
+    const sql = `
+        SELECT COUNT(*) AS total FROM orders WHERE user_id = ?;
+    `;
+    const value = [userId];
+    const [result] = await connection.execute(sql, value);
+    return result[0].total;
+};
+
 const findById = async (id) => {
     const sql = `
             SELECT 
@@ -91,11 +100,25 @@ const getOrder = async (id) => {
     return result;
 };
 
+const getOrderByUser = async (userId, limit, offset) => {
+    const sql = `SELECT          o.id AS order_id,
+         o.user_id,
+         o.total_price,
+         o.state AS order_state_code,
+         o.payment_method AS payment_method_code,
+         o.created_at,
+         o.updated_at
+       FROM orders o WHERE o.user_id = ? LIMIT ? OFFSET ?`;
+    const values = [userId, limit, offset];
+    const [result] = await connection.execute(sql, values);
+    return result;
+};
+
 const getAddress = async (id) => {
     const sql = `SELECT
          id AS address_id,
          full_name,
-         phone_num AS phone,
+         phone_num,
          city,
          district,
          ward,
@@ -117,6 +140,7 @@ const getOrderItems = async (id) => {
          p.category_id,
          p.dial_diameter,
          p.crystal_material,
+         p.slug,
          b.id_brand,
          b.brand_name,
          c.id_category,
@@ -174,6 +198,24 @@ const createOrderDetail = async (data) => {
     const [result] = await connection.execute(sql, values);
     return result;
 };
+
+const searchData = async (keyword) => {
+    const sql = `SELECT 
+         o.id AS order_id,
+         o.user_id,
+         u.name AS user_name,
+         u.email AS user_email,
+         o.total_price,
+         o.state AS order_state_code,
+         o.payment_method AS payment_method_code,
+         o.created_at,
+         o.updated_at
+       FROM orders o
+       JOIN users u ON o.user_id = u.id WHERE o.id LIKE ? OR u.name LIKE ?`;
+    const values = [`%${keyword}%`, `%${keyword}%`];
+    const [result] = await connection.execute(sql, values);
+    return result;
+};
 module.exports = {
     getData,
     countAllData,
@@ -187,4 +229,7 @@ module.exports = {
     getIdUserByOrderId,
     createOrder,
     createOrderDetail,
+    getOrderByUser,
+    countOrderByUser,
+    searchData,
 };

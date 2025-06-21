@@ -8,12 +8,13 @@ import {
     // postAddOrder,
     putUpdateOrder,
     postAddOrder,
+    getOrderByUserId,
     // deleleOrder,
-    // searchOrders,
+    searchOrders,
 } from "../../api/v1/order/order.controller";
 
 routes.get("/orders", getOrders);
-// routes.get("/orders/search", searchOrders);
+routes.get("/orders/search", searchOrders);
 routes.get("/orders/:id", getOrderById);
 // routes.post("/orders", postAddOrder);
 routes.put("/orders/:id", putUpdateOrder);
@@ -21,6 +22,9 @@ routes.put("/orders/:id", putUpdateOrder);
 
 routes.post("/orders", authMiddleware, postAddOrder);
 
-routes.get("/orders/detail/:orderId", getOrderDetail);
+routes.get("/orders/detail/:orderId", authMiddleware, getOrderDetail);
+
+routes.get("/orders/user/:userId", authMiddleware, getOrderByUserId);
+routes.get("/don-hang/chi-tiet/:orderId", getOrderDetail);
 
 module.exports = routes;

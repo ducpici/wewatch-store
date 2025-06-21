@@ -34,8 +34,8 @@ export default function EditProduct() {
             name: string;
             description: string;
         };
-        quantity: number | null;
-        price: number | null;
+        quantity: string | null;
+        price: string | null;
         state: boolean;
         image: File | null;
         functions: string[] | null;
@@ -78,7 +78,7 @@ export default function EditProduct() {
     const breadcrumbItems = [
         { label: "Trang chủ", path: "/" },
         { label: "Sản phẩm", path: "/products" },
-        { label: "Thêm mới" }, // Không có path => là trang hiện tại
+        { label: "Cập nhật" }, // Không có path => là trang hiện tại
     ];
 
     const navigate = useNavigate();
@@ -120,6 +120,9 @@ export default function EditProduct() {
             });
         }
     };
+    const isValidNumber = (value: any) => {
+        return !isNaN(value) && Number(value) > 0;
+    };
 
     const handleUpdateProduct = async () => {
         if (
@@ -142,6 +145,27 @@ export default function EditProduct() {
             toast.error("Các trường không được để trống!");
             return;
         }
+
+        if (!isValidNumber(productData.price)) {
+            toast.error("Giá phải là số dương hợp lệ!");
+            return;
+        }
+
+        if (!isValidNumber(productData.quantity)) {
+            toast.error("Số lượng phải là số dương hợp lệ!");
+            return;
+        }
+
+        if (!isValidNumber(productData.dial_diameter)) {
+            toast.error("Đường kính mặt số phải là số dương hợp lệ!");
+            return;
+        }
+
+        if (!isValidNumber(productData.case_thickness)) {
+            toast.error("Độ dày thân phải là số dương hợp lệ!");
+            return;
+        }
+
         // const file = productData.image;
 
         // if (!(file instanceof File) || !file.type.startsWith("image/")) {
@@ -225,7 +249,7 @@ export default function EditProduct() {
                 const data = response.data;
                 setProductData(data);
                 console.log(data);
-                // setIsEnabled(data.state);
+                setIsEnabled(data.state);
             })
             .catch((err) => {
                 console.error(err);
@@ -350,13 +374,13 @@ export default function EditProduct() {
                     <div>
                         <Label htmlFor="quantity">Số lượng:</Label>
                         <Input
-                            type="text"
+                            type="number"
                             id="quantity"
                             value={productData.quantity?.toString()}
                             onChange={(e) =>
                                 setProductData({
                                     ...productData,
-                                    quantity: parseInt(e.target.value),
+                                    quantity: e.target.value,
                                 })
                             }
                         />
@@ -364,13 +388,13 @@ export default function EditProduct() {
                     <div>
                         <Label htmlFor="price">Giá:</Label>
                         <Input
-                            type="text"
+                            type="number"
                             id="price"
                             value={productData.price?.toString()}
                             onChange={(e) =>
                                 setProductData({
                                     ...productData,
-                                    price: parseInt(e.target.value),
+                                    price: e.target.value,
                                 })
                             }
                         />
@@ -440,9 +464,10 @@ export default function EditProduct() {
                     <div>
                         <Label htmlFor="dial">Đường kính mặt số:</Label>
                         <Input
-                            type="text"
+                            type="number"
                             id="dial"
-                            value={productData.dial_diameter?.toString()}
+                            // step="0.01"
+                            value={productData.dial_diameter ?? ""}
                             onChange={(e) =>
                                 setProductData({
                                     ...productData,
@@ -454,9 +479,10 @@ export default function EditProduct() {
                     <div>
                         <Label htmlFor="case">Độ dày thân:</Label>
                         <Input
-                            type="text"
+                            type="number"
                             id="case"
-                            value={productData.case_thickness?.toString()}
+                            // step="0.01"
+                            value={productData.case_thickness ?? ""}
                             onChange={(e) =>
                                 setProductData({
                                     ...productData,
@@ -465,6 +491,7 @@ export default function EditProduct() {
                             }
                         />
                     </div>
+
                     <div>
                         <Label htmlFor="strap">Chất liệu dây đeo:</Label>
                         <Input
@@ -482,7 +509,7 @@ export default function EditProduct() {
                     <div>
                         <Label htmlFor="water">Hiệu suất chống nước:</Label>
                         <Input
-                            type="text"
+                            type="number"
                             id="water"
                             value={productData.water_resistance}
                             onChange={(e) =>

@@ -16,6 +16,8 @@ import Actions from "../../components/common/Actions";
 import { SearchAndAddBar } from "../../components/common/SearchAndAdd";
 import { useEffect, useState } from "react";
 import ReactPaginate from "react-paginate";
+import getVoucherStatus from "../../lib/getVoucherStatus";
+import formatDate from "../../lib/formatDate";
 
 interface Voucher {
     id: number;
@@ -32,10 +34,6 @@ interface Voucher {
     end_date: string;
     create_at: Date;
     update_at: Date;
-    status: {
-        code: number;
-        text: string;
-    };
 }
 
 export default function Vouchers() {
@@ -54,12 +52,19 @@ export default function Vouchers() {
         { label: "Ưu đãi", path: "/vouchers" },
     ];
 
-    const stateColorMap = {
-        "Hoạt động": "success",
-        "Hết hạn": "error",
-        "Đã dùng hết": "error",
-        "Vô hiệu hóa": "secondary",
-        "Chưa bắt đầu": "info",
+    const getStatusText = (code: number) => {
+        switch (code) {
+            case 1:
+                return "Hoạt động";
+            case 2:
+                return "Hết hạn";
+            case 3:
+                return "Đã dùng hết";
+            case 4:
+                return "Chưa bắt đầu";
+            default:
+                return "Vô hiệu hóa";
+        }
     };
 
     const fetchAllVouchers = async (page: number, limit: number) => {
@@ -71,6 +76,7 @@ export default function Vouchers() {
             setVouchers(res.data.data);
             setLimitData(res.data.pagination.limit);
             setTotalPage(res.data.pagination.totalPages);
+            console.log(res.data.data);
         } catch (err) {
             console.error("Lỗi khi tải danh sách:", err);
             toast.error("Lỗi khi tải danh sách");
@@ -229,75 +235,99 @@ export default function Vouchers() {
 
                                 {/* Table Body */}
                                 <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
-                                    {vouchers.map((data, index) => (
-                                        <TableRow key={data.id}>
-                                            <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                {index + 1}
-                                            </TableCell>
-                                            <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                {data.id}
-                                            </TableCell>
-                                            <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                {data.code}
-                                            </TableCell>
-                                            <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                {data.discount_type.text}
-                                            </TableCell>
-                                            <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                {data.discount_type.code === 1
-                                                    ? `${data.discount_value}%`
-                                                    : Number(
-                                                          data.discount_value
-                                                      ).toLocaleString("vi-VN")}
-                                            </TableCell>
-                                            <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                {data.description}
-                                            </TableCell>
-                                            <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                {data.quantity}
-                                            </TableCell>
-                                            <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                {data.used_count}
-                                            </TableCell>
-                                            <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                {data.start_date}
-                                            </TableCell>
-                                            <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                {data.end_date}
-                                            </TableCell>
-                                            <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                {data.status.text}
-                                                {/* <Badge
-                                                    size="sm"
-                                                    color={
-                                                        data.status ===
-                                                        "Hoạt động"
-                                                            ? "success"
-                                                            : data.status ===
-                                                              "Vô hiệu hóa"
-                                                            ? "error"
-                                                            : "warning"
-                                                    }
-                                                >
-                                                    {data.status}
-                                                </Badge> */}
-                                            </TableCell>
-                                            <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                <Actions
-                                                    onEdit={() =>
-                                                        navigate(
-                                                            `/vouchers/edit/${data.id}`
-                                                        )
-                                                    }
-                                                    onDelete={() =>
-                                                        handleDeleteVoucher(
-                                                            data.id
-                                                        )
-                                                    }
-                                                />
-                                            </TableCell>
+                                    {vouchers.length === 0 ? (
+                                        <TableRow>
+                                            <td
+                                                colSpan={12}
+                                                className="text-center py-4 text-gray-500"
+                                            >
+                                                Không tìm thấy dữ liệu
+                                            </td>
                                         </TableRow>
-                                    ))}
+                                    ) : (
+                                        vouchers.map((data, index) => {
+                                            const start = formatDate(
+                                                data.start_date,
+                                                "dd-MM-yyyy",
+                                                "yyyy-MM-dd"
+                                            );
+                                            const end = formatDate(
+                                                data.end_date,
+                                                "dd-MM-yyyy",
+                                                "yyyy-MM-dd"
+                                            );
+                                            const statusCode = getVoucherStatus(
+                                                start,
+                                                end,
+                                                data.quantity,
+                                                data.used_count
+                                            );
+                                            return (
+                                                <TableRow key={data.id}>
+                                                    <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                                        {index + 1}
+                                                    </TableCell>
+                                                    <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                                        {data.id}
+                                                    </TableCell>
+                                                    <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                                        {data.code}
+                                                    </TableCell>
+                                                    <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                                        {
+                                                            data.discount_type
+                                                                .text
+                                                        }
+                                                    </TableCell>
+                                                    <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                                        {data.discount_type
+                                                            .code === 1
+                                                            ? `${data.discount_value}%`
+                                                            : Number(
+                                                                  data.discount_value
+                                                              ).toLocaleString(
+                                                                  "vi-VN"
+                                                              )}
+                                                    </TableCell>
+                                                    <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                                        {data.description}
+                                                    </TableCell>
+                                                    <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                                        {data.quantity}
+                                                    </TableCell>
+                                                    <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                                        {data.used_count}
+                                                    </TableCell>
+                                                    <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                                        {data.start_date}
+                                                    </TableCell>
+                                                    <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                                        {data.end_date}
+                                                    </TableCell>
+
+                                                    <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                                        {getStatusText(
+                                                            statusCode
+                                                        )}
+                                                    </TableCell>
+                                                    <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                                        <Actions
+                                                            onEdit={() =>
+                                                                navigate(
+                                                                    `/vouchers/edit/${data.id}`
+                                                                )
+                                                            }
+                                                            onDelete={() =>
+                                                                handleDeleteVoucher(
+                                                                    data.id
+                                                                )
+                                                            }
+                                                        />
+                                                    </TableCell>
+                                                </TableRow>
+                                            );
+                                        })
+                                    )}
                                 </TableBody>
                             </Table>
                         </div>

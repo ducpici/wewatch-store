@@ -28,7 +28,7 @@ const countItem = async () => {
 
 const createData = async (data) => {
     const sql = `
-        INSERT INTO vouchers (code, discount_type, discount_value, description, quantity, used_count, start_date, end_date, status) values (?,?,?,?,?,?,?,?,?)
+        INSERT INTO vouchers (code, discount_type, discount_value, description, quantity, used_count, start_date, end_date) values (?,?,?,?,?,?,?,?)
     `;
     const values = [
         data.code,
@@ -39,7 +39,6 @@ const createData = async (data) => {
         data.used_count,
         data.start_date,
         data.end_date,
-        data.status,
     ];
     const [result] = await connection.execute(sql, values);
     return result;

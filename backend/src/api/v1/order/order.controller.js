@@ -11,6 +11,9 @@ import {
     getAddress,
     createOrder,
     createOrderDetail,
+    getOrderByUser,
+    countOrderByUser,
+    searchData,
 } from "./order.modal";
 import { formatDate } from "../../../utils/formatDate";
 import { connection } from "../../../config/database";
@@ -125,6 +128,7 @@ const putUpdateOrder = async (req, res) => {
 const getOrderDetail = async (req, res) => {
     try {
         const { orderId } = req.params;
+        console.log(orderId);
         const order = await getOrder(orderId);
         const items = await getOrderItems(orderId);
         const idUser = await getIdUserByOrderId(orderId);
@@ -167,13 +171,14 @@ const getOrderDetail = async (req, res) => {
                     name: item.category_name,
                     description: item.category_description,
                 },
+                slug: item.slug,
             };
         });
 
         const orderDetail = {
             ...orderData,
             user,
-            address,
+            shipping_address: address,
             items: formattedItems,
             payment_method: {
                 code: paymentMethodCode,
@@ -184,7 +189,7 @@ const getOrderDetail = async (req, res) => {
                 text: orderStateMap[stateCode] || "Không xác định",
             },
         };
-
+        console.log(orderDetail);
         res.status(200).json(orderDetail);
     } catch (error) {
         console.error("Error getting data:", error);
@@ -192,43 +197,184 @@ const getOrderDetail = async (req, res) => {
     }
 };
 
+// const postAddOrder = async (req, res) => {
+//     try {
+//         const createdAt = new Date().toISOString().slice(0, 10);
+//         const userId = req.user.id;
+//         const payload = req.body;
+//         const data = {
+//             ...payload,
+//             createdAt,
+//             userId,
+//             state: 0,
+//         };
+//         const orderResult = await createOrder(data);
+
+//         const orderId = orderResult.insertId;
+//         const items = data.items;
+
+//         for (const item of items) {
+//             const data = {
+//                 product_id: item.id,
+//                 order_id: orderId,
+//                 quantity: item.quantity,
+//             };
+//             console.log(data);
+//             await createOrderDetail(data);
+
+//             // Trừ số lượng sản phẩm
+//             await connection.execute(
+//                 `UPDATE products SET quantity = quantity - ? WHERE id_product = ? AND quantity >= ?`,
+//                 [item.quantity, item.id, item.quantity]
+//             );
+//         }
+
+//         res.json({ message: "Đặt hàng thành công" });
+//     } catch (error) {
+//         console.error("Error getting data:", error);
+//         res.status(500).json({ error: "Internal Server Error" });
+//     }
+// };
+
 const postAddOrder = async (req, res) => {
+    const conn = await connection.getConnection();
+    await conn.beginTransaction();
+
     try {
         const createdAt = new Date().toISOString().slice(0, 10);
         const userId = req.user.id;
         const payload = req.body;
+        const { voucherCode } = payload;
+
         const data = {
             ...payload,
             createdAt,
             userId,
             state: 0,
         };
-        const orderResult = await createOrder(data);
 
+        // Tạo đơn hàng
+        const orderResult = await createOrder(data);
         const orderId = orderResult.insertId;
+
         const items = data.items;
 
         for (const item of items) {
-            const data = {
+            // Kiểm tra số lượng tồn
+            const [rows] = await conn.query(
+                `SELECT quantity FROM products WHERE id_product = ?`,
+                [item.id]
+            );
+
+            if (!rows[0] || rows[0].quantity < item.quantity) {
+                throw new Error(
+                    `Sản phẩm mã ${item.id} chỉ còn ${rows[0]?.quantity ?? 0}`
+                );
+            }
+
+            // Thêm chi tiết đơn hàng
+            const orderDetailData = {
                 product_id: item.id,
                 order_id: orderId,
                 quantity: item.quantity,
             };
-            console.log(data);
-            await createOrderDetail(data);
+            await createOrderDetail(orderDetailData);
 
             // Trừ số lượng sản phẩm
-            await connection.execute(
-                `UPDATE products SET quantity = quantity - ? WHERE id_product = ? AND quantity >= ?`,
-                [item.quantity, item.id, item.quantity]
+            await conn.query(
+                `UPDATE products SET quantity = quantity - ? WHERE id_product = ?`,
+                [item.quantity, item.id]
+            );
+
+            // Nếu có voucherCode thì cộng số lượt sử dụng voucher
+            if (voucherCode) {
+                await connection.execute(
+                    `UPDATE vouchers SET used_count = used_count + 1 WHERE code = ?`,
+                    [voucherCode]
+                );
+            }
+
+            // Xoá sản phẩm khỏi giỏ hàng
+            await conn.query(
+                `DELETE FROM carts WHERE user_id = ? AND product_id = ?`,
+                [userId, item.id]
             );
         }
 
+        await conn.commit();
+        conn.release();
         res.json({ message: "Đặt hàng thành công" });
+    } catch (error) {
+        await conn.rollback();
+        conn.release();
+        console.error("Lỗi đặt hàng:", error);
+        res.status(500).json({
+            error: "Lỗi xử lý đơn hàng",
+            message: error.message,
+        });
+    }
+};
+const getOrderByUserId = async (req, res) => {
+    try {
+        const userId = req.user.id;
+
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const offset = (page - 1) * limit;
+
+        const result = await getOrderByUser(userId, limit, offset);
+        const totalData = await countOrderByUser(userId);
+
+        const orders = result.map((order) => {
+            const order_state_name =
+                orderStateMap[order.order_state_code] || "Không rõ trạng thái";
+
+            const payment_method_name =
+                paymentMethodMap[order.payment_method_code] ||
+                "Không rõ phương thức";
+
+            return {
+                ...order,
+                order_state_name,
+                payment_method_name,
+                created_at_text: formatDate(order.created_at),
+            };
+        });
+
+        res.status(200).json({
+            orders,
+            pagination: {
+                total: totalData,
+                page,
+                limit,
+                totalPages: Math.ceil(totalData / limit),
+            },
+        });
     } catch (error) {
         console.error("Error getting data:", error);
         res.status(500).json({ error: "Internal Server Error" });
     }
+};
+
+const searchOrders = async (req, res) => {
+    const { keyword } = req.query;
+    const result = await searchData(keyword);
+    const orders = result.map((order) => {
+        const order_state_name =
+            orderStateMap[order.order_state_code] || "Không rõ trạng thái";
+
+        const payment_method_name =
+            paymentMethodMap[order.payment_method_code] ||
+            "Không rõ phương thức";
+
+        return {
+            ...order,
+            order_state_name,
+            payment_method_name,
+            created_at_text: formatDate(order.created_at),
+        };
+    });
+    res.json({ data: orders });
 };
 
 module.exports = {
@@ -237,8 +383,9 @@ module.exports = {
     putUpdateOrder,
     getOrderDetail,
     postAddOrder,
+    getOrderByUserId,
     // postAddOrder,
     // putUpdateOrder,
     // deleleOrder,
-    // searchOrders,
+    searchOrders,
 };

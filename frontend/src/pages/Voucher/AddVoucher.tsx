@@ -13,6 +13,7 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router";
 import formatDate from "../../lib/formatDate";
 import getVoucherStatus from "../../lib/getVoucherStatus";
+import { useEffect } from "react";
 
 export default function AddVoucher() {
     const initialVoucher: Voucher = {
@@ -24,7 +25,6 @@ export default function AddVoucher() {
         discount_value: "",
         start_date: "",
         end_date: "",
-        status: 0,
     };
 
     type Voucher = {
@@ -36,7 +36,6 @@ export default function AddVoucher() {
         discount_value: string;
         start_date: string;
         end_date: string;
-        status: number;
     };
 
     const [voucherData, setVoucherData] = useState<Voucher>(initialVoucher);
@@ -78,6 +77,12 @@ export default function AddVoucher() {
                 "yyyy-MM-dd"
             );
 
+            // So sánh ngày (chuyển về Date để so sánh logic)
+            if (new Date(endDate) < new Date(startDate)) {
+                toast.error("Ngày kết thúc không được nhỏ hơn ngày bắt đầu");
+                return;
+            }
+
             const cleanData = {
                 ...voucherData,
                 discount_type: parseInt(voucherData.discount_type),
@@ -86,12 +91,6 @@ export default function AddVoucher() {
                 used_count: Number(voucherData.used_count),
                 start_date: startDate,
                 end_date: endDate,
-                status: getVoucherStatus(
-                    startDate,
-                    endDate,
-                    parseInt(voucherData.quantity),
-                    voucherData.used_count
-                ),
             };
 
             const { code } = voucherData;
@@ -121,6 +120,41 @@ export default function AddVoucher() {
             discount_type: value,
         });
     };
+    // useEffect(() => {
+    //     if (
+    //         voucherData.start_date &&
+    //         voucherData.end_date &&
+    //         voucherData.quantity
+    //     ) {
+    //         const start = formatDate(
+    //             voucherData.start_date,
+    //             "dd-MM-yyyy",
+    //             "yyyy-MM-dd"
+    //         );
+    //         const end = formatDate(
+    //             voucherData.end_date,
+    //             "dd-MM-yyyy",
+    //             "yyyy-MM-dd"
+    //         );
+
+    //         const status = getVoucherStatus(
+    //             start,
+    //             end,
+    //             parseInt(voucherData.quantity),
+    //             voucherData.used_count
+    //         );
+
+    //         setVoucherData((prev) => ({
+    //             ...prev,
+    //             status,
+    //         }));
+    //     }
+    // }, [
+    //     voucherData.start_date,
+    //     voucherData.end_date,
+    //     voucherData.quantity,
+    //     voucherData.used_count,
+    // ]);
 
     return (
         <>
@@ -151,7 +185,7 @@ export default function AddVoucher() {
                     <div>
                         <Label htmlFor="discount_value">Giá trị giảm:</Label>
                         <Input
-                            type="text"
+                            type="number"
                             id="discount_value"
                             onChange={(e) =>
                                 setVoucherData({
@@ -177,7 +211,7 @@ export default function AddVoucher() {
                     <div>
                         <Label htmlFor="quantity">Số lượng:</Label>
                         <Input
-                            type="text"
+                            type="number"
                             id="quantity"
                             onChange={(e) =>
                                 setVoucherData({

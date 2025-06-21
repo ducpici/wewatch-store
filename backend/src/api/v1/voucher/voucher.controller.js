@@ -10,13 +10,13 @@ import {
 } from "./voucher.modal";
 import { formatDate, formatDate2 } from "../../../utils/formatDate";
 
-const stateMap = {
-    0: "Vô hiệu hóa",
-    1: "Hoạt động",
-    2: "Hết hạn",
-    3: "Đã dùng hết",
-    4: "Chưa bắt đầu",
-};
+// const stateMap = {
+//     0: "Vô hiệu hóa",
+//     1: "Hoạt động",
+//     2: "Hết hạn",
+//     3: "Đã dùng hết",
+//     4: "Chưa bắt đầu",
+// };
 
 const discountTypeMap = {
     1: "Theo phần trăm",
@@ -44,10 +44,6 @@ const getVouchers = async (req, res) => {
                 discount_type: {
                     code: discountTypeCode,
                     text: discountTypeMap[discountTypeCode] || "Không xác định",
-                },
-                status: {
-                    code: stateCode,
-                    text: stateMap[stateCode],
                 },
             };
         });
@@ -111,6 +107,7 @@ const addVoucher = async (req, res) => {
 const editVoucher = async (req, res) => {
     const data = req.body;
     const idVoucher = data.id_voucher;
+    console.log(data);
     try {
         const result = await updateData(data, idVoucher);
         if (result.affectedRows === 0) {
@@ -151,7 +148,6 @@ const searchVoucher = async (req, res) => {
             end_date: formatDate(data.end_date),
             discount_type:
                 discountTypeMap[data.discount_type] || "Không xác định",
-            status: stateMap[data.status] || "Không xác định",
         }));
         res.status(200).json({ data: parsedData });
     } catch (err) {

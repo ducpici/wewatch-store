@@ -13,6 +13,9 @@ import { toast } from "react-toastify";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import formatDate from "../../lib/formatDate";
+import { isValidEmail } from "../../lib/validationEmail";
+import { isValidName } from "../../lib/validateName";
+import { isValidPhoneNum } from "../../lib/validatePhoneNum";
 
 export default function EditEmployee() {
     type Employee = {
@@ -128,6 +131,18 @@ export default function EditEmployee() {
             employeeData.state === undefined
         ) {
             toast.error("Các trường không được để trống!");
+            return;
+        }
+        if (!isValidName(employeeData.name)) {
+            toast.error("Họ tên không hợp lệ!");
+            return;
+        }
+        if (!isValidPhoneNum(employeeData.phone_number)) {
+            toast.error("Số điện thoại không hợp lệ!");
+            return;
+        }
+        if (!isValidEmail(employeeData.email)) {
+            toast.error("Email không hợp lệ!");
             return;
         }
         try {
@@ -300,7 +315,7 @@ export default function EditEmployee() {
                     <div>
                         <Label htmlFor="phone_num">Số điện thoại:</Label>
                         <Input
-                            type="text"
+                            type="number"
                             id="phone_num"
                             value={employeeData.phone_number}
                             onChange={(e) =>

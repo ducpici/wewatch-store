@@ -279,7 +279,7 @@ export default function AddProduct() {
                     <div>
                         <Label htmlFor="quantity">Số lượng:</Label>
                         <Input
-                            type="text"
+                            type="number"
                             id="quantity"
                             onChange={(e) =>
                                 setProductData({
@@ -292,7 +292,7 @@ export default function AddProduct() {
                     <div>
                         <Label htmlFor="price">Giá:</Label>
                         <Input
-                            type="text"
+                            type="number"
                             id="price"
                             onChange={(e) =>
                                 setProductData({
@@ -349,7 +349,7 @@ export default function AddProduct() {
                             }
                         />
                     </div>
-                    <div>
+                    {/* <div>
                         <Label htmlFor="dial">Đường kính mặt số:</Label>
                         <Input
                             type="text"
@@ -366,6 +366,32 @@ export default function AddProduct() {
                         <Label htmlFor="case">Độ dày thân:</Label>
                         <Input
                             type="text"
+                            id="case"
+                            onChange={(e) =>
+                                setProductData({
+                                    ...productData,
+                                    case_thickness: parseFloat(e.target.value),
+                                })
+                            }
+                        />
+                    </div> */}
+                    <div>
+                        <Label htmlFor="dial">Đường kính mặt số:</Label>
+                        <Input
+                            type="number"
+                            id="dial"
+                            onChange={(e) =>
+                                setProductData({
+                                    ...productData,
+                                    dial_diameter: parseFloat(e.target.value),
+                                })
+                            }
+                        />
+                    </div>
+                    <div>
+                        <Label htmlFor="case">Độ dày thân:</Label>
+                        <Input
+                            type="number"
                             id="case"
                             onChange={(e) =>
                                 setProductData({
@@ -391,7 +417,7 @@ export default function AddProduct() {
                     <div>
                         <Label htmlFor="water">Hiệu suất chống nước:</Label>
                         <Input
-                            type="text"
+                            type="number"
                             id="water"
                             onChange={(e) =>
                                 setProductData({

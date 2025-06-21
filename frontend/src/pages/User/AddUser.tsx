@@ -11,6 +11,10 @@ import axios from "../../lib/axiosConfig";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router";
 import formatDate from "../../lib/formatDate";
+import { isValidEmail } from "../../lib/validationEmail";
+import { isValidName } from "../../lib/validateName";
+import { isValidPhoneNum } from "../../lib/validatePhoneNum";
+import { isValidUsername, isValidPassword } from "../../lib/validateData";
 
 export default function AddUser() {
     const initialUser: User = {
@@ -80,6 +84,31 @@ export default function AddUser() {
             userData.state === undefined
         ) {
             toast.error("Các trường không được để trống!");
+            return;
+        }
+
+        if (!isValidName(userData.name)) {
+            toast.error("Họ tên không hợp lệ!");
+            return;
+        }
+        if (!isValidPhoneNum(userData.phone_number)) {
+            toast.error("Số điện thoại không hợp lệ!");
+            return;
+        }
+        if (!isValidEmail(userData.email)) {
+            toast.error("Email không hợp lệ!");
+            return;
+        }
+        if (!isValidUsername(userData.username)) {
+            toast.error("Tên đăng nhập không hợp lệ");
+            return;
+        }
+        if (userData.password.length < 6) {
+            toast.error("Mật khẩu phải từ 6 ký tự trở lên");
+            return;
+        }
+        if (!isValidPassword(userData.password)) {
+            toast.error("Mật khẩu không hợp lệ");
             return;
         }
         try {
@@ -231,7 +260,7 @@ export default function AddUser() {
                     <div>
                         <Label htmlFor="phone_num">Số điện thoại:</Label>
                         <Input
-                            type="text"
+                            type="number"
                             id="phone_num"
                             onChange={(e) =>
                                 setUserData({

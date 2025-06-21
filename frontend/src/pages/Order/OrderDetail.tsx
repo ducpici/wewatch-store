@@ -40,6 +40,7 @@ export default function OrderDetail() {
         };
         quantity: number;
         price: number;
+        slug: string;
     };
 
     type orderDetail = {
@@ -54,9 +55,10 @@ export default function OrderDetail() {
         shipping_address: {
             full_name: string;
             phone_num: string;
-            street: string;
-            distric: string;
-            province: string;
+            city: string;
+            district: string;
+            ward: string;
+            detail: string;
         };
         payment_method: {
             code: number;
@@ -79,6 +81,7 @@ export default function OrderDetail() {
                 };
                 quantity: number;
                 price: number;
+                slug: string;
             }
         ];
         order_state: {
@@ -91,6 +94,7 @@ export default function OrderDetail() {
     };
 
     const { id } = useParams();
+    const navigate = useNavigate();
 
     const [loading, setLoading] = useState(false);
     const [totalUser, setTotalUser] = useState(0);
@@ -120,6 +124,10 @@ export default function OrderDetail() {
         } finally {
             setLoading(false);
         }
+    };
+
+    const handleViewProduct = (id: number) => {
+        navigate(`/products/edit/${id}`);
     };
 
     useEffect(() => {
@@ -168,32 +176,49 @@ export default function OrderDetail() {
                                 <Label htmlFor="name">
                                     Họ tên:
                                     <span className="ml-2">
-                                        {dataOrderDetail?.user.name}
+                                        {
+                                            dataOrderDetail?.shipping_address
+                                                .full_name
+                                        }
                                     </span>
                                 </Label>
                                 <Label htmlFor="phone">
                                     Số điện thoại:
                                     <span className="ml-2">
-                                        {dataOrderDetail?.user.phone_number}
-                                    </span>
-                                </Label>
-                                <Label htmlFor="address">
-                                    Email:
-                                    <span className="ml-2">
-                                        {dataOrderDetail?.user.email}
+                                        {
+                                            dataOrderDetail?.shipping_address
+                                                .phone_num
+                                        }
                                     </span>
                                 </Label>
                                 <Label htmlFor="address">
                                     Địa chỉ:
                                     <span className="ml-2">
-                                        {dataOrderDetail?.user.address}
+                                        {
+                                            dataOrderDetail?.shipping_address
+                                                .detail
+                                        }
+                                        {dataOrderDetail?.shipping_address.ward}
+                                        ,{" "}
+                                        {
+                                            dataOrderDetail?.shipping_address
+                                                .district
+                                        }
+                                        ,{" "}
+                                        {dataOrderDetail?.shipping_address.city}
                                     </span>
                                 </Label>
                             </div>
                         </ComponentCard>
                         <ComponentCard title="Thông tin đơn hàng">
                             <div className="space-y-0">
-                                <Label htmlFor="address">
+                                <Label htmlFor="order_id">
+                                    Mã đơn hàng:
+                                    <span className="ml-2">
+                                        {dataOrderDetail?.id}
+                                    </span>
+                                </Label>
+                                <Label htmlFor="total">
                                     Tổng tiền:
                                     <span className="ml-2">
                                         {dataOrderDetail?.total_price.toLocaleString(
@@ -202,13 +227,13 @@ export default function OrderDetail() {
                                         VNĐ
                                     </span>
                                 </Label>
-                                <Label htmlFor="name">
+                                <Label htmlFor="payment_method">
                                     Hình thức thanh toán:
                                     <span className="ml-2">
                                         {dataOrderDetail?.payment_method.text}
                                     </span>
                                 </Label>
-                                <Label htmlFor="phone">
+                                <Label htmlFor="order_state">
                                     Trạng thái đơn hàng:
                                     <span className="ml-2">
                                         {dataOrderDetail?.order_state.text}
@@ -218,7 +243,7 @@ export default function OrderDetail() {
                         </ComponentCard>
                     </div>
                     <div className="overflow-hidden rounded-xl dark:border-white/[0.05] dark:bg-white/[0.03]">
-                        <ComponentCard title="Danh sách sản phẩm">
+                        <ComponentCard title="Thông tin sản phẩm">
                             <div className="max-w-full overflow-x-auto">
                                 <Table>
                                     {/* Table Header */}
@@ -299,11 +324,11 @@ export default function OrderDetail() {
                                             </TableCell> */}
                                                 <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
                                                     <Actions
-                                                        onView={() => {
-                                                            alert(
-                                                                "view product"
-                                                            );
-                                                        }}
+                                                        onView={() =>
+                                                            handleViewProduct(
+                                                                data.id
+                                                            )
+                                                        }
                                                     />
                                                 </TableCell>
                                             </TableRow>
