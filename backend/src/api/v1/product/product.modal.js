@@ -282,6 +282,21 @@ const deleteProductFunction = async (productId) => {
     return result;
 };
 
+const getProductReviews = async (productId) => {
+    const sql = `SELECT r.comment, r.created_at, r.rating, u.name FROM products p JOIN reviews r ON r.product_id = p.id_product JOIN users u ON r.user_id = u.id WHERE p.id_product = ?`;
+    const value = [productId];
+    const [result] = await connection.execute(sql, value);
+    return result;
+};
+
+const addReview = async (productId, userId, rating, comment, createdAt) => {
+    const sql = `INSERT INTO reviews (product_id, user_id, rating, comment, created_at) VALUES (?,?,?,?,?)`;
+    const values = [productId, userId, rating, comment, createdAt];
+    const [result] = await connection.execute(sql, values);
+    console.log(result);
+    return result;
+};
+
 module.exports = {
     getAllData,
     findById,
@@ -300,4 +315,6 @@ module.exports = {
     countProductByCategory,
     countProductByBrand,
     findProductBySlug,
+    getProductReviews,
+    addReview,
 };

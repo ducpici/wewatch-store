@@ -15,7 +15,7 @@ import {
     countOrderByUser,
     searchData,
 } from "./order.modal";
-import { formatDate } from "../../../utils/formatDate";
+import { formatDate, formatDateTime } from "../../../utils/formatDate";
 import { connection } from "../../../config/database";
 
 const orderStateMap = {
@@ -53,7 +53,7 @@ const getOrders = async (req, res) => {
                 ...order,
                 order_state_name,
                 payment_method_name,
-                created_at_text: formatDate(order.created_at),
+                created_at_text: formatDateTime(order.created_at),
             };
         });
 
@@ -241,7 +241,20 @@ const postAddOrder = async (req, res) => {
     await conn.beginTransaction();
 
     try {
-        const createdAt = new Date().toISOString().slice(0, 10);
+        const now = new Date();
+        const createdAt = `${now.getFullYear()}-${(now.getMonth() + 1)
+            .toString()
+            .padStart(2, "0")}-${now
+            .getDate()
+            .toString()
+            .padStart(2, "0")} ${now
+            .getHours()
+            .toString()
+            .padStart(2, "0")}:${now
+            .getMinutes()
+            .toString()
+            .padStart(2, "0")}:${now.getSeconds().toString().padStart(2, "0")}`;
+
         const userId = req.user.id;
         const payload = req.body;
         const { voucherCode } = payload;
@@ -337,7 +350,7 @@ const getOrderByUserId = async (req, res) => {
                 ...order,
                 order_state_name,
                 payment_method_name,
-                created_at_text: formatDate(order.created_at),
+                created_at_text: formatDateTime(order.created_at),
             };
         });
 

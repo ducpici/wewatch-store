@@ -1,3 +1,5 @@
+import { format } from "date-fns";
+
 const formatDate = (date) => {
     const d = new Date(date);
     const day = String(d.getDate()).padStart(2, "0");
@@ -16,4 +18,15 @@ const formatDate2 = (date) => {
     return `${year}-${month}-${day}`;
 };
 
-module.exports = { formatDate, formatDate2 };
+function formatDateTime(inputDate) {
+    try {
+        const date =
+            typeof inputDate === "string" ? new Date(inputDate) : inputDate;
+        return format(date, "dd-MM-yyyy HH:mm:ss");
+    } catch (error) {
+        console.error("Invalid date:", inputDate);
+        return "";
+    }
+}
+
+module.exports = { formatDate, formatDate2, formatDateTime };
