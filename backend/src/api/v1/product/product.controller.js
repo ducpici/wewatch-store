@@ -381,29 +381,37 @@ const searchProduct = async (req, res) => {
 
     try {
         const result = await search(keyword);
-        const parsedProducts = result.map((data) => ({
-            id: data.id_product,
-            modal_num: data.modal_num,
-            product_name: data.product_name,
-            brand: {
-                id: data.id_brand,
-                name: data.brand_name,
-            },
-            origin: data.origin,
-            crystal_material: data.crystal_material,
-            movement_type: data.movement_type,
-            dial_diameter: data.dial_diameter,
-            case_thickness: data.case_thickness,
-            strap_material: data.strap_material,
-            water_resistance: data.water_resistance,
-            category: {
-                id: data.id_category,
-                name: data.category_name,
-            },
-            quantity: data.quantity,
-            price: data.price,
-            state: data.state?.[0] === 1 ? "Hoạt động" : "Vô hiệu hóa",
-        }));
+        const parsedProducts = result.map((data) => {
+            const rawName = `${data.brand_name} - ${data.modal_num} - ${data.crystal_material} - ${data.movement_type} - Mặt số ${data.dial_diameter} mm`;
+            return {
+                id: data.id_product,
+                modal_num: data.modal_num,
+                name: rawName,
+                brand: {
+                    id: data.id_brand,
+                    name: data.brand_name,
+                    slug: data.brand_slug,
+                },
+                origin: data.origin,
+                crystal_material: data.crystal_material,
+                movement_type: data.movement_type,
+                dial_diameter: data.dial_diameter + " " + "mm",
+                case_thickness: data.case_thickness + " " + "mm",
+                strap_material: data.strap_material,
+                water_resistance: data.water_resistance,
+                category: {
+                    id: data.id_category,
+                    name: data.category_name,
+                    slug: data.category_slug,
+                    description: data.description,
+                },
+                quantity: data.quantity,
+                price: data.price,
+                image: data.image,
+                slug: data.product_slug,
+                state: data.state?.[0] === 1 ? "Hoạt động" : "Vô hiệu hóa",
+            };
+        });
         res.status(200).json({ data: parsedProducts });
     } catch (err) {
         console.error("Lỗi tìm kiếm:", err);

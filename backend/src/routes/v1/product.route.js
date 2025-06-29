@@ -33,7 +33,7 @@ routes.put("/products/:id", uploadTo("products").single("file"), editProduct);
 routes.delete("/products/:id", deleteProduct);
 
 //api user side
-
+// routes.get("/tim-kiem", searchProduct);
 routes.get("/danh-muc/:slug", getProductByCategory);
 routes.get("/thuong-hieu/:slug", getProductByBrand);
 routes.get("/san-pham/:slug", getProductBySlug);

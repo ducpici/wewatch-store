@@ -1,32 +1,91 @@
 import { connection } from "../../../config/database";
 
-const getData = async (limit, offset) => {
-    const sql = `
-            SELECT 
-         o.id AS order_id,
-         o.user_id,
-         u.name AS user_name,
-         u.email AS user_email,
-         o.total_price,
-         o.state AS order_state_code,
-         o.payment_method AS payment_method_code,
-         o.created_at,
-         o.updated_at
-       FROM orders o
-       JOIN users u ON o.user_id = u.id
- ORDER BY o.created_at DESC
- LIMIT ? OFFSET ?
+// const getData = async (limit, offset) => {
+//     const sql = `
+//             SELECT
+//          o.id AS order_id,
+//          o.user_id,
+//          u.name AS user_name,
+//          u.email AS user_email,
+//          o.total_price,
+//          o.state AS order_state_code,
+//          o.payment_method AS payment_method_code,
+//          o.created_at,
+//          o.updated_at
+//        FROM orders o
+//        JOIN users u ON o.user_id = u.id
+//  ORDER BY o.created_at DESC
+//  LIMIT ? OFFSET ?
+//     `;
+//     const values = [limit, offset];
+//     const [result] = await connection.execute(sql, values);
+//     return result;
+// };
+
+// const countAllData = async () => {
+//     const sql = `
+//         SELECT COUNT(*) AS total FROM orders;
+//     `;
+//     const [result] = await connection.execute(sql);
+//     return result[0].total;
+// };
+
+const getData = async (limit, offset, filters = {}) => {
+    let sql = `
+        SELECT 
+            o.id AS order_id,
+            o.user_id,
+            u.name AS user_name,
+            u.email AS user_email,
+            o.total_price,
+            o.state AS order_state_code,
+            o.payment_method AS payment_method_code,
+            o.created_at,
+            o.updated_at
+        FROM orders o
+        JOIN users u ON o.user_id = u.id
+        WHERE 1=1
     `;
-    const values = [limit, offset];
+    const values = [];
+
+    // Thêm điều kiện lọc nếu có
+    if (filters.payment_method_code !== undefined) {
+        sql += " AND o.payment_method = ?";
+        values.push(filters.payment_method_code);
+    }
+
+    if (filters.order_state_code !== undefined) {
+        sql += " AND o.state = ?";
+        values.push(filters.order_state_code);
+    }
+
+    sql += " ORDER BY o.created_at DESC LIMIT ? OFFSET ?";
+    values.push(limit, offset);
+
     const [result] = await connection.execute(sql, values);
     return result;
 };
 
-const countAllData = async () => {
-    const sql = `
-        SELECT COUNT(*) AS total FROM orders;
+const countAllData = async (filters = {}) => {
+    let sql = `
+        SELECT COUNT(*) AS total
+        FROM orders o
+        JOIN users u ON o.user_id = u.id
+        WHERE 1=1
     `;
-    const [result] = await connection.execute(sql);
+    const values = [];
+
+    if (filters.payment_method_code !== undefined) {
+        sql += " AND o.payment_method = ?";
+        values.push(filters.payment_method_code);
+    }
+
+    if (filters.order_state_code !== undefined) {
+        sql += " AND o.state = ?";
+        values.push(filters.order_state_code);
+    }
+
+    const [result] = await connection.execute(sql, values);
     return result[0].total;
 };
 

@@ -232,6 +232,8 @@ const search = async (keyword) => {
     p.quantity,
     p.price,
     p.state,
+    p.slug AS product_slug,
+    p.image,
     b.id_brand,
     b.brand_name,
     c.id_category,

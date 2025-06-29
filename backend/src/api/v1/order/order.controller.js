@@ -32,14 +32,68 @@ const paymentMethodMap = {
     1: "Chuyển khoản",
 };
 
+// const getOrders = async (req, res) => {
+//     try {
+//         const page = parseInt(req.query.page) || 1;
+//         const limit = parseInt(req.query.limit) || 10;
+//         const offset = (page - 1) * limit;
+
+//         const result = await getData(limit, offset);
+//         const totalData = await countAllData();
+
+//         const orders = result.map((order) => {
+//             const order_state_name =
+//                 orderStateMap[order.order_state_code] || "Không rõ trạng thái";
+
+//             const payment_method_name =
+//                 paymentMethodMap[order.payment_method_code] ||
+//                 "Không rõ phương thức";
+
+//             return {
+//                 ...order,
+//                 order_state_name,
+//                 payment_method_name,
+//                 created_at_text: formatDateTime(order.created_at),
+//             };
+//         });
+
+//         res.status(200).json({
+//             orders,
+//             pagination: {
+//                 total: totalData,
+//                 page,
+//                 limit,
+//                 totalPages: Math.ceil(totalData / limit),
+//             },
+//         });
+//     } catch (error) {
+//         console.error("Error getting orders:", error);
+//         res.status(500).json({ error: "Internal Server Error" });
+//     }
+// };
+
 const getOrders = async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 10;
         const offset = (page - 1) * limit;
 
-        const result = await getData(limit, offset);
-        const totalData = await countAllData();
+        // Lấy filter từ query
+        const paymentMethod = req.query.payment_method;
+        const state = req.query.state;
+
+        // Tạo điều kiện lọc
+        const filters = {};
+        if (paymentMethod !== undefined && paymentMethod !== "") {
+            filters.payment_method_code = parseInt(paymentMethod);
+        }
+        if (state !== undefined && state !== "") {
+            filters.order_state_code = parseInt(state);
+        }
+
+        // Lấy dữ liệu có lọc
+        const result = await getData(limit, offset, filters);
+        const totalData = await countAllData(filters); // Cần hỗ trợ lọc
 
         const orders = result.map((order) => {
             const order_state_name =

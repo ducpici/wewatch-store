@@ -20,6 +20,7 @@ import Input from "../../components/form/input/InputField";
 import Button from "../../components/ui/button/Button";
 import Label from "../../components/form/Label";
 import Select from "../../components/form/Select";
+import Filters from "../../components/common/Filters";
 
 interface Order {
     order_id: bigint;
@@ -44,8 +45,34 @@ export default function Orders() {
         { id: 5, name: "Đã hủy" },
     ];
 
-    const { isOpen, openModal, closeModal } = useModal();
+    const filterOptions = [
+        {
+            label: "Hình thức thanh toán",
+            key: "payment_method",
+            options: [
+                { id: 0, label: "COD" },
+                { id: 1, label: "Chuyển khoản" },
+            ],
+        },
+        {
+            label: "Trạng thái",
+            key: "state",
+            options: [
+                { id: 0, label: "Chờ xác nhận" },
+                { id: 1, label: "Đã xác nhận" },
+                { id: 2, label: "Đang giao hàng" },
+                { id: 3, label: "Hoàn thành" },
+                { id: 4, label: "Trả hàng" },
+                { id: 5, label: "Đã hủy" },
+            ],
+        },
+    ];
 
+    const { isOpen, openModal, closeModal } = useModal();
+    const [filter, setFilter] = useState({
+        paymentMethod: "",
+        orderState: "",
+    });
     const [orders, setOrders] = useState<Order[]>([]);
     const [searchValue, setSearchValue] = useState("");
     const [loading, setLoading] = useState(false);
@@ -55,6 +82,9 @@ export default function Orders() {
     const [limitData, setLimitData] = useState(10);
     const [orderState, setOrderState] = useState("");
     const [orderId, setOrderId] = useState(BigInt(0));
+    const [filters, setFilters] = useState<{ [key: string]: string | number }>(
+        {}
+    );
 
     const breadcrumbItems = [
         { label: "Trang chủ", path: "/" },
@@ -89,42 +119,68 @@ export default function Orders() {
 
         closeModal();
     };
-    const fetchOrders = async (page: number, limit: number) => {
+    // const fetchOrders = async (page: number, limit: number) => {
+    //     setLoading(true);
+    //     try {
+    //         const res = await axios.get(`/orders?page=${page}&limit=${limit}`);
+    //         setOrders(res.data.orders);
+    //         console.log(res);
+    //         setLimitData(res.data.pagination.limit);
+    //         setTotalPage(res.data.pagination.totalPages);
+    //     } catch (err) {
+    //         console.error("Lỗi khi tải danh sách:", err);
+    //         toast.error("Lỗi khi tải danh ");
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // };
+
+    const fetchOrders = async (
+        page: number,
+        limit: number,
+        filters?: { [key: string]: string | number }
+    ) => {
         setLoading(true);
         try {
-            const res = await axios.get(`/orders?page=${page}&limit=${limit}`);
+            const params = new URLSearchParams();
+            params.append("page", page.toString());
+            params.append("limit", limit.toString());
+
+            if (filters) {
+                Object.entries(filters).forEach(([key, value]) => {
+                    if (value !== undefined && value !== null && value !== "") {
+                        params.append(key, value.toString());
+                    }
+                });
+            }
+
+            const res = await axios.get(`/orders?${params.toString()}`);
             setOrders(res.data.orders);
-            console.log(res);
             setLimitData(res.data.pagination.limit);
             setTotalPage(res.data.pagination.totalPages);
         } catch (err) {
             console.error("Lỗi khi tải danh sách:", err);
-            toast.error("Lỗi khi tải danh ");
+            toast.error("Lỗi khi tải danh sách đơn hàng");
         } finally {
             setLoading(false);
         }
     };
 
     useEffect(() => {
-        fetchOrders(page, limitData);
-    }, [page, limitData]);
-
-    // const handleDelete = async (id: number) => {
-    //     const confirmDelete = window.confirm("Bạn có chắc chắn muốn xóa?");
-    //     if (!confirmDelete) return;
-
-    //     try {
-    //         await axios.delete(`/orders/${id}`);
-    //         toast.success("Xóa thành công!");
-    //         fetchOrders(page, limitData); // Gọi lại danh sách sau khi xóa
-    //     } catch (error) {
-    //         console.error("Lỗi khi xóa:", error);
-    //         toast.error("Xóa thất bại!");
-    //     }
-    // };
+        fetchOrders(page, limitData, filters);
+    }, [page, limitData, filters]);
 
     const handlePageClick = (selectedItem: { selected: number }) => {
         fetchOrders(selectedItem.selected + 1, limitData);
+    };
+
+    const handleFilterChange = (newFilters: {
+        [key: string]: string | number;
+    }) => {
+        console.log("Filters changed:", newFilters);
+        setFilters(newFilters);
+        setPage(1);
+        fetchOrders(1, limitData, newFilters);
     };
 
     const handleSearch = async (value: string) => {
@@ -168,118 +224,135 @@ export default function Orders() {
                     {/* {loading ? (
                         <div>Đang tải danh sách nhân viên...</div>
                     ) : ( */}
-                    <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
+                    <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03] min-h-60">
+                        <div className="filters w-full flex m-2">
+                            <Filters
+                                filters={filterOptions}
+                                onFilterChange={handleFilterChange}
+                            />
+                        </div>
                         <div className="max-w-full overflow-x-auto">
-                            <Table>
-                                {/* Table Header */}
-                                <TableHeader className="text-left border-b border-gray-100 dark:border-white/[0.05]">
-                                    <TableRow>
-                                        <TableCell
-                                            isHeader
-                                            className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
-                                        >
-                                            #
-                                        </TableCell>
-                                        <TableCell
-                                            isHeader
-                                            className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
-                                        >
-                                            Mã đơn hàng
-                                        </TableCell>
-                                        <TableCell
-                                            isHeader
-                                            className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
-                                        >
-                                            Mã khách hàng
-                                        </TableCell>
-                                        <TableCell
-                                            isHeader
-                                            className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
-                                        >
-                                            Tên khách hàng
-                                        </TableCell>
-                                        <TableCell
-                                            isHeader
-                                            className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
-                                        >
-                                            Tổng tiền
-                                        </TableCell>
-                                        <TableCell
-                                            isHeader
-                                            className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
-                                        >
-                                            Phương thức thanh toán
-                                        </TableCell>
-                                        <TableCell
-                                            isHeader
-                                            className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
-                                        >
-                                            Ngày tạo
-                                        </TableCell>
+                            {loading ? (
+                                <div className="loading-spinner text-center py-8">
+                                    <p>Đang tải dữ liệu...</p>
+                                </div>
+                            ) : orders.length > 0 ? (
+                                <Table>
+                                    {/* Table Header */}
+                                    <TableHeader className="text-left border-b border-gray-100 dark:border-white/[0.05]">
+                                        <TableRow>
+                                            <TableCell
+                                                isHeader
+                                                className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
+                                            >
+                                                #
+                                            </TableCell>
+                                            <TableCell
+                                                isHeader
+                                                className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
+                                            >
+                                                Mã đơn hàng
+                                            </TableCell>
+                                            <TableCell
+                                                isHeader
+                                                className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
+                                            >
+                                                Mã khách hàng
+                                            </TableCell>
+                                            <TableCell
+                                                isHeader
+                                                className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
+                                            >
+                                                Tên khách hàng
+                                            </TableCell>
+                                            <TableCell
+                                                isHeader
+                                                className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
+                                            >
+                                                Tổng tiền
+                                            </TableCell>
+                                            <TableCell
+                                                isHeader
+                                                className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
+                                            >
+                                                Phương thức thanh toán
+                                            </TableCell>
+                                            <TableCell
+                                                isHeader
+                                                className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
+                                            >
+                                                Ngày tạo
+                                            </TableCell>
 
-                                        <TableCell
-                                            isHeader
-                                            className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
-                                        >
-                                            Trạng thái
-                                        </TableCell>
-                                        <TableCell
-                                            isHeader
-                                            className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
-                                        >
-                                            Thao tác
-                                        </TableCell>
-                                    </TableRow>
-                                </TableHeader>
-
-                                {/* Table Body */}
-                                <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
-                                    {orders.map((data, index) => (
-                                        <TableRow key={data.order_id}>
-                                            <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                {index + 1}
+                                            <TableCell
+                                                isHeader
+                                                className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
+                                            >
+                                                Trạng thái
                                             </TableCell>
-                                            <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                {data.order_id}
-                                            </TableCell>
-                                            <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                {data.user_id}
-                                            </TableCell>
-                                            <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                {data.user_name}
-                                            </TableCell>
-                                            <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                {data.total_price?.toLocaleString(
-                                                    "vi-VN"
-                                                )}
-                                            </TableCell>
-                                            <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                {data.payment_method_name}
-                                            </TableCell>
-                                            <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                {data.created_at_text}
-                                            </TableCell>
-                                            <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                {data.order_state_name}
-                                            </TableCell>
-                                            <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                <Actions
-                                                    onView={() => {
-                                                        navigate(
-                                                            `/orders/detail/${data.order_id}`
-                                                        );
-                                                    }}
-                                                    onEdit={() =>
-                                                        handlePressEdit(
-                                                            data.order_id
-                                                        )
-                                                    }
-                                                />
+                                            <TableCell
+                                                isHeader
+                                                className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
+                                            >
+                                                Thao tác
                                             </TableCell>
                                         </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
+                                    </TableHeader>
+
+                                    {/* Table Body */}
+
+                                    <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
+                                        {orders.map((data, index) => (
+                                            <TableRow key={data.order_id}>
+                                                <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                                    {index + 1}
+                                                </TableCell>
+                                                <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                                    {data.order_id}
+                                                </TableCell>
+                                                <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                                    {data.user_id}
+                                                </TableCell>
+                                                <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                                    {data.user_name}
+                                                </TableCell>
+                                                <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                                    {data.total_price?.toLocaleString(
+                                                        "vi-VN"
+                                                    )}
+                                                </TableCell>
+                                                <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                                    {data.payment_method_name}
+                                                </TableCell>
+                                                <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                                    {data.created_at_text}
+                                                </TableCell>
+                                                <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                                    {data.order_state_name}
+                                                </TableCell>
+                                                <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                                    <Actions
+                                                        onView={() => {
+                                                            navigate(
+                                                                `/orders/detail/${data.order_id}`
+                                                            );
+                                                        }}
+                                                        onEdit={() =>
+                                                            handlePressEdit(
+                                                                data.order_id
+                                                            )
+                                                        }
+                                                    />
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            ) : (
+                                <div className="no-products text-center py-8">
+                                    <p>Không có đơn hàng nào được tìm thấy.</p>
+                                </div>
+                            )}
                         </div>
                         <div className="flex justify-between m-5">
                             <div></div>
