@@ -41,7 +41,8 @@ const getData = async (limit, offset, filters = {}) => {
             o.state AS order_state_code,
             o.payment_method AS payment_method_code,
             o.created_at,
-            o.updated_at
+            o.updated_at,
+            o.order_code
         FROM orders o
         JOIN users u ON o.user_id = u.id
         WHERE 1=1
@@ -108,7 +109,8 @@ const findById = async (id) => {
                 o.state,
                 o.payment_method,
                 o.created_at,
-                o.updated_at
+                o.updated_at,
+                o.order_code
             FROM orders o
             JOIN users u ON o.user_id = u.id
             where o.id = ? 
@@ -166,7 +168,8 @@ const getOrderByUser = async (userId, limit, offset) => {
          o.state AS order_state_code,
          o.payment_method AS payment_method_code,
          o.created_at,
-         o.updated_at
+         o.updated_at,
+         o.order_code
        FROM orders o WHERE o.user_id = ? LIMIT ? OFFSET ?`;
     const values = [userId, limit, offset];
     const [result] = await connection.execute(sql, values);
@@ -236,7 +239,7 @@ const getIdUserByOrderId = async (orderId) => {
 
 const createOrder = async (data) => {
     const sql = `
-        INSERT INTO orders (user_id, total_price, state, payment_method, created_at) VALUES (?,?,?,?,?)
+        INSERT INTO orders (user_id, total_price, state, payment_method, created_at, order_code) VALUES (?,?,?,?,?,?)
     `;
     const values = [
         data.userId,
@@ -244,6 +247,7 @@ const createOrder = async (data) => {
         data.state,
         data.payment,
         data.createdAt,
+        data.order_code,
     ];
     const [result] = await connection.execute(sql, values);
     return result;
@@ -268,10 +272,11 @@ const searchData = async (keyword) => {
          o.state AS order_state_code,
          o.payment_method AS payment_method_code,
          o.created_at,
-         o.updated_at
+         o.updated_at,
+         o.order_code
        FROM orders o
-       JOIN users u ON o.user_id = u.id WHERE o.id LIKE ? OR u.name LIKE ?`;
-    const values = [`%${keyword}%`, `%${keyword}%`];
+       JOIN users u ON o.user_id = u.id WHERE o.id LIKE ? OR u.name LIKE ? OR o.order_code LIKE ?`;
+    const values = [`%${keyword}%`, `%${keyword}%`, `%${keyword}%`];
     const [result] = await connection.execute(sql, values);
     return result;
 };

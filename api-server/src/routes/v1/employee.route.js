@@ -9,13 +9,14 @@ import {
     deleleEmployee,
     checkDuplicate,
     searchEmployees,
+    changePassword,
 } from "../../api/v1/employee/employee.controller";
 
 routes.get("/employees", getEmployees);
 routes.get("/employees/check", checkDuplicate);
 routes.get("/employees/search", searchEmployees);
 routes.get("/employees/:id", findEmployeeById);
-
+routes.put("/employees/change-password", changePassword);
 routes.post("/employees", postAddEmployee);
 routes.put("/employees/:id", putUpdateEmployee);
 routes.delete("/employees/:id", deleleEmployee);

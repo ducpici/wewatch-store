@@ -24,6 +24,7 @@ import Filters from "../../components/common/Filters";
 
 interface Order {
     order_id: bigint;
+    order_code: string;
     user_id: bigint;
     user_name: string;
     total_price: number | null;
@@ -283,7 +284,12 @@ export default function Orders() {
                                             >
                                                 Ngày tạo
                                             </TableCell>
-
+                                            <TableCell
+                                                isHeader
+                                                className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
+                                            >
+                                                Code
+                                            </TableCell>
                                             <TableCell
                                                 isHeader
                                                 className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
@@ -326,6 +332,9 @@ export default function Orders() {
                                                 </TableCell>
                                                 <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
                                                     {data.created_at_text}
+                                                </TableCell>
+                                                <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                                    {data.order_code}
                                                 </TableCell>
                                                 <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
                                                     {data.order_state_name}

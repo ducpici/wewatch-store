@@ -20,10 +20,19 @@ routes.post("/login", async (req, res) => {
     );
 
     if (!rows || rows.length === 0) {
-        return res.status(401).json({ message: "Tên đăng nhập không tồn tại" });
+        return res.status(401).json({
+            message: "Tên đăng nhập không tồn tại",
+        });
     }
 
     const account = rows[0];
+    console.log(account);
+
+    if (account.state?.[0] == 0) {
+        return res.status(403).json({
+            message: "Tài khoản hiện đang bị cấm",
+        });
+    }
 
     try {
         const match = await bcrypt.compare(password, account.password);
