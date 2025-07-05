@@ -124,11 +124,15 @@ const Filters: React.FC<ProductFiltersProps> = ({
                         <button
                             onClick={() => toggleDropdown(key)}
                             className={`border px-3 py-1 rounded text-sm hover:bg-gray-50 transition-colors flex items-center gap-1 ${
-                                selectedId ? "bg-blue-50 border-blue-300" : ""
+                                typeof selectedId !== "undefined"
+                                    ? "bg-blue-50 border-blue-300"
+                                    : ""
                             }`}
                         >
-                            {label} {selectedLabel ? `: ${selectedLabel}` : ""}
-                            {selectedId && (
+                            {label}
+                            {typeof selectedLabel !== "undefined" &&
+                                `: ${selectedLabel}`}
+                            {typeof selectedId !== "undefined" && (
                                 <button
                                     onClick={(e) => {
                                         e.stopPropagation();

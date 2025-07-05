@@ -225,7 +225,7 @@ export default function Orders() {
                     {/* {loading ? (
                         <div>Đang tải danh sách nhân viên...</div>
                     ) : ( */}
-                    <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03] min-h-60">
+                    <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03] min-h-70">
                         <div className="filters w-full flex m-2">
                             <Filters
                                 filters={filterOptions}
