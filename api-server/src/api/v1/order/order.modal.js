@@ -90,12 +90,16 @@ const countAllData = async (filters = {}) => {
     return result[0].total;
 };
 
-const countOrderByUser = async (userId) => {
-    const sql = `
-        SELECT COUNT(*) AS total FROM orders WHERE user_id = ?;
+const countOrderByUser = async (userId, state) => {
+    let sql = `
+        SELECT COUNT(*) AS total FROM orders WHERE user_id = ?
     `;
-    const value = [userId];
-    const [result] = await connection.execute(sql, value);
+    const values = [userId];
+    if (state) {
+        sql += ` AND state = ?`;
+        values.push(state);
+    }
+    const [result] = await connection.execute(sql, values);
     return result[0].total;
 };
 
@@ -161,17 +165,29 @@ const getOrder = async (id) => {
     return result;
 };
 
-const getOrderByUser = async (userId, limit, offset) => {
-    const sql = `SELECT          o.id AS order_id,
+const getOrderByUser = async (userId, limit, offset, state) => {
+    let sql = `SELECT          o.id,
          o.user_id,
          o.total_price,
-         o.state AS order_state_code,
-         o.payment_method AS payment_method_code,
+         o.state AS order_state,
+         o.payment_method,
          o.created_at,
          o.updated_at,
-         o.order_code
-       FROM orders o WHERE o.user_id = ? LIMIT ? OFFSET ?`;
-    const values = [userId, limit, offset];
+         o.order_code,
+         p.*,
+         p.slug AS product_slug,
+         b.*,
+         c.*
+       FROM orders o JOIN order_details od ON o.id = od.order_id        JOIN products p ON od.product_id = p.id_product  
+       JOIN brands b ON b.id_brand = p.brand_id
+       JOIN categories c ON c.id_category = p.category_id WHERE o.user_id = ?`;
+    const values = [userId];
+    if (state) {
+        sql += ` AND o.state = ?`;
+        values.push(state);
+    }
+    sql += ` ORDER BY o.created_at DESC LIMIT ? OFFSET ?`;
+    values.push(limit, offset);
     const [result] = await connection.execute(sql, values);
     return result;
 };
@@ -202,6 +218,7 @@ const getOrderItems = async (id) => {
          p.category_id,
          p.dial_diameter,
          p.crystal_material,
+         p.movement_type,
          p.slug,
          b.id_brand,
          b.brand_name,

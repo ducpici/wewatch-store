@@ -212,6 +212,7 @@ const getOrderDetail = async (req, res) => {
             return {
                 id: item.product_id,
                 name: rawName,
+                image: item.image,
                 modal_num: item.modal_num,
                 quantity: item.quantity,
                 price: item.price,
@@ -381,34 +382,91 @@ const postAddOrder = async (req, res) => {
         });
     }
 };
+// const getOrderByUserId = async (req, res) => {
+//     try {
+//         const userId = req.user.id;
+
+//         const page = parseInt(req.query.page) || 1;
+//         const limit = parseInt(req.query.limit) || 10;
+//         const offset = (page - 1) * limit;
+
+//         const result = await getOrderByUser(userId, limit, offset);
+//         const totalData = await countOrderByUser(userId);
+
+//         const orders = result.map((order) => {
+//             const order_state_name =
+//                 orderStateMap[order.order_state_code] || "Không rõ trạng thái";
+
+//             const payment_method_name =
+//                 paymentMethodMap[order.payment_method_code] ||
+//                 "Không rõ phương thức";
+
+//             return {
+//                 ...order,
+//                 order_state_name,
+//                 payment_method_name,
+//                 created_at_text: formatDateTime(order.created_at),
+//             };
+//         });
+
+//         res.status(200).json({
+//             orders,
+//             pagination: {
+//                 total: totalData,
+//                 page,
+//                 limit,
+//                 totalPages: Math.ceil(totalData / limit),
+//             },
+//         });
+//     } catch (error) {
+//         console.error("Error getting data:", error);
+//         res.status(500).json({ error: "Internal Server Error" });
+//     }
+// };
+
 const getOrderByUserId = async (req, res) => {
     try {
         const userId = req.user.id;
-
+        const state = req.query.state;
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 10;
         const offset = (page - 1) * limit;
+        const result = await getOrderByUser(userId, limit, offset, state);
+        const totalData = await countOrderByUser(userId, state);
 
-        const result = await getOrderByUser(userId, limit, offset);
-        const totalData = await countOrderByUser(userId);
+        const orders = [];
+        const seenOrderIds = new Set(); // ✅ tạo Set để theo dõi ID đã lặp
 
-        const orders = result.map((order) => {
-            const order_state_name =
-                orderStateMap[order.order_state_code] || "Không rõ trạng thái";
-
-            const payment_method_name =
-                paymentMethodMap[order.payment_method_code] ||
-                "Không rõ phương thức";
-
-            return {
-                ...order,
-                order_state_name,
-                payment_method_name,
-                created_at_text: formatDateTime(order.created_at),
-            };
-        });
-
-        res.status(200).json({
+        for (const order of result) {
+            if (seenOrderIds.has(order.id)) {
+                continue; // ✅ nếu đã tồn tại thì bỏ qua
+            }
+            seenOrderIds.add(order.id); // ✅ đánh dấu là đã gặp
+            const items = await getOrderItems(order.id);
+            orders.push({
+                id: order.id,
+                items: items.map((item) => {
+                    const rawName = `${item.brand_name} - ${item.modal_num} - ${item.crystal_material} - ${item.movement_type} - Mặt số ${item.dial_diameter} mm`;
+                    return {
+                        id: item.product_id,
+                        name: rawName,
+                        quantity: item.quantity,
+                        price: item.price,
+                        image: item.image,
+                    };
+                }),
+                total: order.total_price,
+                order_state: {
+                    code: order.order_state,
+                    name: orderStateMap[order.order_state] || "Không xác định",
+                },
+                payment_method: {
+                    code: order.payment_method,
+                    name: paymentMethodMap[order.payment_method],
+                },
+            });
+        }
+        res.json({
             orders,
             pagination: {
                 total: totalData,
