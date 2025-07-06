@@ -1,0 +1,49 @@
+@import "tailwindcss";
+
+/* Base navbar styles */
+.nav-item {
+    @apply mx-2 flex items-center uppercase relative;
+}
+
+.nav-link {
+    @apply tracking-tighter font-semibold block px-4 py-3 text-gray-700 hover:text-gray-900 transition-colors;
+}
+
+/* Dropdown Menu - Ẩn mặc định */
+.dropdown-menu {
+    @apply absolute top-full left-0 mt-2 w-48 bg-white shadow-lg rounded-lg z-[999];
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+}
+
+/* Hiện dropdown khi hover - Dùng :hover thông thường */
+.nav-item:hover .dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+/* Dropdown items */
+.dropdown-item {
+    @apply block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-colors;
+}
+
+/* Icon arrow */
+.nav-item svg {
+    @apply transition-transform duration-300;
+}
+
+.nav-item:hover svg {
+    @apply rotate-180;
+}
+
+/* List styles */
+.nav-list {
+    @apply relative z-10;
+}
+
+.dropdown-menu ul {
+    @apply py-2;
+}
