@@ -120,11 +120,9 @@ const ProductReviews: React.FC<ProductReviewsProps> = ({
     const totalReviews = reviewData?.totalReviews || 41354;
     const { isOpen, openModal, closeModal } = useModal();
     const handleOpenModalReview = () => {
-        if (!user?.email) {
-            toast.warning(
-                "Vui lòng cập nhật thông tin cá nhân trước khi đánh giá"
-            );
-            navigate("/thong-tin-ca-nhan");
+        if (!user) {
+            toast.warning("Vui lòng đăng nhập trước khi đánh giá");
+            // navigate("/signin");
             return;
         }
         openModal();

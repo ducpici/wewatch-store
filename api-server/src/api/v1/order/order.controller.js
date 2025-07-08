@@ -14,6 +14,7 @@ import {
     getOrderByUser,
     countOrderByUser,
     searchData,
+    getAddressByOrderId,
 } from "./order.modal";
 import { formatDate, formatDateTime } from "../../../utils/formatDate";
 import { connection } from "../../../config/database";
@@ -160,11 +161,24 @@ const getOrderById = async (req, res) => {
 const putUpdateOrder = async (req, res) => {
     try {
         const { state, id } = req.body;
-        console.log(state, id);
+
+        // Nếu là trả hàng, cần cộng lại số lượng sản phẩm
+        if (state === 4) {
+            const [details] = await connection.query(
+                `SELECT product_id, quantity FROM order_details WHERE order_id = ?`,
+                [id]
+            );
+
+            // Cộng lại từng sản phẩm trong order
+            for (const { product_id, quantity } of details) {
+                await connection.query(
+                    `UPDATE products SET quantity = quantity + ? WHERE id_product = ?`,
+                    [quantity, product_id]
+                );
+            }
+        }
 
         const result = await updateData(state, id);
-
-        console.log(result);
 
         if (result.affectedRows === 0) {
             return res
@@ -186,7 +200,8 @@ const getOrderDetail = async (req, res) => {
         const order = await getOrder(orderId);
         const items = await getOrderItems(orderId);
         const idUser = await getIdUserByOrderId(orderId);
-        const address = await getAddress(idUser);
+        // const address = await getAddress(idUser);
+        const address = await getAddressByOrderId(orderId);
 
         const user = await getUser(idUser);
 
@@ -244,7 +259,7 @@ const getOrderDetail = async (req, res) => {
                 text: orderStateMap[stateCode] || "Không xác định",
             },
         };
-        console.log(orderDetail);
+
         res.status(200).json(orderDetail);
     } catch (error) {
         console.error("Error getting data:", error);
@@ -347,6 +362,21 @@ const postAddOrder = async (req, res) => {
                 quantity: item.quantity,
             };
             await createOrderDetail(orderDetailData);
+
+            //Thêm vào bảng ship
+            const address = await getAddress(userId);
+            await conn.query(
+                `INSERT INTO ship (order_id, full_name, phone_num, city, district, ward, detail) VALUES (?,?,?,?,?,?,?)`,
+                [
+                    orderId,
+                    address.full_name,
+                    address.phone_num,
+                    address.city,
+                    address.district,
+                    address.ward,
+                    address.detail,
+                ]
+            );
 
             // Trừ số lượng sản phẩm
             await conn.query(

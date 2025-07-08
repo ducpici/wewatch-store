@@ -40,6 +40,7 @@ const getProducts = async (req, res) => {
         const parsedProducts = result.map((data) => ({
             id: data.id_product,
             modal_num: data.modal_num,
+            image: data.image,
             brand: {
                 id: data.id_brand,
                 name: data.brand_name,
@@ -172,7 +173,7 @@ const getProductBySlug = async (req, res) => {
             name: item.name_function,
         }));
         const parsedProducts = result.map((data) => {
-            const rawName = `${data.brand_name} - ${data.modal_num} - ${data.crystal_material} - ${data.movement_type} - Mặt số ${data.dial_diameter} mm`;
+            const rawName = `${data.brand_name} - ${data.modal_num} - ${data.crystal_material} - ${data.movement_type} - Mặt số ${data.dial_diameter} mm, Chống nước ${data.water_resistance} ATM`;
             return {
                 id: data.id_product,
                 modal_num: data.modal_num,

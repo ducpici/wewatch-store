@@ -69,7 +69,7 @@ export default function SameProduct({ title, slug }: SameProduct) {
                             <Link to={`/san-pham/${product.slug}`}>
                                 <div className="box-image">
                                     <img
-                                        className="w-60"
+                                        className="w-60 h-60"
                                         src={`https://admin.wewatch.com:4090${product.image}`}
                                         alt="ảnh"
                                     />

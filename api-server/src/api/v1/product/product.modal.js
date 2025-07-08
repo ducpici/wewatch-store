@@ -15,6 +15,7 @@ const getDataPaginated = async (limit, offset) => {
     p.quantity,
     p.price,
     p.state,
+    p.image,
     b.id_brand,
     b.brand_name,
     c.id_category,

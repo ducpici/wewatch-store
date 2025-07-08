@@ -66,10 +66,7 @@ export default function ProductDetail() {
 
     const handleAddToCart = async (id: number) => {
         if (!user) {
-            toast.warning("Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng");
-            setTimeout(() => {
-                navigate("/signin", { state: { from: location.pathname } });
-            }, 1500);
+            toast.warning("Vui lòng đăng nhập");
             return;
         }
         if (product?.quantity === 0) {

@@ -15,6 +15,7 @@ const getUserCart = async (userId) => {
         p.water_resistance,
         p.price,
         p.image,
+        p.slug,
         b.id_brand,
         b.brand_name,
         cat.id_category,

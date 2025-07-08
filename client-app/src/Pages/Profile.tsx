@@ -175,22 +175,22 @@ export default function Profile() {
     return (
         <>
             <PageBreadcrumb items={breadcrumbItems} />
-            <div className="flex text-sm font-medium mb-4">
+            <div className="flex">
                 <button
-                    className={`pb-2 mr-6 border-b-2 cursor-pointer ${
+                    className={`cursor-pointer px-6 py-4 text-sm font-medium border-b-2 transition-colors ${
                         activeTab === "info"
-                            ? "border-black text-black"
-                            : "text-gray-500 border-transparent"
+                            ? "border-green-500 text-green-600"
+                            : "border-transparent text-gray-500 hover:text-gray-700"
                     }`}
                     onClick={() => setActiveTab("info")}
                 >
                     Thông tin cá nhân
                 </button>
                 <button
-                    className={`pb-2 mr-6 border-b-2 cursor-pointer ${
+                    className={`cursor-pointer px-6 py-4 text-sm font-medium border-b-2 transition-colors ${
                         activeTab === "account"
-                            ? "border-black text-black"
-                            : "text-gray-500 border-transparent"
+                            ? "border-green-500 text-green-600"
+                            : "border-transparent text-gray-500 hover:text-gray-700"
                     }`}
                     onClick={() => setActiveTab("account")}
                 >
@@ -200,14 +200,17 @@ export default function Profile() {
             {activeTab === "account" && (
                 <div>
                     <ComponentCard title="Thông tin tài khoản">
-                        <div>
+                        <div className="flex">
                             <Label htmlFor="username">Username:</Label>
-                            <Input
+                            {/* <Input
                                 disabled
                                 type="text"
                                 id="email"
                                 value={userData.username}
-                            />
+                            /> */}
+                            <strong className="mx-4">
+                                {userData.username}
+                            </strong>
                         </div>
                         <div>
                             <Label htmlFor="pasword">Mật khẩu cũ:</Label>

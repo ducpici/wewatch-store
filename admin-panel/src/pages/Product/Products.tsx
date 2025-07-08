@@ -19,6 +19,7 @@ interface Product {
     id: number;
     modal_num: string;
     product_name: string;
+    image: string;
     brand: {
         id: number;
         name: string;
@@ -163,6 +164,12 @@ export default function Products() {
                                             isHeader
                                             className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
                                         >
+                                            Hình ảnh
+                                        </TableCell>
+                                        <TableCell
+                                            isHeader
+                                            className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
+                                        >
                                             Số hiệu sản phẩm
                                         </TableCell>
                                         <TableCell
@@ -189,7 +196,7 @@ export default function Products() {
                                         >
                                             Loại động cơ
                                         </TableCell>
-                                        <TableCell
+                                        {/* <TableCell
                                             isHeader
                                             className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
                                         >
@@ -200,7 +207,7 @@ export default function Products() {
                                             className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
                                         >
                                             Độ dày thân
-                                        </TableCell>
+                                        </TableCell> */}
                                         <TableCell
                                             isHeader
                                             className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
@@ -250,6 +257,13 @@ export default function Products() {
                                             <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
                                                 {data.id}
                                             </TableCell>
+                                            <TableCell className="px-2 py-2 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                                <img
+                                                    className="w-20 h-20"
+                                                    src={`https://admin.wewatch.com:4090${data.image}`}
+                                                    alt=""
+                                                />
+                                            </TableCell>
                                             <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
                                                 {data.modal_num}
                                             </TableCell>
@@ -265,12 +279,12 @@ export default function Products() {
                                             <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
                                                 {data.movement_type}
                                             </TableCell>
-                                            <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                            {/* <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
                                                 {data.dial_diameter}
                                             </TableCell>
                                             <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
                                                 {data.case_thickness}
-                                            </TableCell>
+                                            </TableCell> */}
                                             <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
                                                 {data.strap_material}
                                             </TableCell>

@@ -96,8 +96,8 @@ const AddressList = () => {
                             </button>
                         </div>
                         <p className="text-gray-700 mt-1">
-                            {addr.detail} {addr.ward}, {addr.district},{" "}
-                            {addr.city}
+                            {addr.detail && `${addr.detail}, `}
+                            {addr.ward}, {addr.district}, {addr.city}
                         </p>
                         {addr.is_default === 1 && (
                             <span className="inline-block mt-2 px-2 py-1 text-xs bg-gray-200 rounded">

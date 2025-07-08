@@ -32,6 +32,7 @@ import Label from "../../components/form/Label";
 import Select from "../../components/form/Select";
 import ComponentCard from "../../components/common/ComponentCard";
 import Radio from "../../components/form/input/Radio";
+// import {formatDateToVietnamese} from "../../libs/formatDate.js";
 
 export default function OrderDetail() {
     type Product = {
@@ -140,19 +141,36 @@ export default function OrderDetail() {
         navigate(`/san-pham/${slug}`);
     };
 
+    function formatDateToVietnamese(input) {
+        const date = new Date(input);
+        // Chuyển sang múi giờ Việt Nam (UTC+7)
+        const vnDate = new Date(date.getTime() + 7 * 60 * 60 * 1000);
+
+        const day = vnDate.getDate().toString().padStart(2, "0");
+        const month = vnDate.getMonth() + 1;
+        const year = vnDate.getFullYear();
+
+        let hours = vnDate.getHours();
+        const minutes = vnDate.getMinutes().toString().padStart(2, "0");
+        const ampm = hours >= 12 ? "PM" : "AM";
+        hours = hours % 12 || 12;
+
+        return `${day} tháng ${month} năm ${year}, ${hours}:${minutes} ${ampm}`;
+    }
+
     const renderStateMessage = (stateCode: number) => {
         switch (stateCode) {
             case 0:
                 return (
                     <>
-                        <div className="w-8 h-8 bg-gray-400 rounded-full flex items-center justify-center">
-                            <AlertCircle className="w-5 h-5 text-white" />
+                        <div className="w-8 h-8 rounded-full flex items-center justify-center">
+                            <AlertCircle className="w-5 h-5 text-gray-600" />
                         </div>
                         <div>
-                            <h3 className="font-semibold text-gray-800">
+                            <h3 className="font-semibold text-gray-600">
                                 Đơn hàng của bạn chưa được xác nhận!
                             </h3>
-                            <p className="text-sm text-gray-600">
+                            <p className="text-sm text-gray-500">
                                 Vui lòng đợi nhà bán xác nhận đơn hàng của bạn.
                             </p>
                         </div>
@@ -243,6 +261,18 @@ export default function OrderDetail() {
         }
     };
 
+    const handleCancelOrder = async (orderId: any) => {
+        const res = await axios.put(`/orders/${orderId}`, {
+            state: 5,
+            id: orderId,
+        });
+        console.log(res);
+        if (res.data.status == true) {
+            toast.success("Hủy thành công!");
+            navigate("/don-hang");
+        }
+    };
+
     useEffect(() => {
         fetchOrderDetailById();
     }, [id]);
@@ -260,9 +290,18 @@ export default function OrderDetail() {
                                 dataOrderDetail.order_state.code
                             )}
                     </div>
-                    <button className="bg-red-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-red-600 transition-colors">
-                        Hủy đơn
-                    </button>
+                    {dataOrderDetail?.order_state.code == 0 ? (
+                        <button
+                            className="bg-red-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-red-600 transition-colors cursor-pointer"
+                            onClick={() =>
+                                handleCancelOrder(dataOrderDetail?.id)
+                            }
+                        >
+                            Hủy đơn
+                        </button>
+                    ) : (
+                        <></>
+                    )}
                 </div>
 
                 {/* Order Info */}
@@ -286,7 +325,9 @@ export default function OrderDetail() {
                                     Thời gian đặt hàng
                                 </p>
                                 <p className="font-semibold text-gray-800">
-                                    {dataOrderDetail?.created_at}
+                                    {formatDateToVietnamese(
+                                        dataOrderDetail?.created_at
+                                    )}
                                 </p>
                             </div>
                         </div>
@@ -299,20 +340,6 @@ export default function OrderDetail() {
                             Thông tin nhận hàng
                         </h4>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <p className="text-sm text-gray-600 mb-1">
-                                    Địa chỉ:
-                                </p>
-                                <p className="text-gray-800 font-semibold">
-                                    {dataOrderDetail?.shipping_address?.detail}{" "}
-                                    {dataOrderDetail?.shipping_address?.ward},{" "}
-                                    {
-                                        dataOrderDetail?.shipping_address
-                                            ?.district
-                                    }
-                                    , {dataOrderDetail?.shipping_address?.city}
-                                </p>
-                            </div>
                             <div className="space-y-3">
                                 <div>
                                     <p className="text-sm text-gray-600">
@@ -333,6 +360,30 @@ export default function OrderDetail() {
                                         {
                                             dataOrderDetail?.shipping_address
                                                 .phone_num
+                                        }
+                                    </p>
+                                </div>
+                                <div>
+                                    <p className="text-sm text-gray-600 mb-1">
+                                        Địa chỉ:
+                                    </p>
+                                    <p className="text-gray-800 font-semibold">
+                                        {dataOrderDetail?.shipping_address
+                                            ?.detail &&
+                                            `${dataOrderDetail?.shipping_address?.detail},`}{" "}
+                                        {
+                                            dataOrderDetail?.shipping_address
+                                                ?.ward
+                                        }
+                                        ,{" "}
+                                        {
+                                            dataOrderDetail?.shipping_address
+                                                ?.district
+                                        }
+                                        ,{" "}
+                                        {
+                                            dataOrderDetail?.shipping_address
+                                                ?.city
                                         }
                                     </p>
                                 </div>
@@ -368,7 +419,10 @@ export default function OrderDetail() {
                     <div className="border-l border-r border-gray-200">
                         {/* Product  */}
                         {dataOrderDetail?.items.map((item) => (
-                            <div className="grid grid-cols-12 gap-4 p-4 border-b border-gray-200 items-center">
+                            <div
+                                key={item.id}
+                                className="grid grid-cols-12 gap-4 p-4 border-b border-gray-200 items-center"
+                            >
                                 <div className="col-span-6 flex items-center space-x-3">
                                     <img
                                         src={`https://admin.wewatch.com:4090${item.image}`}
@@ -391,7 +445,7 @@ export default function OrderDetail() {
                                 </div>
                                 <div className="col-span-2 text-center">
                                     <span className="font-medium">
-                                        {item.price.toLocaleString("vi-VN")}
+                                        {item.price.toLocaleString("vi-VN")}₫
                                     </span>
                                 </div>
                                 <div className="col-span-2 text-center">
@@ -399,6 +453,7 @@ export default function OrderDetail() {
                                         {(
                                             item.quantity * item.price
                                         ).toLocaleString("vi-VN")}
+                                        ₫
                                     </span>
                                 </div>
                             </div>
@@ -433,6 +488,7 @@ export default function OrderDetail() {
                                     {dataOrderDetail?.total_price.toLocaleString(
                                         "vi-VN"
                                     )}
+                                    ₫
                                 </span>
                             </div>
                             <p className="text-sm text-gray-500">

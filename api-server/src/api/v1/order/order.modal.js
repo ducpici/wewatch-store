@@ -208,6 +208,22 @@ const getAddress = async (id) => {
     return result[0];
 };
 
+const getAddressByOrderId = async (id) => {
+    const sql = `SELECT
+         id AS address_id,
+         full_name,
+         phone_num,
+         city,
+         district,
+         ward,
+         detail
+       FROM ship
+       WHERE order_id = ?`;
+    const values = [id];
+    const [result] = await connection.execute(sql, values);
+    return result[0];
+};
+
 const getOrderItems = async (id) => {
     const sql = `SELECT
          od.id AS order_detail_id,
@@ -306,6 +322,7 @@ module.exports = {
     getDataOrderDetail,
     getOrderItems,
     getAddress,
+    getAddressByOrderId,
     getUser,
     getIdUserByOrderId,
     createOrder,

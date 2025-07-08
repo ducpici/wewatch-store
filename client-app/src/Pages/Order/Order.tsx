@@ -256,6 +256,7 @@ export default function Order() {
                                                     {item.price.toLocaleString(
                                                         "vi-VN"
                                                     )}
+                                                    ₫
                                                 </span>
                                             </div>
                                         </div>
@@ -263,7 +264,7 @@ export default function Order() {
                                 </div>
 
                                 {/* Order Total */}
-                                <div className="flex items-center justify-between mt-6 pt-4 border-t border-gray-200">
+                                <div className="flex items-center justify-end mt-6 pt-4 border-t border-gray-200">
                                     <div className="flex items-center space-x-2">
                                         <span className="text-gray-700">
                                             Tổng tiền:
@@ -272,12 +273,9 @@ export default function Order() {
                                             {order.total.toLocaleString(
                                                 "vi-VN"
                                             )}
+                                            ₫
                                         </span>
-                                        {/* {order.hasGift && (
-                                            <span className="px-3 py-1 bg-yellow-500 text-white text-xs font-medium rounded">
-                                                🎁 CHƯA TRẢ
-                                            </span>
-                                        )} */}
+                                        <s></s>
                                     </div>
                                 </div>
                             </div>

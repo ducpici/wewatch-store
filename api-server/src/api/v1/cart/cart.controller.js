@@ -23,6 +23,7 @@ const getCart = async (req, res) => {
                 quantity: data.quantity,
                 price: data.price,
                 image: data.image,
+                slug: data.slug,
             };
         });
 
@@ -119,6 +120,13 @@ const applyVoucher = async (req, res) => {
 
         if (nowDate > endOnlyDate) {
             return res.status(400).json({ message: "Mã giảm giá đã hết hạn" });
+        }
+
+        // ✅ Kiểm tra lượt sử dụng
+        if (voucher.used_count >= voucher.quantity) {
+            return res
+                .status(400)
+                .json({ message: "Mã giảm giá đã hết lượt sử dụng" });
         }
 
         // Tính giảm giá

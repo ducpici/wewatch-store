@@ -115,7 +115,8 @@ export default function Orders() {
         console.log(res);
         if (res.data.status) {
             toast.success("Cập nhật thành công");
-            fetchOrders(page, limitData);
+            fetchOrders(page, limitData, filters);
+            // fetchOrders(page, limitData);
         }
 
         closeModal();

@@ -1,5 +1,6 @@
 import React from "react";
 import "/public/styles/footer.css";
+import { Link } from "react-router";
 class Footer extends React.Component {
     render() {
         return (
@@ -57,19 +58,16 @@ class Footer extends React.Component {
                     </ul>
                 </div>
                 <div className="footer-block">
-                    <h3 className="title-footer">Thương hiệu</h3>
+                    <h3 className="title-footer">Thương hiệu nổi bật</h3>
                     <ul className="nav-menu">
                         <li>
-                            <a href="">Casio</a>
+                            <Link to="/thuong-hieu/casio">Casio</Link>
                         </li>
                         <li>
-                            <a href="">Seiko</a>
+                            <Link to="/thuong-hieu/seiko">Seiko</Link>
                         </li>
                         <li>
-                            <a href="">Citizen</a>
-                        </li>
-                        <li>
-                            <a href="">Orient</a>
+                            <Link to="/thuong-hieu/citizen">Citizen</Link>
                         </li>
                     </ul>
                 </div>
@@ -77,13 +75,15 @@ class Footer extends React.Component {
                     <h3 className="title-footer">Danh mục sản phẩm</h3>
                     <ul className="nav-menu">
                         <li>
-                            <a href="">Đồng hồ Nam</a>
+                            <Link to="/danh-muc/dong-ho-nam">Đồng hồ Nam</Link>
                         </li>
                         <li>
-                            <a href="">Đồng hồ Nữ</a>
+                            <Link to="/danh-muc/dong-ho-nu">Đồng hồ Nam</Link>
                         </li>
                         <li>
-                            <a href="">Đồng hồ Cặp đôi</a>
+                            <Link to="/danh-muc/dong-ho-cap-doi">
+                                Đồng hồ Cặp đôi
+                            </Link>
                         </li>
                     </ul>
                 </div>

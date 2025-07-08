@@ -1,38 +1,58 @@
 import Chart from "react-apexcharts";
 import { ApexOptions } from "apexcharts";
-import { Dropdown } from "../ui/dropdown/Dropdown";
-import { DropdownItem } from "../ui/dropdown/DropdownItem";
-import { MoreDotIcon } from "../../icons";
 import { useState, useEffect } from "react";
 import axios from "../../lib/axiosConfig";
+
 type SeriesType = {
     name: string;
-    data: number[]; // hoặc { x: string | number; y: number }[]
+    data: number[];
 }[];
 
 export default function MonthlySalesChart() {
-    const [series, setSeries] = useState<SeriesType>([]);
+    const [years, setYears] = useState<number[]>([]);
+    const [selectedYear, setSelectedYear] = useState<number>(
+        new Date().getFullYear()
+    );
+    const [series, setSeries] = useState<SeriesType>([
+        { name: "Số đơn", data: Array(12).fill(0) },
+    ]);
+
+    // Lấy danh sách năm từ backend
     useEffect(() => {
         axios
-            .get("/reports/monthly-sales")
+            .get("/reports/order-years")
+            .then((res) => {
+                setYears(res.data.data);
+                if (!res.data.data.includes(selectedYear)) {
+                    setSelectedYear(res.data.data[0]); // fallback nếu năm hiện tại không có
+                }
+            })
+            .catch((err) => {
+                console.error("Lỗi khi lấy danh sách năm:", err);
+            });
+    }, []);
+
+    // Lấy dữ liệu thống kê theo năm
+    useEffect(() => {
+        axios
+            .get(`/reports/monthly-sales?year=${selectedYear}`)
             .then((res) => {
                 const newData = res.data.data;
-                console.log(res.data);
                 setSeries([{ name: "Số đơn", data: newData }]);
             })
             .catch((err) => {
                 console.error("Lỗi khi lấy dữ liệu biểu đồ:", err);
+                setSeries([{ name: "Số đơn", data: Array(12).fill(0) }]);
             });
-    }, []);
+    }, [selectedYear]);
+
     const options: ApexOptions = {
         colors: ["#465fff"],
         chart: {
             fontFamily: "Outfit, sans-serif",
             type: "bar",
             height: 180,
-            toolbar: {
-                show: false,
-            },
+            toolbar: { show: false },
         },
         plotOptions: {
             bar: {
@@ -42,9 +62,7 @@ export default function MonthlySalesChart() {
                 borderRadiusApplication: "end",
             },
         },
-        dataLabels: {
-            enabled: false,
-        },
+        dataLabels: { enabled: false },
         stroke: {
             show: true,
             width: 4,
@@ -52,25 +70,21 @@ export default function MonthlySalesChart() {
         },
         xaxis: {
             categories: [
-                "Jan",
-                "Feb",
-                "Mar",
-                "Apr",
-                "May",
-                "Jun",
-                "Jul",
-                "Aug",
-                "Sep",
-                "Oct",
-                "Nov",
-                "Dec",
+                "Tháng 1",
+                "Tháng 2",
+                "Tháng 3",
+                "Tháng 4",
+                "Tháng 5",
+                "Tháng 6",
+                "Tháng 7",
+                "Tháng 8",
+                "Tháng 9",
+                "Tháng 10",
+                "Tháng 11",
+                "Tháng 12",
             ],
-            axisBorder: {
-                show: false,
-            },
-            axisTicks: {
-                show: false,
-            },
+            axisBorder: { show: false },
+            axisTicks: { show: false },
         },
         legend: {
             show: true,
@@ -79,76 +93,53 @@ export default function MonthlySalesChart() {
             fontFamily: "Outfit",
         },
         yaxis: {
-            title: {
-                text: undefined,
+            labels: {
+                formatter: (val: number) => val.toLocaleString("vi-VN"),
             },
+            title: { text: undefined },
         },
         grid: {
             yaxis: {
-                lines: {
-                    show: true,
-                },
+                lines: { show: true },
             },
         },
-        fill: {
-            opacity: 1,
-        },
-
+        fill: { opacity: 1 },
         tooltip: {
-            x: {
-                show: false,
-            },
+            x: { show: false },
             y: {
-                formatter: (val: number) => `${val}`,
+                formatter: (val: number) =>
+                    `${val.toLocaleString("vi-VN")} đơn`,
             },
         },
     };
-    // const series = [
-    //     {
-    //         name: "Sales",
-    //         data: [168, 385, 201, 298, 187, 195, 291, 110, 215, 390, 280, 112],
-    //     },
-    // ];
-    const [isOpen, setIsOpen] = useState(false);
 
-    function toggleDropdown() {
-        setIsOpen(!isOpen);
-    }
-
-    function closeDropdown() {
-        setIsOpen(false);
-    }
     return (
         <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white px-5 pt-5 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6 sm:pt-6">
             <div className="flex items-center justify-between">
                 <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90">
                     Đơn hàng mỗi tháng
                 </h3>
-                <div className="relative inline-block">
-                    <button
-                        className="dropdown-toggle"
-                        onClick={toggleDropdown}
+                <div className="flex items-center gap-2">
+                    <label
+                        htmlFor="yearSelect"
+                        className="text-sm text-gray-600"
                     >
-                        <MoreDotIcon className="text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 size-6" />
-                    </button>
-                    <Dropdown
-                        isOpen={isOpen}
-                        onClose={closeDropdown}
-                        className="w-40 p-2"
+                        Năm:
+                    </label>
+                    <select
+                        id="yearSelect"
+                        className="px-2 py-1 border rounded-md"
+                        value={selectedYear}
+                        onChange={(e) =>
+                            setSelectedYear(Number(e.target.value))
+                        }
                     >
-                        <DropdownItem
-                            onItemClick={closeDropdown}
-                            className="flex w-full font-normal text-left text-gray-500 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
-                        >
-                            View More
-                        </DropdownItem>
-                        <DropdownItem
-                            onItemClick={closeDropdown}
-                            className="flex w-full font-normal text-left text-gray-500 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
-                        >
-                            Delete
-                        </DropdownItem>
-                    </Dropdown>
+                        {years.map((year) => (
+                            <option key={year} value={year}>
+                                {year}
+                            </option>
+                        ))}
+                    </select>
                 </div>
             </div>
 

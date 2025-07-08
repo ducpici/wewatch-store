@@ -6,6 +6,7 @@ import axios from "../libs/axiosConfig";
 import { toast } from "react-toastify";
 import { useMemo } from "react";
 import useSession from "../hooks/useSession";
+import PageBreadcrumb from "../components/common/PageBreadCrumb";
 type Address = {
     id_ship: bigint;
     user_id: bigint;
@@ -31,6 +32,10 @@ const initAddr: Address = {
 };
 const Checkout = () => {
     const { user } = useSession();
+    const breadcrumbItems = [
+        { label: "Trang chủ", path: "/" },
+        { label: "Thanh toán" },
+    ];
 
     // const genOrderCode = () => {
     //     const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, "");
@@ -101,7 +106,8 @@ const Checkout = () => {
     }, [user]);
 
     return (
-        <div className="p-6 max-w-6xl mx-auto">
+        <div className="p-6 max-w-md mx-auto">
+            <PageBreadcrumb items={breadcrumbItems} />
             <h1 className="text-xl font-bold mb-4">Xác nhận đơn hàng</h1>
 
             <div className="mb-6">
@@ -123,7 +129,7 @@ const Checkout = () => {
                                     Giá:{" "}
                                     {(
                                         item.price * item.quantity
-                                    ).toLocaleString()}{" "}
+                                    ).toLocaleString("vi-VN")}{" "}
                                     ₫
                                 </p>
                             </div>
@@ -149,8 +155,9 @@ const Checkout = () => {
                                     {address.full_name} ({address.phone_num})
                                 </h3>
                                 <p>
-                                    {address.detail} {address.ward},{" "}
-                                    {address.district}, {address.city}
+                                    {address.detail && `${address.detail}, `}
+                                    {address.ward}, {address.district},{" "}
+                                    {address.city}
                                 </p>
                             </div>
                         ) : (
@@ -215,11 +222,11 @@ const Checkout = () => {
                 )}
             </div>
 
-            <div className="text-center">
-                <p>Tạm tính: {subtotal.toLocaleString()} ₫</p>
-                <p>Giảm giá: - {discount.toLocaleString()} ₫</p>
+            <div className="text-right">
+                <p>Tạm tính: {subtotal.toLocaleString("vi-VN")} ₫</p>
+                <p>Giảm giá: - {discount.toLocaleString("vi-VN")} ₫</p>
                 <p className="text-lg font-bold">
-                    Tổng cộng: {total.toLocaleString()} ₫
+                    Tổng cộng: {total.toLocaleString("vi-VN")} ₫
                 </p>
                 <button
                     className="bg-green-500 text-white px-6 py-2 mt-4 cursor-pointer hover:bg-red-400 rounded"

@@ -38,7 +38,7 @@ const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
             <div className="box-image">
                 <Link to={`/san-pham/${product.slug}`}>
                     <img
-                        className="w-60"
+                        className="w-60 h-60"
                         src={`https://admin.wewatch.com:4090${product.image}`}
                         alt="ảnh"
                     />

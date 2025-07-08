@@ -76,9 +76,12 @@ export default function FeatureProduct({
                         " " +
                         product.movement_type +
                         " " +
+                        "Mặt số " +
                         product.dial_diameter +
                         " " +
-                        product.water_resistance;
+                        "Chống nước " +
+                        product.water_resistance +
+                        "ATM";
 
                     return (
                         <div className="product" key={product.id}>

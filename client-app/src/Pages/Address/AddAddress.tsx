@@ -112,7 +112,7 @@ const AddAddress = () => {
                 </h2>
                 <div className="my-2">
                     <Input
-                        placeholder="Thành phố"
+                        placeholder="Tỉnh/Thành phố"
                         onChange={(e) =>
                             setAddress({ ...address, city: e.target.value })
                         }
@@ -136,7 +136,7 @@ const AddAddress = () => {
                 </div>
                 <div className="my-2">
                     <Input
-                        placeholder="Đường"
+                        placeholder="Số nhà/Tên đường"
                         onChange={(e) =>
                             setAddress({ ...address, detail: e.target.value })
                         }

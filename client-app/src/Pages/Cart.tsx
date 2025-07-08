@@ -19,6 +19,7 @@ type Product = {
     quantity: number;
     price: number;
     image: string;
+    slug: string;
 };
 
 const Cart = () => {
@@ -90,6 +91,18 @@ const Cart = () => {
     };
 
     const handleUseCoupon = async () => {
+        const selectedItemsData = cartItems
+            .filter((item) => selectedItems.includes(item.id))
+            .map((item) => ({
+                id: item.id,
+                modal_num: item.modal_num,
+                quantity: item.quantity,
+            }));
+
+        if (selectedItemsData.length === 0) {
+            toast.warning("Bạn chưa chọn sản phẩm");
+            return;
+        }
         try {
             const res = await axios.post(`/cart/apply-voucher`, {
                 voucherCode: coupon,
@@ -238,16 +251,19 @@ const Cart = () => {
                     <div className="md:col-span-2">
                         <table className="w-full text-left border-t border-gray-200">
                             <thead>
-                                <tr className="border-b">
-                                    <th className="p-2">SẢN PHẨM</th>
-                                    <th className="p-2">GIÁ</th>
-                                    <th className="p-2">SỐ LƯỢNG</th>
-                                    <th className="p-2">TẠM TÍNH</th>
+                                <tr className="bg-green-600 text-white px-4 py-3 rounded-t-lg">
+                                    <th className="p-2">Sản phẩm</th>
+                                    <th className="p-2">Giá</th>
+                                    <th className="p-2">Số lượng</th>
+                                    <th className="p-2">Tạm tính</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {cartItems.map((item) => (
-                                    <tr key={item.id} className="border-b">
+                                    <tr
+                                        key={item.id}
+                                        className="border-b border-gray-200"
+                                    >
                                         <td className="flex items-center gap-4 p-2">
                                             <input
                                                 type="checkbox"
@@ -272,13 +288,19 @@ const Cart = () => {
                                             <img
                                                 src={`https://admin.wewatch.com:4090${item.image}`}
                                                 // alt={item.name}
-                                                className="w-16 h-16 cursor-pointer"
+                                                className="w-20 h-20 cursor-pointer"
+                                                onClick={() =>
+                                                    navigate(
+                                                        `/san-pham/${item.slug}`
+                                                    )
+                                                }
                                             />
 
                                             <span>{item.name}</span>
                                         </td>
                                         <td className="p-2 font-semibold text-black">
-                                            {item.price.toLocaleString()} ₫
+                                            {item.price.toLocaleString("vi-VN")}{" "}
+                                            ₫
                                         </td>
                                         <td className="p-2">
                                             <div className="flex items-center border border-gray-300 rounded w-max">
@@ -315,7 +337,7 @@ const Cart = () => {
                                         <td className="p-2 font-semibold text-black">
                                             {(
                                                 item.price * item.quantity
-                                            ).toLocaleString()}{" "}
+                                            ).toLocaleString("vi-VN")}{" "}
                                             ₫
                                         </td>
                                     </tr>
@@ -337,7 +359,7 @@ const Cart = () => {
                     </div>
 
                     {/* Cart Summary */}
-                    <div className="border p-6">
+                    <div className="border border-gray-300 rounded p-6">
                         <h2 className="text-lg font-semibold mb-4">
                             CỘNG GIỎ HÀNG
                         </h2>

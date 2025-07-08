@@ -4,6 +4,7 @@ import Navbar from "./Navbar";
 import { Link } from "react-router";
 import useSession from "../../../hooks/useSession";
 import axios from "../../../libs/axiosConfig";
+import { User, Tag, LogOut, Package } from "lucide-react";
 
 export default function Header() {
     const navigate = useNavigate();
@@ -63,28 +64,42 @@ export default function Header() {
                                             <li className="cursor-pointer">
                                                 <Link
                                                     to="/thong-tin-ca-nhan"
-                                                    className="block px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                                                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer flex items-center"
                                                     onClick={() =>
                                                         setDropdownOpen(false)
                                                     }
                                                 >
+                                                    <User className="mr-1 text-gray-500" />{" "}
                                                     Thông tin cá nhân
                                                 </Link>
                                             </li>
                                             <li className="cursor-pointer">
                                                 <Link
                                                     to="/don-hang"
-                                                    className="block px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                                                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer flex items-center"
                                                     onClick={() =>
                                                         setDropdownOpen(false)
                                                     }
                                                 >
+                                                    <Package className="mr-1 text-gray-500" />{" "}
                                                     Đơn hàng của tôi
                                                 </Link>
                                             </li>
-                                            <li className="cursor-pointer">
+                                            {/* <li className="cursor-pointer">
+                                                <Link
+                                                    to="/khuyen-mai-cua-toi"
+                                                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer flex items-center"
+                                                    onClick={() =>
+                                                        setDropdownOpen(false)
+                                                    }
+                                                >
+                                                    <Tag className="mr-1 text-gray-500" />{" "}
+                                                    Khuyến mãi
+                                                </Link>
+                                            </li> */}
+                                            <li className="cursor-pointer border-t border-gray-300">
                                                 <button
-                                                    className="w-full text-left px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                                                    className="w-full text-left px-4 py-2 hover:bg-gray-100 cursor-pointer flex items-center text-red-500"
                                                     onClick={() => {
                                                         localStorage.removeItem(
                                                             "token"
@@ -96,6 +111,7 @@ export default function Header() {
                                                             "/";
                                                     }}
                                                 >
+                                                    <LogOut className="mr-1 text-red-500" />{" "}
                                                     Đăng xuất
                                                 </button>
                                             </li>

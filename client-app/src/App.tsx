@@ -17,6 +17,10 @@ import AddressList from "./Pages/AddressList";
 import AddAddress from "./Pages/Address/AddAddress";
 import EditAddress from "./Pages/Address/EditAddress";
 import SearchResult from "./Pages/SearchResult";
+import UserVoucher from "./Pages/UserVoucher";
+import ShopVoucher from "./Pages/ShopVoucher.";
+import Contact from "./Pages/Contact";
+import AboutPage from "./Pages/AboutPage";
 function App() {
     return (
         <Router>
@@ -45,6 +49,13 @@ function App() {
                         element={<OrderDetail />}
                     />
                     <Route path="/tim-kiem" element={<SearchResult />} />
+                    <Route
+                        path="/khuyen-mai-cua-toi"
+                        element={<UserVoucher />}
+                    />
+                    <Route path="/khuyen-mai" element={<ShopVoucher />} />
+                    <Route path="/lien-he" element={<Contact />} />
+                    <Route path="/gioi-thieu" element={<AboutPage />} />
                 </Route>
             </Routes>
         </Router>

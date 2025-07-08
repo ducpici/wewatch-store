@@ -81,15 +81,46 @@ export default function Navbar() {
                     </Link>
                 </li>
                 <li className="nav-item">
-                    <Link to="/contact" className="nav-link">
+                    <Link to="/lien-he" className="nav-link">
                         <span>Liên hệ</span>
                     </Link>
                 </li>
-                {/* <li className="nav-item">
-                    <Link to="/news" className="nav-link">
-                        <span>Tin tức</span>
+                <li className="nav-item relative">
+                    <Link to="" className="nav-link flex items-center">
+                        <span>Trang khác</span>
+                        <svg
+                            className="w-4 h-4 ml-1 inline-block transition-transform"
+                            fill="currentColor"
+                            viewBox="0 0 20 20"
+                        >
+                            <path
+                                fillRule="evenodd"
+                                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                clipRule="evenodd"
+                            />
+                        </svg>
                     </Link>
-                </li> */}
+                    <div className="dropdown-menu border border-gray-300">
+                        <ul className="py-2">
+                            <li>
+                                <Link
+                                    to="/gioi-thieu"
+                                    className="dropdown-item block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-colors"
+                                >
+                                    Giới thiệu
+                                </Link>
+                            </li>
+                            <li>
+                                <Link
+                                    to="/khuyen-mai"
+                                    className="dropdown-item block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-colors"
+                                >
+                                    Khuyến mãi
+                                </Link>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
             </ul>
         </nav>
     );

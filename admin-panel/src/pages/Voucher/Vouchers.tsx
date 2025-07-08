@@ -317,11 +317,11 @@ export default function Vouchers() {
                                                                     `/vouchers/edit/${data.id}`
                                                                 )
                                                             }
-                                                            onDelete={() =>
-                                                                handleDeleteVoucher(
-                                                                    data.id
-                                                                )
-                                                            }
+                                                            // onDelete={() =>
+                                                            //     handleDeleteVoucher(
+                                                            //         data.id
+                                                            //     )
+                                                            // }
                                                         />
                                                     </TableCell>
                                                 </TableRow>

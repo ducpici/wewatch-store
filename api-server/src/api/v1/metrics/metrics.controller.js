@@ -93,8 +93,6 @@ const getMonthlyStats = async (req, res) => {
             };
         });
 
-        console.log(data);
-
         res.status(200).json({ year, data });
     } catch (err) {
         console.error("Error in getMonthlyStats:", err);
@@ -102,8 +100,28 @@ const getMonthlyStats = async (req, res) => {
     }
 };
 
+const getAvailableOrderYears = async (req, res) => {
+    try {
+        const [rows] = await connection.query(`
+            SELECT DISTINCT YEAR(created_at) AS year
+            FROM orders
+            ORDER BY year DESC
+        `);
+
+        const years = rows.map((row) => row.year);
+        res.status(200).json({ status: true, data: years });
+    } catch (error) {
+        console.error("Error fetching years:", error);
+        res.status(500).json({
+            status: false,
+            message: "Internal Server Error",
+        });
+    }
+};
+
 module.exports = {
     getEcommerceMetrics,
     getMonthlySales,
     getMonthlyStats,
+    getAvailableOrderYears,
 };
