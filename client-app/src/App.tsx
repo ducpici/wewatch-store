@@ -4,7 +4,7 @@ import AppLayout from "./components/layouts/AppLayout";
 import Home from "./Pages/Home";
 import ProductDetail from "./Pages/ProductDetail";
 import Cart from "./Pages/Cart";
-import SignIn from "./auth/Signin";
+import SignIn from "./auth/SignIn";
 import SignUp from "./auth/SignUp";
 import Brand from "./Pages/Brand";
 import Category from "./Pages/Category";
