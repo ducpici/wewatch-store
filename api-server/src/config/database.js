@@ -8,14 +8,14 @@ const connection = mysql.createPool({
     database: process.env.DB_NAME,
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
-    // host: 'localhost',
-    // port: 3306,
-    // database: 'watchshop',
-    // user: 'root',
-    // password: '',
-    // waitForConnections: true,
-    // connectionLimit: 10,
-    // queueLimit: 0,
+    // host: "localhost",
+    // port: 3307,
+    // database: "wewatchshop",
+    // user: "root",
+    // password: "123456",
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0,
 });
 
 const checkConnection = async () => {
