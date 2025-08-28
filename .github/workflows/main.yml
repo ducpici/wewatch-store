@@ -1,0 +1,25 @@
+name: Local VPS CI/CD
+
+on:
+    push:
+        branches:
+            - production
+
+jobs:
+    build-and-deploy:
+        runs-on: self-hosted # chạy trên server local (runner)
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Build & Restart services
+              run: |
+                  cd /var/www/myapps
+
+                  # Copy code mới về (nếu muốn mount trực tiếp thì bỏ bước này)
+                  rsync -a --delete $GITHUB_WORKSPACE/ .
+
+                  # Build và restart containers
+                  docker compose down
+                  docker compose up -d --build
