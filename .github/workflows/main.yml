@@ -18,7 +18,7 @@ jobs:
                   cd /var/www/myapps
 
                   # Copy code mới về (nếu muốn mount trực tiếp thì bỏ bước này)
-                  rsync -a --delete $GITHUB_WORKSPACE/ .
+                  rsync -a --delete --exclude=docker-compose.yml $GITHUB_WORKSPACE/ /var/www/myapps/
 
                   # Build và restart containers
                   docker compose down
