@@ -57,8 +57,8 @@ export default function EditEmployee() {
     const [selectedValue, setSelectedValue] = useState<string>();
     const [positionData, setPositionData] = useState([]);
 
-    const getPositions = () => {
-        let res = axios
+    const getPositions = async () => {
+        await axios
             .get("/positions")
             .then((response) => {
                 const data = response.data.data;
@@ -91,11 +91,11 @@ export default function EditEmployee() {
         getDataById();
     }, [id]); // chỉ gọi lại khi id thay đổi
 
-    const handleRadioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setSelectedValue(e.target.value);
+    const handleRadioChange = (value: string) => {
+        setSelectedValue(value);
         setEmployeeData({
             ...employeeData,
-            gender: e.target.value,
+            gender: value,
         });
     };
 
@@ -108,7 +108,6 @@ export default function EditEmployee() {
     };
 
     const handleSelectChange = (value: string) => {
-        const num = parseInt(value);
         setEmployeeData({
             ...employeeData,
             position_id: value,
@@ -208,7 +207,7 @@ export default function EditEmployee() {
                                 "yyyy-MM-dd",
                                 "dd-MM-yyyy"
                             )}
-                            onChange={(dates, currentDateString) => {
+                            onChange={(_, currentDateString) => {
                                 setEmployeeData({
                                     ...employeeData,
                                     dob: formatDate(

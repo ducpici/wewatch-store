@@ -12,8 +12,6 @@ import axios from "../../lib/axiosConfig";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router";
 import formatDate from "../../lib/formatDate";
-import getVoucherStatus from "../../lib/getVoucherStatus";
-import { useEffect } from "react";
 
 export default function AddVoucher() {
     const initialVoucher: Voucher = {
@@ -228,7 +226,7 @@ export default function AddVoucher() {
                             id="start_date"
                             label="Ngày bắt đầu:"
                             placeholder="Nhập ngày bắt đầu"
-                            onChange={(dates, currentDateString) => {
+                            onChange={(_, currentDateString) => {
                                 setVoucherData({
                                     ...voucherData,
                                     start_date: currentDateString,
@@ -241,7 +239,7 @@ export default function AddVoucher() {
                             id="end_date"
                             label="Ngày hết hạn:"
                             placeholder="Nhập ngày hết hạn"
-                            onChange={(dates, currentDateString) => {
+                            onChange={(_, currentDateString) => {
                                 setVoucherData({
                                     ...voucherData,
                                     end_date: currentDateString,

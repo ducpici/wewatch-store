@@ -30,13 +30,11 @@ interface ProductFiltersProps {
 // Component
 const Filters: React.FC<ProductFiltersProps> = ({
     filters = [],
-    sortOptions = [],
     onFilterChange,
     onSortChange,
     onAdvancedFilterClick,
     className = "",
     showAdvancedFilter = true,
-    showSort = true,
 }) => {
     const [selectedFilters, setSelectedFilters] = useState<{
         [key: string]: string | number;

@@ -1,5 +1,5 @@
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Label from "../../components/form/Label";
 import Input from "../../components/form/input/InputField";
 import ComponentCard from "../../components/common/ComponentCard";
@@ -54,11 +54,11 @@ export default function AddUser() {
 
     const navigate = useNavigate();
 
-    const handleRadioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setSelectedValue(e.target.value);
+    const handleRadioChange = (value: string) => {
+        setSelectedValue(value);
         setUserData({
             ...userData,
-            gender: e.target.value,
+            gender: value,
         });
     };
 
@@ -169,7 +169,7 @@ export default function AddUser() {
                                 "yyyy-MM-dd",
                                 "dd-MM-yyyy"
                             )}
-                            onChange={(dates, currentDateString) => {
+                            onChange={(_, currentDateString) => {
                                 setUserData({
                                     ...userData,
                                     dob: formatDate(

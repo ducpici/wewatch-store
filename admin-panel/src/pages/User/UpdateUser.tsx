@@ -15,7 +15,7 @@ import formatDate from "../../lib/formatDate";
 import { isValidEmail } from "../../lib/validationEmail";
 import { isValidName } from "../../lib/validateName";
 import { isValidPhoneNum } from "../../lib/validatePhoneNum";
-import { format } from "date-fns";
+
 export default function UpdateUser() {
     const initialUser: User = {
         id: BigInt(0),
@@ -71,11 +71,11 @@ export default function UpdateUser() {
         { label: "Cập nhật thông tin" }, // Không có path => là trang hiện tại
     ];
 
-    const handleRadioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setSelectedValue(e.target.value);
+    const handleRadioChange = (value: string) => {
+        setSelectedValue(value);
         setUserData({
             ...userData,
-            gender: e.target.value,
+            gender: value,
         });
     };
 
@@ -179,7 +179,7 @@ export default function UpdateUser() {
                                 "yyyy-MM-dd",
                                 "dd-MM-yyyy"
                             )}
-                            onChange={(dates, currentDateString) => {
+                            onChange={(_, currentDateString) => {
                                 setUserData({
                                     ...userData,
                                     dob: formatDate(

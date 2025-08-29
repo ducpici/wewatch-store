@@ -9,7 +9,6 @@ import {
     TableHeader,
     TableRow,
 } from "../../components/ui/table";
-import Badge from "../../components/ui/badge/Badge";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Actions from "../../components/common/Actions";
@@ -41,8 +40,6 @@ export default function Vouchers() {
     const [vouchers, setVouchers] = useState<Voucher[]>([]);
     const [searchValue, setSearchValue] = useState("");
     const [loading, setLoading] = useState(false);
-
-    const [totalVoucher, setTotalVoucher] = useState(0);
     const [totalPage, setTotalPage] = useState(0);
     const [page, setPage] = useState(1);
     const [limitData, setLimitData] = useState(10);
@@ -73,6 +70,7 @@ export default function Vouchers() {
             const res = await axios.get(
                 `/vouchers?page=${page}&limit=${limit}`
             );
+            setPage(page);
             setVouchers(res.data.data);
             setLimitData(res.data.pagination.limit);
             setTotalPage(res.data.pagination.totalPages);
@@ -89,19 +87,19 @@ export default function Vouchers() {
         fetchAllVouchers(page, limitData);
     }, [page, limitData]);
 
-    const handleDeleteVoucher = async (id: number) => {
-        const confirmDelete = window.confirm("Bạn có chắc chắn muốn xóa?");
-        if (!confirmDelete) return;
+    // const handleDeleteVoucher = async (id: number) => {
+    //     const confirmDelete = window.confirm("Bạn có chắc chắn muốn xóa?");
+    //     if (!confirmDelete) return;
 
-        try {
-            await axios.delete(`/vouchers/${id}`);
-            toast.success("Xóa thành công!");
-            fetchAllVouchers(page, limitData); // Gọi lại danh sách sau khi xóa
-        } catch (error) {
-            console.error("Lỗi khi xóa:", error);
-            toast.error("Xóa thất bại!");
-        }
-    };
+    //     try {
+    //         await axios.delete(`/vouchers/${id}`);
+    //         toast.success("Xóa thành công!");
+    //         fetchAllVouchers(page, limitData); // Gọi lại danh sách sau khi xóa
+    //     } catch (error) {
+    //         console.error("Lỗi khi xóa:", error);
+    //         toast.error("Xóa thất bại!");
+    //     }
+    // };
 
     const handlePageClick = (selectedItem: { selected: number }) => {
         fetchAllVouchers(selectedItem.selected + 1, limitData);
@@ -149,213 +147,215 @@ export default function Vouchers() {
                             handleSearch(searchValue);
                         }}
                     />
-                    {/* {loading ? (
-                        <div>Đang tải danh sách người dùng...</div>
-                    ) : ( */}
-                    <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
-                        <div className="max-w-full overflow-x-auto">
-                            <Table>
-                                {/* Table Header */}
-                                <TableHeader className="text-start border-b border-gray-100 dark:border-white/[0.05]">
-                                    <TableRow>
-                                        <TableCell
-                                            isHeader
-                                            className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                                        >
-                                            #
-                                        </TableCell>
-                                        <TableCell
-                                            isHeader
-                                            className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                                        >
-                                            Mã ưu đãi
-                                        </TableCell>
-                                        <TableCell
-                                            isHeader
-                                            className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                                        >
-                                            Mã code
-                                        </TableCell>
-                                        <TableCell
-                                            isHeader
-                                            className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                                        >
-                                            Loại ưu đãi
-                                        </TableCell>
-                                        <TableCell
-                                            isHeader
-                                            className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                                        >
-                                            Giá trị giảm
-                                        </TableCell>
-                                        <TableCell
-                                            isHeader
-                                            className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                                        >
-                                            Mô tả
-                                        </TableCell>
-                                        <TableCell
-                                            isHeader
-                                            className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                                        >
-                                            Số lượng
-                                        </TableCell>
-                                        <TableCell
-                                            isHeader
-                                            className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                                        >
-                                            Số lượt sử dụng
-                                        </TableCell>
-                                        <TableCell
-                                            isHeader
-                                            className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                                        >
-                                            Ngày bắt đầu
-                                        </TableCell>
-                                        <TableCell
-                                            isHeader
-                                            className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                                        >
-                                            Ngày kết thúc
-                                        </TableCell>
-                                        <TableCell
-                                            isHeader
-                                            className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                                        >
-                                            Trạng thái
-                                        </TableCell>
-                                        <TableCell
-                                            isHeader
-                                            className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                                        >
-                                            Thao tác
-                                        </TableCell>
-                                    </TableRow>
-                                </TableHeader>
-
-                                {/* Table Body */}
-                                <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
-                                    {vouchers.length === 0 ? (
+                    {loading ? (
+                        <div>Đang tải danh sách...</div>
+                    ) : (
+                        <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
+                            <div className="max-w-full overflow-x-auto">
+                                <Table>
+                                    {/* Table Header */}
+                                    <TableHeader className="text-start border-b border-gray-100 dark:border-white/[0.05]">
                                         <TableRow>
-                                            <td
-                                                colSpan={12}
-                                                className="text-center py-4 text-gray-500"
+                                            <TableCell
+                                                isHeader
+                                                className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
                                             >
-                                                Không tìm thấy dữ liệu
-                                            </td>
+                                                #
+                                            </TableCell>
+                                            <TableCell
+                                                isHeader
+                                                className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                                            >
+                                                Mã ưu đãi
+                                            </TableCell>
+                                            <TableCell
+                                                isHeader
+                                                className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                                            >
+                                                Mã code
+                                            </TableCell>
+                                            <TableCell
+                                                isHeader
+                                                className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                                            >
+                                                Loại ưu đãi
+                                            </TableCell>
+                                            <TableCell
+                                                isHeader
+                                                className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                                            >
+                                                Giá trị giảm
+                                            </TableCell>
+                                            <TableCell
+                                                isHeader
+                                                className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                                            >
+                                                Mô tả
+                                            </TableCell>
+                                            <TableCell
+                                                isHeader
+                                                className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                                            >
+                                                Số lượng
+                                            </TableCell>
+                                            <TableCell
+                                                isHeader
+                                                className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                                            >
+                                                Số lượt sử dụng
+                                            </TableCell>
+                                            <TableCell
+                                                isHeader
+                                                className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                                            >
+                                                Ngày bắt đầu
+                                            </TableCell>
+                                            <TableCell
+                                                isHeader
+                                                className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                                            >
+                                                Ngày kết thúc
+                                            </TableCell>
+                                            <TableCell
+                                                isHeader
+                                                className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                                            >
+                                                Trạng thái
+                                            </TableCell>
+                                            <TableCell
+                                                isHeader
+                                                className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                                            >
+                                                Thao tác
+                                            </TableCell>
                                         </TableRow>
-                                    ) : (
-                                        vouchers.map((data, index) => {
-                                            const start = formatDate(
-                                                data.start_date,
-                                                "dd-MM-yyyy",
-                                                "yyyy-MM-dd"
-                                            );
-                                            const end = formatDate(
-                                                data.end_date,
-                                                "dd-MM-yyyy",
-                                                "yyyy-MM-dd"
-                                            );
-                                            const statusCode = getVoucherStatus(
-                                                start,
-                                                end,
-                                                data.quantity,
-                                                data.used_count
-                                            );
-                                            return (
-                                                <TableRow key={data.id}>
-                                                    <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                        {index + 1}
-                                                    </TableCell>
-                                                    <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                        {data.id}
-                                                    </TableCell>
-                                                    <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                        {data.code}
-                                                    </TableCell>
-                                                    <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                        {
-                                                            data.discount_type
-                                                                .text
-                                                        }
-                                                    </TableCell>
-                                                    <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                        {data.discount_type
-                                                            .code === 1
-                                                            ? `${data.discount_value}%`
-                                                            : Number(
-                                                                  data.discount_value
-                                                              ).toLocaleString(
-                                                                  "vi-VN"
-                                                              )}
-                                                    </TableCell>
-                                                    <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                        {data.description}
-                                                    </TableCell>
-                                                    <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                        {data.quantity}
-                                                    </TableCell>
-                                                    <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                        {data.used_count}
-                                                    </TableCell>
-                                                    <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                        {data.start_date}
-                                                    </TableCell>
-                                                    <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                        {data.end_date}
-                                                    </TableCell>
+                                    </TableHeader>
 
-                                                    <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                        {getStatusText(
-                                                            statusCode
-                                                        )}
-                                                    </TableCell>
-                                                    <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                        <Actions
-                                                            onEdit={() =>
-                                                                navigate(
-                                                                    `/vouchers/edit/${data.id}`
-                                                                )
+                                    {/* Table Body */}
+                                    <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
+                                        {vouchers.length === 0 ? (
+                                            <TableRow>
+                                                <td
+                                                    colSpan={12}
+                                                    className="text-center py-4 text-gray-500"
+                                                >
+                                                    Không tìm thấy dữ liệu
+                                                </td>
+                                            </TableRow>
+                                        ) : (
+                                            vouchers.map((data, index) => {
+                                                const start = formatDate(
+                                                    data.start_date,
+                                                    "dd-MM-yyyy",
+                                                    "yyyy-MM-dd"
+                                                );
+                                                const end = formatDate(
+                                                    data.end_date,
+                                                    "dd-MM-yyyy",
+                                                    "yyyy-MM-dd"
+                                                );
+                                                const statusCode =
+                                                    getVoucherStatus(
+                                                        start,
+                                                        end,
+                                                        data.quantity,
+                                                        data.used_count
+                                                    );
+                                                return (
+                                                    <TableRow key={data.id}>
+                                                        <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                                            {index + 1}
+                                                        </TableCell>
+                                                        <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                                            {data.id}
+                                                        </TableCell>
+                                                        <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                                            {data.code}
+                                                        </TableCell>
+                                                        <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                                            {
+                                                                data
+                                                                    .discount_type
+                                                                    .text
                                                             }
-                                                            // onDelete={() =>
-                                                            //     handleDeleteVoucher(
-                                                            //         data.id
-                                                            //     )
-                                                            // }
-                                                        />
-                                                    </TableCell>
-                                                </TableRow>
-                                            );
-                                        })
-                                    )}
-                                </TableBody>
-                            </Table>
+                                                        </TableCell>
+                                                        <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                                            {data.discount_type
+                                                                .code === 1
+                                                                ? `${data.discount_value}%`
+                                                                : Number(
+                                                                      data.discount_value
+                                                                  ).toLocaleString(
+                                                                      "vi-VN"
+                                                                  )}
+                                                        </TableCell>
+                                                        <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                                            {data.description}
+                                                        </TableCell>
+                                                        <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                                            {data.quantity}
+                                                        </TableCell>
+                                                        <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                                            {data.used_count}
+                                                        </TableCell>
+                                                        <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                                            {data.start_date}
+                                                        </TableCell>
+                                                        <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                                            {data.end_date}
+                                                        </TableCell>
+
+                                                        <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                                            {getStatusText(
+                                                                statusCode
+                                                            )}
+                                                        </TableCell>
+                                                        <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                                            <Actions
+                                                                onEdit={() =>
+                                                                    navigate(
+                                                                        `/vouchers/edit/${data.id}`
+                                                                    )
+                                                                }
+                                                                // onDelete={() =>
+                                                                //     handleDeleteVoucher(
+                                                                //         data.id
+                                                                //     )
+                                                                // }
+                                                            />
+                                                        </TableCell>
+                                                    </TableRow>
+                                                );
+                                            })
+                                        )}
+                                    </TableBody>
+                                </Table>
+                            </div>
+                            <div className="flex justify-between m-5">
+                                <div></div>
+                                <ReactPaginate
+                                    nextLabel="next >"
+                                    onPageChange={handlePageClick}
+                                    pageRangeDisplayed={3}
+                                    marginPagesDisplayed={2}
+                                    pageCount={totalPage}
+                                    previousLabel="< previous"
+                                    pageClassName="page-item"
+                                    pageLinkClassName="page-link p-2"
+                                    previousClassName="page-item"
+                                    previousLinkClassName="page-link"
+                                    nextClassName="page-item"
+                                    nextLinkClassName="page-link"
+                                    breakLabel="..."
+                                    breakClassName="page-item"
+                                    breakLinkClassName="page-link"
+                                    containerClassName="pagination flex font-semibol text-gray-500 text-theme-md dark:text-gray-400"
+                                    activeClassName="active text-blue-600"
+                                    renderOnZeroPageCount={null}
+                                />
+                            </div>
                         </div>
-                        <div className="flex justify-between m-5">
-                            <div></div>
-                            <ReactPaginate
-                                nextLabel="next >"
-                                onPageChange={handlePageClick}
-                                pageRangeDisplayed={3}
-                                marginPagesDisplayed={2}
-                                pageCount={totalPage}
-                                previousLabel="< previous"
-                                pageClassName="page-item"
-                                pageLinkClassName="page-link p-2"
-                                previousClassName="page-item"
-                                previousLinkClassName="page-link"
-                                nextClassName="page-item"
-                                nextLinkClassName="page-link"
-                                breakLabel="..."
-                                breakClassName="page-item"
-                                breakLinkClassName="page-link"
-                                containerClassName="pagination flex font-semibol text-gray-500 text-theme-md dark:text-gray-400"
-                                activeClassName="active text-blue-600"
-                                renderOnZeroPageCount={null}
-                            />
-                        </div>
-                    </div>
-                    {/* )} */}
+                    )}
                 </div>
             </div>
         </>

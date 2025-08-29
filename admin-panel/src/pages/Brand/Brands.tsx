@@ -28,7 +28,6 @@ export default function Brands() {
     const [brands, setBrands] = useState<Brand[]>([]);
     const [searchValue, setSearchValue] = useState("");
     const [loading, setLoading] = useState(false);
-    const [totalUser, setTotalUser] = useState(0);
     const [totalPage, setTotalPage] = useState(0);
     const [page, setPage] = useState(1);
     const [limitData, setLimitData] = useState(10);
@@ -43,6 +42,7 @@ export default function Brands() {
         try {
             const res = await axios.get(`/brands?page=${page}&limit=${limit}`);
             setBrands(res.data.data);
+            setPage(page);
             setLimitData(res.data.pagination.limit);
             setTotalPage(res.data.pagination.totalPages);
         } catch (err) {
@@ -116,131 +116,131 @@ export default function Brands() {
                             handleSearch(searchValue);
                         }}
                     />
-                    {/* {loading ? (
-                        <div>Đang tải danh sách nhân viên...</div>
-                    ) : ( */}
-                    <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
-                        <div className="max-w-full overflow-x-auto">
-                            <Table>
-                                {/* Table Header */}
-                                <TableHeader className="text-left border-b border-gray-100 dark:border-white/[0.05]">
-                                    <TableRow>
-                                        <TableCell
-                                            isHeader
-                                            className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
-                                        >
-                                            #
-                                        </TableCell>
-                                        <TableCell
-                                            isHeader
-                                            className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
-                                        >
-                                            Mã nhà cung cấp
-                                        </TableCell>
-                                        <TableCell
-                                            isHeader
-                                            className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
-                                        >
-                                            Tên nhà cung cấp
-                                        </TableCell>
-                                        <TableCell
-                                            isHeader
-                                            className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
-                                        >
-                                            Mô tả
-                                        </TableCell>
-                                        <TableCell
-                                            isHeader
-                                            className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
-                                        >
-                                            Email
-                                        </TableCell>
-                                        <TableCell
-                                            isHeader
-                                            className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
-                                        >
-                                            Số điện thoại
-                                        </TableCell>
-                                        <TableCell
-                                            isHeader
-                                            className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
-                                        >
-                                            Thao tác
-                                        </TableCell>
-                                    </TableRow>
-                                </TableHeader>
-
-                                {/* Table Body */}
-                                <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
-                                    {brands.map((data, index) => (
-                                        <TableRow key={data.id}>
-                                            <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                {index + 1}
+                    {loading ? (
+                        <div>Đang tải danh sách...</div>
+                    ) : (
+                        <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
+                            <div className="max-w-full overflow-x-auto">
+                                <Table>
+                                    {/* Table Header */}
+                                    <TableHeader className="text-left border-b border-gray-100 dark:border-white/[0.05]">
+                                        <TableRow>
+                                            <TableCell
+                                                isHeader
+                                                className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
+                                            >
+                                                #
                                             </TableCell>
-                                            <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                {data.id}
+                                            <TableCell
+                                                isHeader
+                                                className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
+                                            >
+                                                Mã nhà cung cấp
                                             </TableCell>
-                                            <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                {data.name}
+                                            <TableCell
+                                                isHeader
+                                                className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
+                                            >
+                                                Tên nhà cung cấp
                                             </TableCell>
-                                            <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                {data.description}
+                                            <TableCell
+                                                isHeader
+                                                className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
+                                            >
+                                                Mô tả
                                             </TableCell>
-                                            <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                {data.email}
+                                            <TableCell
+                                                isHeader
+                                                className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
+                                            >
+                                                Email
                                             </TableCell>
-                                            <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                {data.phone_num}
+                                            <TableCell
+                                                isHeader
+                                                className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
+                                            >
+                                                Số điện thoại
                                             </TableCell>
-                                            <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                <Actions
-                                                    // onView={() =>
-                                                    //     navigate(
-                                                    //         `/brands/${data.id_user}`
-                                                    //     )
-                                                    // }
-                                                    onEdit={() =>
-                                                        navigate(
-                                                            `/brands/edit/${data.id}`
-                                                        )
-                                                    }
-                                                    onDelete={() =>
-                                                        handleDeleteBrand(
-                                                            data.id
-                                                        )
-                                                    }
-                                                />
+                                            <TableCell
+                                                isHeader
+                                                className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
+                                            >
+                                                Thao tác
                                             </TableCell>
                                         </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
+                                    </TableHeader>
+
+                                    {/* Table Body */}
+                                    <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
+                                        {brands.map((data, index) => (
+                                            <TableRow key={data.id}>
+                                                <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                                    {index + 1}
+                                                </TableCell>
+                                                <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                                    {data.id}
+                                                </TableCell>
+                                                <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                                    {data.name}
+                                                </TableCell>
+                                                <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                                    {data.description}
+                                                </TableCell>
+                                                <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                                    {data.email}
+                                                </TableCell>
+                                                <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                                    {data.phone_num}
+                                                </TableCell>
+                                                <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                                    <Actions
+                                                        // onView={() =>
+                                                        //     navigate(
+                                                        //         `/brands/${data.id_user}`
+                                                        //     )
+                                                        // }
+                                                        onEdit={() =>
+                                                            navigate(
+                                                                `/brands/edit/${data.id}`
+                                                            )
+                                                        }
+                                                        onDelete={() =>
+                                                            handleDeleteBrand(
+                                                                data.id
+                                                            )
+                                                        }
+                                                    />
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </div>
+                            <div className="flex justify-between m-5">
+                                <div></div>
+                                <ReactPaginate
+                                    nextLabel="next >"
+                                    onPageChange={handlePageClick}
+                                    pageRangeDisplayed={3}
+                                    marginPagesDisplayed={2}
+                                    pageCount={totalPage}
+                                    previousLabel="< previous"
+                                    pageClassName="page-item"
+                                    pageLinkClassName="page-link p-2"
+                                    previousClassName="page-item"
+                                    previousLinkClassName="page-link"
+                                    nextClassName="page-item"
+                                    nextLinkClassName="page-link"
+                                    breakLabel="..."
+                                    breakClassName="page-item"
+                                    breakLinkClassName="page-link"
+                                    containerClassName="pagination flex font-semibol text-gray-500 text-theme-md dark:text-gray-400"
+                                    activeClassName="active text-blue-600"
+                                    renderOnZeroPageCount={null}
+                                />
+                            </div>
                         </div>
-                        <div className="flex justify-between m-5">
-                            <div></div>
-                            <ReactPaginate
-                                nextLabel="next >"
-                                onPageChange={handlePageClick}
-                                pageRangeDisplayed={3}
-                                marginPagesDisplayed={2}
-                                pageCount={totalPage}
-                                previousLabel="< previous"
-                                pageClassName="page-item"
-                                pageLinkClassName="page-link p-2"
-                                previousClassName="page-item"
-                                previousLinkClassName="page-link"
-                                nextClassName="page-item"
-                                nextLinkClassName="page-link"
-                                breakLabel="..."
-                                breakClassName="page-item"
-                                breakLinkClassName="page-link"
-                                containerClassName="pagination flex font-semibol text-gray-500 text-theme-md dark:text-gray-400"
-                                activeClassName="active text-blue-600"
-                                renderOnZeroPageCount={null}
-                            />
-                        </div>
-                    </div>
-                    {/* )} */}
+                    )}
                 </div>
             </div>
         </>

@@ -16,9 +16,7 @@ import { useEffect, useState } from "react";
 import ReactPaginate from "react-paginate";
 import { useModal } from "../../hooks/useModal";
 import { Modal } from "../../components/ui/modal";
-import Input from "../../components/form/input/InputField";
 import Button from "../../components/ui/button/Button";
-import Label from "../../components/form/Label";
 import Select from "../../components/form/Select";
 import Filters from "../../components/common/Filters";
 
@@ -70,14 +68,9 @@ export default function Orders() {
     ];
 
     const { isOpen, openModal, closeModal } = useModal();
-    const [filter, setFilter] = useState({
-        paymentMethod: "",
-        orderState: "",
-    });
     const [orders, setOrders] = useState<Order[]>([]);
     const [searchValue, setSearchValue] = useState("");
     const [loading, setLoading] = useState(false);
-    const [totalUser, setTotalUser] = useState(0);
     const [totalPage, setTotalPage] = useState(0);
     const [page, setPage] = useState(1);
     const [limitData, setLimitData] = useState(10);

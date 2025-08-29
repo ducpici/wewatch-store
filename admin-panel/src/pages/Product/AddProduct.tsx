@@ -54,8 +54,8 @@ export default function AddProduct() {
     const [categoryDara, setCategoryData] = useState([]);
     const [functionData, setFunctionData] = useState([]);
     const [isEnabled, setIsEnabled] = useState(true);
-    const [selectedValue, setSelectedValue] = useState<string>();
-    const [selectedValues, setSelectedValues] = useState<string[]>([]);
+    // const [selectedValue, setSelectedValue] = useState<string>();
+    // const [selectedValues, setSelectedValues] = useState<string[]>([]);
 
     const breadcrumbItems = [
         { label: "Trang chủ", path: "/" },
@@ -183,8 +183,8 @@ export default function AddProduct() {
         }
     };
 
-    const getBrands = () => {
-        let res = axios
+    const getBrands = async () => {
+        await axios
             .get("/brands")
             .then((response) => {
                 const data = response.data.data;
@@ -196,8 +196,8 @@ export default function AddProduct() {
             .finally(() => {});
     };
 
-    const getCategories = () => {
-        let res = axios
+    const getCategories = async () => {
+        await axios
             .get("/categories")
             .then((response) => {
                 const data = response.data.data;
@@ -209,8 +209,8 @@ export default function AddProduct() {
             .finally(() => {});
     };
 
-    const getFunctions = () => {
-        let res = axios
+    const getFunctions = async () => {
+        await axios
             .get("/functions")
             .then((response) => {
                 const data = response.data.data;
@@ -433,7 +433,7 @@ export default function AddProduct() {
                         <Label htmlFor="functions">Chức năng:</Label>
                         <MultiSelect
                             options={functionData}
-                            defaultSelected={selectedValues}
+                            // defaultSelected={selectedValues}
                             // onChange={(values) => setSelectedValues(values)}
                             onChange={(values) => {
                                 setProductData({
