@@ -14,6 +14,7 @@ import Actions from "../../components/common/Actions";
 import { SearchAndAddBar } from "../../components/common/SearchAndAdd";
 import { useEffect, useState } from "react";
 import ReactPaginate from "react-paginate";
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 interface Product {
     id: number;
@@ -260,7 +261,7 @@ export default function Products() {
                                                 <TableCell className="px-2 py-2 text-gray-500 text-start text-theme-sm dark:text-gray-400">
                                                     <img
                                                         className="w-20 h-20"
-                                                        src={`https://admin.wewatch.com:4090${data.image}`}
+                                                        src={`${BASE_URL}${data.image}`}
                                                         alt=""
                                                     />
                                                 </TableCell>

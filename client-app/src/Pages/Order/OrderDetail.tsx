@@ -33,7 +33,7 @@ import Select from "../../components/form/Select";
 import ComponentCard from "../../components/common/ComponentCard";
 import Radio from "../../components/form/input/Radio";
 // import {formatDateToVietnamese} from "../../libs/formatDate.js";
-
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 export default function OrderDetail() {
     type Product = {
         id: number;
@@ -141,7 +141,7 @@ export default function OrderDetail() {
         navigate(`/san-pham/${slug}`);
     };
 
-    function formatDateToVietnamese(input) {
+    function formatDateToVietnamese(input: any) {
         const date = new Date(input);
         // Chuyển sang múi giờ Việt Nam (UTC+7)
         const vnDate = new Date(date.getTime() + 7 * 60 * 60 * 1000);
@@ -425,7 +425,7 @@ export default function OrderDetail() {
                             >
                                 <div className="col-span-6 flex items-center space-x-3">
                                     <img
-                                        src={`https://admin.wewatch.com:4090${item.image}`}
+                                        src={`${BASE_URL}${item.image}`}
                                         alt="Product"
                                         className="w-15 h-15 object-cover rounded-lg bg-gray-100 cursor-pointer"
                                         onClick={() =>

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router";
-
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 // Assume these icons are imported from an icon library
 import {
     ChevronDownIcon,
@@ -337,7 +337,7 @@ const AppSidebar: React.FC = () => {
                         <>
                             <img
                                 className="dark:hidden w-20"
-                                src="https://admin.wewatch.com:4090/uploads/mylogo.png"
+                                src={`${BASE_URL}/uploads/mylogo.png`}
                                 alt="Logo"
                                 width={150}
                                 height={40}

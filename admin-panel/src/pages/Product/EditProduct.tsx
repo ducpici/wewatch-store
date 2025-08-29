@@ -11,7 +11,7 @@ import FileInput from "../../components/form/input/FileInput";
 import axios from "../../lib/axiosConfig";
 import { toast } from "react-toastify";
 import { useNavigate, useParams } from "react-router";
-
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 export default function EditProduct() {
     const { id } = useParams();
 
@@ -411,7 +411,7 @@ export default function EditProduct() {
                                     Ảnh hiện tại:
                                 </p>
                                 <img
-                                    src={`https://admin.wewatch.com:4090${productData.image}`}
+                                    src={`${BASE_URL}${productData.image}`}
                                     alt="Ảnh banner hiện tại"
                                     className="w-64 rounded border"
                                 />

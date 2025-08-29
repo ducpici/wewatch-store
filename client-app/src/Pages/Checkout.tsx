@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 import { useMemo } from "react";
 import useSession from "../hooks/useSession";
 import PageBreadcrumb from "../components/common/PageBreadCrumb";
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 type Address = {
     id_ship: bigint;
     user_id: bigint;
@@ -119,7 +120,7 @@ const Checkout = () => {
                             className="flex gap-4 py-2 border-gray-300 border-b"
                         >
                             <img
-                                src={`https://admin.wewatch.com:4090${item.image}`}
+                                src={`${BASE_URL}${item.image}`}
                                 className="w-16 h-16 object-cover"
                             />
                             <div>

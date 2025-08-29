@@ -10,6 +10,7 @@ import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router";
 import SameProduct from "../components/common/SameProduct";
 import ProductReviews from "../components/common/ProductReviews";
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 type Product = {
     id: number;
     modal_num: string;
@@ -54,8 +55,6 @@ export default function ProductDetail() {
     const getProductBySlug = async () => {
         try {
             let res = await axios.get(`/san-pham/${slug}`);
-
-            console.log(res.data);
             setProduct(res.data);
         } catch (err) {
             console.error("Lỗi khi tải danh sách:", err);
@@ -102,7 +101,7 @@ export default function ProductDetail() {
                     <div className="mainImg relative flex">
                         {/* <SlArrowLeft className="absolute left-0 top-1/2 -translate-y-1/2 cursor-pointer text-2xl" /> */}
                         <img
-                            src={`https://admin.wewatch.com:4090${product.image}`}
+                            src={`${BASE_URL}${product.image}`}
                             alt="Black Link Watch"
                             className="w-full rounded-lg"
                         />

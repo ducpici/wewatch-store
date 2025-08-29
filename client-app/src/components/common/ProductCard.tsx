@@ -1,7 +1,7 @@
 import { useParams } from "react-router";
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
-
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 type Product = {
     id: number;
     modal_num: string;
@@ -39,7 +39,7 @@ const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
                 <Link to={`/san-pham/${product.slug}`}>
                     <img
                         className="w-60 h-60"
-                        src={`https://admin.wewatch.com:4090${product.image}`}
+                        src={`${BASE_URL}${product.image}`}
                         alt="ảnh"
                     />
                 </Link>

@@ -50,7 +50,7 @@ export default function ShopVoucher() {
         }
     };
 
-    const handleUseVoucher = (id) => {
+    const handleUseVoucher = (id: any) => {
         setVouchers(
             vouchers.map((voucher) =>
                 voucher.id === id ? { ...voucher, isUsed: true } : voucher
@@ -58,7 +58,7 @@ export default function ShopVoucher() {
         );
     };
 
-    const handleViewDetails = (voucher) => {
+    const handleViewDetails = (voucher: any) => {
         alert(
             `Chi tiết voucher:\nMã: ${voucher.code}\nGiá trị: ${voucher.value}\nHạn sử dụng: ${voucher.expiry}`
         );
@@ -72,7 +72,6 @@ export default function ShopVoucher() {
             setVouchers(res.data.data);
             setLimitData(res.data.pagination.limit);
             setTotalPage(res.data.pagination.totalPages);
-            console.log(res.data.data);
         } catch (err) {
             console.error("Lỗi khi tải danh sách:", err);
             toast.error("Lỗi khi tải danh sách");

@@ -1,8 +1,8 @@
 /// <reference types="vite/client" />
-
+declare module "@tailwindcss/vite";
 interface ImportMetaEnv {
-    readonly VITE_API_URL: string;
-    // khai báo thêm các biến môi trường khác ở đây nếu cần
+    readonly VITE_BASE_URL: string;
+    // thêm biến env khác ở đây nếu cần
 }
 
 interface ImportMeta {

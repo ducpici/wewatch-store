@@ -6,7 +6,7 @@ import { data } from "react-router";
 import { toast } from "react-toastify";
 import { Link } from "react-router";
 import { useNavigate } from "react-router-dom";
-
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 const breadcrumbItems = [
     { label: "Trang chủ", path: "/" },
     { label: "Giỏ hàng" },
@@ -115,7 +115,7 @@ const Cart = () => {
             setNewTotal(total);
             setDiscount(discount);
             // const { total, discount, originalTotal } = res.data;
-        } catch (error) {
+        } catch (error: any) {
             const msg =
                 error.response?.data?.message ||
                 "Không thể áp dụng mã giảm giá";
@@ -189,8 +189,8 @@ const Cart = () => {
                 selectedItemsData
             );
             if (!res.data.success) {
-                const failed = res.data.results.filter((r) => !r.ok);
-                failed.forEach((item) => toast.error(item.message));
+                const failed = res.data.results.filter((r: any) => !r.ok);
+                failed.forEach((item: any) => toast.error(item.message));
                 return;
             }
 
@@ -286,7 +286,7 @@ const Cart = () => {
                                             </button>
 
                                             <img
-                                                src={`https://admin.wewatch.com:4090${item.image}`}
+                                                src={`${BASE_URL}${item.image}`}
                                                 // alt={item.name}
                                                 className="w-20 h-20 cursor-pointer"
                                                 onClick={() =>

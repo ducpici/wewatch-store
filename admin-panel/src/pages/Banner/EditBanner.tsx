@@ -8,7 +8,7 @@ import Button from "../../components/ui/button/Button";
 import axios from "../../lib/axiosConfig";
 import { toast } from "react-toastify";
 import { useNavigate, useParams } from "react-router";
-
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 export default function EditBanner() {
     const { id } = useParams();
     type Banner = {
@@ -117,7 +117,7 @@ export default function EditBanner() {
                                     Ảnh hiện tại:
                                 </p>
                                 <img
-                                    src={`https://admin.wewatch.com:4090${bannerData.image_name}`}
+                                    src={`${BASE_URL}${bannerData.image_name}`}
                                     alt="Ảnh banner hiện tại"
                                     className="w-64 rounded border"
                                 />
