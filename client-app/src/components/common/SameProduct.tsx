@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import axios from "../../libs/axiosConfig";
 import { toast } from "react-toastify";
 import toSlug from "../../libs/formatSlug";
-
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 type Product = {
     id: number;
     modal_num: string;
@@ -46,7 +46,6 @@ export default function SameProduct({ title, slug }: SameProduct) {
     const getProduct = async () => {
         try {
             let res = await axios.get(`/thuong-hieu/${slug}`);
-            console.log(res);
             setProducts(res.data.data);
         } catch (err) {
             console.error("Lỗi khi tải danh sách:", err);
@@ -70,7 +69,7 @@ export default function SameProduct({ title, slug }: SameProduct) {
                                 <div className="box-image">
                                     <img
                                         className="w-60 h-60"
-                                        src={`https://admin.wewatch.com:4090${product.image}`}
+                                        src={`${BASE_URL}${product.image}`}
                                         alt="ảnh"
                                     />
                                 </div>

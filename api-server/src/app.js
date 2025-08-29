@@ -22,19 +22,19 @@ const allowedOrigins = [
     "https://shop.wewatch.com:5174",
 ];
 
-app.use(
-    cors({
-        origin: function (origin, callback) {
-            if (!origin || allowedOrigins.includes(origin)) {
-                callback(null, true);
-            } else {
-                console.warn("Blocked CORS origin:", origin);
-                callback(new Error("Not allowed by CORS"));
-            }
-        },
-        credentials: true, // Bắt buộc để gửi cookie
-    })
-);
+// app.use(
+//     cors({
+//         origin: function (origin, callback) {
+//             if (!origin || allowedOrigins.includes(origin)) {
+//                 callback(null, true);
+//             } else {
+//                 console.warn("Blocked CORS origin:", origin);
+//                 callback(new Error("Not allowed by CORS"));
+//             }
+//         },
+//         credentials: true, // Bắt buộc để gửi cookie
+//     })
+// );
 
 // Session config
 // const sessionShop = session({
@@ -84,6 +84,13 @@ app.use(
 //         next();
 //     }
 // });
+
+app.use(
+    cors({
+        origin: ["http://localhost:3001", "http://localhost:3002"],
+        credentials: true,
+    })
+);
 
 app.use(require("./routes"));
 

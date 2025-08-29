@@ -34,7 +34,7 @@ import {
     Truck,
     XCircle,
 } from "lucide-react";
-
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 export default function OrderDetail() {
     type orderDetail = {
         id: number;
@@ -512,7 +512,7 @@ export default function OrderDetail() {
                                 >
                                     <div className="col-span-6 flex items-center space-x-3">
                                         <img
-                                            src={`https://admin.wewatch.com:4090${item.image}`}
+                                            src={`${BASE_URL}${item.image}`}
                                             alt="Product"
                                             className="w-15 h-15 object-cover rounded-lg bg-gray-100 cursor-pointer"
                                             onClick={() =>

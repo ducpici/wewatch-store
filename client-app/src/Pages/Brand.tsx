@@ -119,13 +119,6 @@ export default function Brand() {
             limit: number,
             currentFilters: { [key: string]: string } = {}
         ) => {
-            console.log("fetchProducts called with:", {
-                slug,
-                page,
-                limit,
-                currentFilters,
-            });
-
             if (!slug) {
                 console.log("No slug provided, aborting fetch");
                 return;
@@ -139,31 +132,21 @@ export default function Brand() {
                     currentFilters
                 );
                 const url = `/thuong-hieu/${slug}?${queryString}`;
-                console.log(`Fetching URL: ${url}`);
 
                 const res = await axios.get(url);
-                console.log("API Response:", res.data);
 
                 if (res.data && res.data.data) {
                     setProducts(res.data.data);
                     setLimitData(res.data.limit || limit);
                     setPage(res.data.page || page);
                     setTotalPage(res.data.pagination?.totalPages || 0);
-                    console.log(
-                        "Products set successfully:",
-                        res.data.data.length,
-                        "items"
-                    );
                 } else {
                     console.log("No data in response");
                     setProducts([]);
                 }
             } catch (err) {
                 console.error("Fetch error details:", err);
-                if (err.response) {
-                    console.error("Response status:", err.response.status);
-                    console.error("Response data:", err.response.data);
-                }
+
                 toast.error("Lỗi khi tải danh sách sản phẩm");
                 setProducts([]);
             } finally {
@@ -241,13 +224,6 @@ export default function Brand() {
 
     // useEffect chính - reset và load dữ liệu khi slug thay đổi
     useEffect(() => {
-        console.log(
-            "useEffect triggered - Slug:",
-            slug,
-            "limitData:",
-            limitData
-        );
-
         if (slug) {
             // Reset tất cả state khi chuyển sang brand mới
             fetchFilterOptions();
@@ -256,7 +232,6 @@ export default function Brand() {
             setTotalPage(0);
             setFilters({});
             setLoading(true);
-
             // Load dữ liệu mới
             fetchProducts(1, limitData, {});
         } else {

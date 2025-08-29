@@ -5,7 +5,7 @@ import { Link } from "react-router";
 import { useNavigate } from "react-router-dom";
 import useSession from "../../hooks/useSession";
 import { useAuth } from "../../context/AuthContext";
-
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 export default function UserDropdown() {
     const { logout } = useAuth();
     const { user } = useSession();
@@ -37,10 +37,7 @@ export default function UserDropdown() {
                 className="flex items-center text-gray-700 dropdown-toggle dark:text-gray-400"
             >
                 <span className="mr-3 overflow-hidden rounded-full h-11 w-11">
-                    <img
-                        src="https://admin.wewatch.com:4090/uploads/user.png"
-                        alt="User"
-                    />
+                    <img src={`${BASE_URL}/uploads/user.png`} alt="User" />
                 </span>
 
                 <span className="block mr-1 font-medium text-theme-sm">

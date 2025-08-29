@@ -156,14 +156,12 @@ export default function Category() {
     };
 
     const handleFilterChange = (newFilters: { [key: string]: string }) => {
-        console.log("Filters changed:", newFilters);
         setFilters(newFilters);
         setPage(1); // Reset về trang 1 khi filter thay đổi
         fetchProducts(1, limitData, newFilters);
     };
 
     const handleSortChange = (sortValue: string) => {
-        console.log("Sort changed:", sortValue);
         const newFilters = { ...filters, sort: sortValue };
         setFilters(newFilters);
         setPage(1); // Reset về trang 1 khi sort thay đổi
@@ -190,13 +188,6 @@ export default function Category() {
             limit: number,
             currentFilters: { [key: string]: string } = {}
         ) => {
-            console.log("fetchProducts called with:", {
-                slug,
-                page,
-                limit,
-                currentFilters,
-            });
-
             if (!slug) {
                 console.log("No slug provided, aborting fetch");
                 return;
@@ -210,31 +201,21 @@ export default function Category() {
                     currentFilters
                 );
                 const url = `/danh-muc/${slug}?${queryString}`;
-                console.log(`Fetching URL: ${url}`);
 
                 const res = await axios.get(url);
-                console.log("API Response:", res.data);
 
                 if (res.data && res.data.data) {
                     setProducts(res.data.data);
                     setLimitData(res.data.limit || limit);
                     setPage(res.data.page || page);
                     setTotalPage(res.data.pagination?.totalPages || 0);
-                    console.log(
-                        "Products set successfully:",
-                        res.data.data.length,
-                        "items"
-                    );
                 } else {
                     console.log("No data in response");
                     setProducts([]);
                 }
             } catch (err) {
                 console.error("Fetch error details:", err);
-                if (err.response) {
-                    console.error("Response status:", err.response.status);
-                    console.error("Response data:", err.response.data);
-                }
+
                 toast.error("Lỗi khi tải danh sách sản phẩm");
                 setProducts([]);
             } finally {
@@ -245,13 +226,6 @@ export default function Category() {
     );
     // useEffect chính - reset và load dữ liệu khi slug thay đổi
     useEffect(() => {
-        console.log(
-            "useEffect triggered - Slug:",
-            slug,
-            "limitData:",
-            limitData
-        );
-
         if (slug) {
             // Reset tất cả state khi chuyển sang brand mới
             fetchFilterOptions();

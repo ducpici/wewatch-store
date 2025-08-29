@@ -18,6 +18,7 @@ import Actions from "../../components/common/Actions";
 import { Modal } from "../../components/ui/modal";
 import { useModal } from "../../hooks/useModal";
 import { MoreHorizontal, Package } from "lucide-react";
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 const breadcrumbItems = [
     { label: "Trang chủ", path: "/" },
     { label: "Đơn hàng của tôi" },
@@ -70,7 +71,7 @@ export default function Order() {
     const handleSelectChange = (value: string) => {
         setOrderState(value);
     };
-    const handleTabChange = (tab) => {
+    const handleTabChange = (tab: any) => {
         setActiveTab(tab.label);
         const stateArr = tab.id !== null ? [tab.id] : null;
         setCurrentStateFilter(stateArr); // 👉 lưu state filter hiện tại
@@ -230,7 +231,7 @@ export default function Order() {
                                         >
                                             <div className="w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center">
                                                 <img
-                                                    src={`https://admin.wewatch.com:4090${item.image}`}
+                                                    src={`${BASE_URL}${item.image}`}
                                                     alt=""
                                                 />
                                             </div>

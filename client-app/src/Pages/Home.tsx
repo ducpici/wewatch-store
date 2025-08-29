@@ -9,6 +9,8 @@ type Banner = {
     state: string;
 };
 
+const BASE_URL = import.meta.env.VITE_BASE_URL;
+
 export default function Home() {
     const [categories, setCategories] = useState([]);
     const [banner, setBanner] = useState<Banner | null>(null);
@@ -49,7 +51,7 @@ export default function Home() {
                 /> */}
                 {banner && (
                     <img
-                        src={`https://admin.wewatch.com:4090${banner.image_name}`}
+                        src={`${BASE_URL}${banner.image_name}`}
                         alt="Banner quảng cáo"
                         className="w-full object-cover rounded"
                     />

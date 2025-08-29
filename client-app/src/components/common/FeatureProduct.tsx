@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import axios from "../../libs/axiosConfig";
 import { toast } from "react-toastify";
 import toSlug from "../../libs/formatSlug";
-
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 type Product = {
     id: number;
     modal_num: string;
@@ -89,7 +89,7 @@ export default function FeatureProduct({
                                 <Link to={`/san-pham/${product.slug}`}>
                                     <img
                                         className="w-60"
-                                        src={`https://admin.wewatch.com:4090${product.image}`}
+                                        src={`${BASE_URL}${product.image}`}
                                         alt="ảnh"
                                     />
                                 </Link>

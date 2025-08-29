@@ -14,7 +14,7 @@ import Actions from "../../components/common/Actions";
 import { SearchAndAddBar } from "../../components/common/SearchAndAdd";
 import { useEffect, useState } from "react";
 import ReactPaginate from "react-paginate";
-
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 interface Banner {
     id_banner: number;
     image_name: string;
@@ -172,7 +172,7 @@ export default function Banners() {
                                                 <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
                                                     <img
                                                         className="w-100"
-                                                        src={`https://admin.wewatch.com:4090${data.image_name}`}
+                                                        src={`${BASE_URL}${data.image_name}`}
                                                         alt=""
                                                     />
                                                 </TableCell>
