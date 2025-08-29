@@ -56,11 +56,11 @@ export default function AddEmployee() {
 
     const navigate = useNavigate();
 
-    const handleRadioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setSelectedValue(e.target.value);
+    const handleRadioChange = (value: string) => {
+        setSelectedValue(value);
         setEmployeeData({
             ...employeeData,
-            gender: e.target.value,
+            gender: value,
         });
     };
 
@@ -152,7 +152,7 @@ export default function AddEmployee() {
     };
 
     const getPositions = () => {
-        let res = axios
+        axios
             .get("/positions")
             .then((response) => {
                 const data = response.data.data;
@@ -196,7 +196,7 @@ export default function AddEmployee() {
                                 "yyyy-MM-dd",
                                 "dd-MM-yyyy"
                             )}
-                            onChange={(dates, currentDateString) => {
+                            onChange={(_, currentDateString) => {
                                 setEmployeeData({
                                     ...employeeData,
                                     dob: formatDate(

@@ -1,7 +1,5 @@
-import { useState } from "react";
 import Input from "../form/input/InputField";
 import Button from "../ui/button/Button";
-import { validators } from "tailwind-merge";
 
 interface SearchAndAddBarProps {
     value: string;
@@ -18,7 +16,6 @@ export const SearchAndAddBar: React.FC<SearchAndAddBarProps> = ({
     onSearch,
     onAdd,
     placeholder = "Tìm kiếm...",
-    addLabel = "Thêm mới",
 }) => {
     return (
         <div className="flex items-center justify-between">

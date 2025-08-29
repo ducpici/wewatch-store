@@ -1,396 +1,41 @@
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "../../lib/axiosConfig";
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHeader,
-    TableRow,
-} from "../../components/ui/table";
+import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import Actions from "../../components/common/Actions";
-import { SearchAndAddBar } from "../../components/common/SearchAndAdd";
-import { useEffect, useState } from "react";
-import ReactPaginate from "react-paginate";
-import { useModal } from "../../hooks/useModal";
-import { Modal } from "../../components/ui/modal";
-import Input from "../../components/form/input/InputField";
-import Button from "../../components/ui/button/Button";
-import Label from "../../components/form/Label";
-import Select from "../../components/form/Select";
-import ComponentCard from "../../components/common/ComponentCard";
-import DatePicker from "../../components/form/date-picker";
-import Radio from "../../components/form/input/Radio";
+// import {
+//     Table,
+//     TableBody,
+//     TableCell,
+//     TableHeader,
+//     TableRow,
+// } from "../../components/ui/table";
+// import { toast } from "react-toastify";
+// import "react-toastify/dist/ReactToastify.css";
+// import Actions from "../../components/common/Actions";
+// import { SearchAndAddBar } from "../../components/common/SearchAndAdd";
+// import { useEffect, useState } from "react";
+// import ReactPaginate from "react-paginate";
+// import { useModal } from "../../hooks/useModal";
+// import { Modal } from "../../components/ui/modal";
+// import Input from "../../components/form/input/InputField";
+// import Button from "../../components/ui/button/Button";
+// import Label from "../../components/form/Label";
+// import Select from "../../components/form/Select";
+// import ComponentCard from "../../components/common/ComponentCard";
+// import DatePicker from "../../components/form/date-picker";
+// import Radio from "../../components/form/input/Radio";
 import {
     Calendar,
     Package,
     User,
-    Phone,
-    Mail,
     AlertCircle,
     CheckCircle,
     Truck,
     XCircle,
 } from "lucide-react";
 
-// export default function OrderDetail() {
-//     type Product = {
-//         id: number;
-//         modal_num: string;
-//         image: string;
-//         brand: {
-//             id: number;
-//             name: string;
-//             description: string;
-//         };
-//         category: {
-//             id: number;
-//             name: string;
-//             description: string;
-//         };
-//         quantity: number;
-//         price: number;
-//         slug: string;
-//     };
-
-//     type orderDetail = {
-//         id: number;
-//         user: {
-//             id: number;
-//             name: string;
-//             email: string;
-//             phone_number: string;
-//             address: string;
-//         };
-//         shipping_address: {
-//             full_name: string;
-//             phone_num: string;
-//             city: string;
-//             district: string;
-//             ward: string;
-//             detail: string;
-//         };
-//         payment_method: {
-//             code: number;
-//             text: string;
-//         };
-//         items: [
-//             {
-//                 id: number;
-//                 name: string;
-//                 modal_num: string;
-//                 image: string;
-//                 brand: {
-//                     id: number;
-//                     name: string;
-//                     description: string;
-//                 };
-//                 category: {
-//                     id: number;
-//                     name: string;
-//                     description: string;
-//                 };
-//                 quantity: number;
-//                 price: number;
-//                 slug: string;
-//             }
-//         ];
-//         order_state: {
-//             code: number;
-//             text: string;
-//         };
-//         total_price: number;
-//         created_at: string;
-//         updated_at: string;
-//     };
-
-//     const { id } = useParams();
-//     const navigate = useNavigate();
-
-//     const [loading, setLoading] = useState(false);
-//     const [totalUser, setTotalUser] = useState(0);
-//     const [totalPage, setTotalPage] = useState(0);
-//     const [page, setPage] = useState(1);
-//     const [limitData, setLimitData] = useState(10);
-//     const [orderId, setOrderId] = useState(BigInt(0));
-//     const [productItems, setProductItems] = useState<Product[]>([]);
-//     const [dataOrderDetail, setDataOrderDetail] = useState<orderDetail>();
-
-//     const breadcrumbItems = [
-//         { label: "Trang chủ", path: "/" },
-//         { label: "Đơn hàng", path: "/orders" },
-//         { label: "Chi tiết đơn hàng", path: "/order-detail" },
-//     ];
-
-//     const fetchOrderDetailById = async () => {
-//         setLoading(true);
-//         try {
-//             const res = await axios.get(`/orders/detail/${id}`);
-//             console.log(res);
-//             setDataOrderDetail(res.data);
-//             setProductItems(res.data.items);
-//         } catch (err) {
-//             console.error("Lỗi khi tải danh sách:", err);
-//             toast.error("Lỗi khi tải danh ");
-//         } finally {
-//             setLoading(false);
-//         }
-//     };
-
-//     const handleViewProduct = (id: number) => {
-//         navigate(`/products/edit/${id}`);
-//     };
-
-//     useEffect(() => {
-//         fetchOrderDetailById();
-//     }, [id]);
-
-//     return (
-//         <>
-//             <PageBreadcrumb items={breadcrumbItems} />
-//             <div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] lg:p-6">
-//                 <div className="space-y-6">
-//                     {/* {loading ? (
-//                         <div>Đang tải danh sách nhân viên...</div>
-//                     ) : ( */}
-//                     <div className="infoUser grid grid-cols-3 gap-4">
-//                         <ComponentCard title="Thông tin khách hàng">
-//                             <div className="space-y-0">
-//                                 <Label htmlFor="name">
-//                                     Họ tên:
-//                                     <span className="ml-2">
-//                                         {dataOrderDetail?.user.name}
-//                                     </span>
-//                                 </Label>
-//                                 <Label htmlFor="phone">
-//                                     Số điện thoại:
-//                                     <span className="ml-2">
-//                                         {dataOrderDetail?.user.phone_number}
-//                                     </span>
-//                                 </Label>
-//                                 <Label htmlFor="address">
-//                                     Email:
-//                                     <span className="ml-2">
-//                                         {dataOrderDetail?.user.email}
-//                                     </span>
-//                                 </Label>
-//                                 <Label htmlFor="address">
-//                                     Địa chỉ:
-//                                     <span className="ml-2">
-//                                         {dataOrderDetail?.user.address}
-//                                     </span>
-//                                 </Label>
-//                             </div>
-//                         </ComponentCard>
-//                         <ComponentCard title="Thông tin địa chỉ nhận hàng">
-//                             <div className="space-y-0">
-//                                 <Label htmlFor="name">
-//                                     Họ tên:
-//                                     <span className="ml-2">
-//                                         {
-//                                             dataOrderDetail?.shipping_address
-//                                                 .full_name
-//                                         }
-//                                     </span>
-//                                 </Label>
-//                                 <Label htmlFor="phone">
-//                                     Số điện thoại:
-//                                     <span className="ml-2">
-//                                         {
-//                                             dataOrderDetail?.shipping_address
-//                                                 .phone_num
-//                                         }
-//                                     </span>
-//                                 </Label>
-//                                 <Label htmlFor="address">
-//                                     Địa chỉ:
-//                                     <span className="ml-2">
-//                                         {dataOrderDetail?.shipping_address
-//                                             .detail &&
-//                                             `${dataOrderDetail?.shipping_address?.detail}, `}
-//                                         {dataOrderDetail?.shipping_address.ward}
-//                                         ,{" "}
-//                                         {
-//                                             dataOrderDetail?.shipping_address
-//                                                 .district
-//                                         }
-//                                         ,{" "}
-//                                         {dataOrderDetail?.shipping_address.city}
-//                                     </span>
-//                                 </Label>
-//                             </div>
-//                         </ComponentCard>
-//                         <ComponentCard title="Thông tin đơn hàng">
-//                             <div className="space-y-0">
-//                                 <Label htmlFor="order_id">
-//                                     Mã đơn hàng:
-//                                     <span className="ml-2">
-//                                         {dataOrderDetail?.id}
-//                                     </span>
-//                                 </Label>
-//                                 <Label htmlFor="total">
-//                                     Tổng tiền:
-//                                     <span className="ml-2">
-//                                         {dataOrderDetail?.total_price.toLocaleString(
-//                                             "vi-VN"
-//                                         )}{" "}
-//                                         VNĐ
-//                                     </span>
-//                                 </Label>
-//                                 <Label htmlFor="payment_method">
-//                                     Hình thức thanh toán:
-//                                     <span className="ml-2">
-//                                         {dataOrderDetail?.payment_method.text}
-//                                     </span>
-//                                 </Label>
-//                                 <Label htmlFor="order_state">
-//                                     Trạng thái đơn hàng:
-//                                     <span className="ml-2">
-//                                         {dataOrderDetail?.order_state.text}
-//                                     </span>
-//                                 </Label>
-//                             </div>
-//                         </ComponentCard>
-//                     </div>
-//                     <div className="overflow-hidden rounded-xl dark:border-white/[0.05] dark:bg-white/[0.03]">
-//                         <ComponentCard title="Thông tin sản phẩm">
-//                             <div className="max-w-full overflow-x-auto">
-//                                 <Table>
-//                                     {/* Table Header */}
-//                                     <TableHeader className="text-left border-b border-gray-100 dark:border-white/[0.05]">
-//                                         <TableRow>
-//                                             <TableCell
-//                                                 isHeader
-//                                                 className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
-//                                             >
-//                                                 #
-//                                             </TableCell>
-//                                             <TableCell
-//                                                 isHeader
-//                                                 className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
-//                                             >
-//                                                 Hình ảnh
-//                                             </TableCell>
-//                                             <TableCell
-//                                                 isHeader
-//                                                 className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
-//                                             >
-//                                                 Số hiệu sản phẩm
-//                                             </TableCell>
-//                                             <TableCell
-//                                                 isHeader
-//                                                 className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
-//                                             >
-//                                                 Loại sản phẩm
-//                                             </TableCell>
-//                                             <TableCell
-//                                                 isHeader
-//                                                 className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
-//                                             >
-//                                                 Thương hiệu
-//                                             </TableCell>
-//                                             <TableCell
-//                                                 isHeader
-//                                                 className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
-//                                             >
-//                                                 Số lượng
-//                                             </TableCell>
-//                                             <TableCell
-//                                                 isHeader
-//                                                 className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
-//                                             >
-//                                                 Đơn giá
-//                                             </TableCell>
-//                                             <TableCell
-//                                                 isHeader
-//                                                 className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
-//                                             >
-//                                                 Thành tiền
-//                                             </TableCell>
-//                                         </TableRow>
-//                                     </TableHeader>
-
-//                                     {/* Table Body */}
-//                                     <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
-//                                         {productItems.map((data, index) => (
-//                                             <TableRow key={data.id}>
-//                                                 <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-//                                                     {index + 1}
-//                                                 </TableCell>
-//                                                 <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-//                                                     <img
-//                                                         className="w-20"
-//                                                         src={`https://admin.wewatch.com:4090${data.image}`}
-//                                                         alt=""
-//                                                     />
-//                                                 </TableCell>
-//                                                 <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-//                                                     {data.modal_num}
-//                                                 </TableCell>{" "}
-//                                                 <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-//                                                     {data.category.name}
-//                                                 </TableCell>
-//                                                 <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-//                                                     {data.brand.name}
-//                                                 </TableCell>
-//                                                 <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-//                                                     {data.quantity}
-//                                                 </TableCell>
-//                                                 <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-//                                                     {data.price.toLocaleString(
-//                                                         "vi-VN"
-//                                                     )}
-//                                                 </TableCell>
-//                                                 {/* <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-//                                                 {data.state_text}
-//                                             </TableCell> */}
-//                                                 <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-//                                                     <Actions
-//                                                         onView={() =>
-//                                                             handleViewProduct(
-//                                                                 data.id
-//                                                             )
-//                                                         }
-//                                                     />
-//                                                 </TableCell>
-//                                             </TableRow>
-//                                         ))}
-//                                     </TableBody>
-//                                 </Table>
-//                             </div>
-//                             <div className="flex justify-between m-5">
-//                                 <div></div>
-//                             </div>
-//                         </ComponentCard>
-//                     </div>
-//                     {/* )} */}
-//                 </div>
-//             </div>
-//         </>
-//     );
-// }
-
 export default function OrderDetail() {
-    type Product = {
-        id: number;
-        modal_num: string;
-        brand: {
-            id: number;
-            name: string;
-            description: string;
-        };
-        category: {
-            id: number;
-            name: string;
-            description: string;
-        };
-        quantity: number;
-        price: number;
-        slug: string;
-    };
-
     type orderDetail = {
         id: number;
         user: {
@@ -446,12 +91,12 @@ export default function OrderDetail() {
     const navigate = useNavigate();
 
     const [loading, setLoading] = useState(false);
-    const [totalUser, setTotalUser] = useState(0);
-    const [totalPage, setTotalPage] = useState(0);
-    const [page, setPage] = useState(1);
-    const [limitData, setLimitData] = useState(10);
-    const [orderId, setOrderId] = useState(BigInt(0));
-    const [productItems, setProductItems] = useState<Product[]>([]);
+    // const [totalUser, setTotalUser] = useState(0);
+    // const [totalPage, setTotalPage] = useState(0);
+    // const [page, setPage] = useState(1);
+    // const [limitData, setLimitData] = useState(10);
+    // const [orderId, setOrderId] = useState(BigInt(0));
+    // const [productItems, setProductItems] = useState<Product[]>([]);
     const [dataOrderDetail, setDataOrderDetail] = useState<orderDetail>();
 
     const breadcrumbItems = [
@@ -466,7 +111,7 @@ export default function OrderDetail() {
             const res = await axios.get(`/orders/detail/${id}`);
             console.log(res);
             setDataOrderDetail(res.data);
-            setProductItems(res.data.items);
+            // setProductItems(res.data.items);
         } catch (err) {
             console.error("Lỗi khi tải danh sách:", err);
             toast.error("Lỗi khi tải danh ");
@@ -475,9 +120,9 @@ export default function OrderDetail() {
         }
     };
 
-    const handleViewProduct = (slug: string) => {
-        navigate(`/san-pham/${slug}`);
-    };
+    // const handleViewProduct = (slug: string) => {
+    //     navigate(`/san-pham/${slug}`);
+    // };
 
     function formatDateToVietnamese(input: any) {
         const date = new Date(input);
@@ -666,270 +311,284 @@ export default function OrderDetail() {
     return (
         <>
             <PageBreadcrumb items={breadcrumbItems} />
-            <div className="max-w-6xl mx-auto p-6 bg-gray-50 min-h-screen">
-                {/* Header Alert */}
-                <div className="bg-white rounded-lg shadow-sm p-4 mb-6 flex items-center justify-between">
-                    <div className="flex items-center space-x-3">
-                        {typeof dataOrderDetail?.order_state.code ===
-                            "number" &&
-                            renderStateMessage(
-                                dataOrderDetail.order_state.code
-                            )}
-                    </div>
-                    {dataOrderDetail?.order_state.code == 0 ? (
-                        <>
-                            <div className="">
-                                <button
-                                    className="bg-red-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-red-600 transition-colors cursor-pointer"
-                                    onClick={() =>
-                                        handleCancelOrder(dataOrderDetail?.id)
-                                    }
-                                >
-                                    Hủy
-                                </button>{" "}
-                                <button
-                                    className="bg-green-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-600 transition-colors cursor-pointer"
-                                    onClick={() =>
-                                        handleConfirmOrder(dataOrderDetail?.id)
-                                    }
-                                >
-                                    Xác nhận
-                                </button>
-                            </div>{" "}
-                        </>
-                    ) : dataOrderDetail?.order_state.code == 1 ? (
-                        <>
-                            <button
-                                className="bg-yellow-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-yellow-600 transition-colors cursor-pointer"
-                                onClick={() =>
-                                    handleShipOrder(dataOrderDetail?.id)
-                                }
-                            >
-                                Giao hàng
-                            </button>
-                        </>
-                    ) : dataOrderDetail?.order_state.code == 2 ? (
-                        <>
-                            <div>
+            {loading ? (
+                <div>Đang tải danh sách...</div>
+            ) : (
+                <div className="max-w-6xl mx-auto p-6 bg-gray-50 min-h-screen">
+                    {/* Header Alert */}
+                    <div className="bg-white rounded-lg shadow-sm p-4 mb-6 flex items-center justify-between">
+                        <div className="flex items-center space-x-3">
+                            {typeof dataOrderDetail?.order_state.code ===
+                                "number" &&
+                                renderStateMessage(
+                                    dataOrderDetail.order_state.code
+                                )}
+                        </div>
+                        {dataOrderDetail?.order_state.code == 0 ? (
+                            <>
+                                <div className="">
+                                    <button
+                                        className="bg-red-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-red-600 transition-colors cursor-pointer"
+                                        onClick={() =>
+                                            handleCancelOrder(
+                                                dataOrderDetail?.id
+                                            )
+                                        }
+                                    >
+                                        Hủy
+                                    </button>{" "}
+                                    <button
+                                        className="bg-green-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-600 transition-colors cursor-pointer"
+                                        onClick={() =>
+                                            handleConfirmOrder(
+                                                dataOrderDetail?.id
+                                            )
+                                        }
+                                    >
+                                        Xác nhận
+                                    </button>
+                                </div>{" "}
+                            </>
+                        ) : dataOrderDetail?.order_state.code == 1 ? (
+                            <>
                                 <button
                                     className="bg-yellow-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-yellow-600 transition-colors cursor-pointer"
                                     onClick={() =>
-                                        handleReturnOrder(dataOrderDetail?.id)
+                                        handleShipOrder(dataOrderDetail?.id)
                                     }
                                 >
-                                    Trả hàng
-                                </button>{" "}
-                                <button
-                                    className="bg-green-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-600 transition-colors cursor-pointer"
-                                    onClick={() =>
-                                        handleCompleteOrder(dataOrderDetail?.id)
-                                    }
-                                >
-                                    Hoàn thành
+                                    Giao hàng
                                 </button>
-                            </div>
-                        </>
-                    ) : (
-                        <></>
-                    )}
-                </div>
-
-                {/* Order Info */}
-                <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                        <div className="flex items-center space-x-3">
-                            <Package className="w-5 h-5 text-gray-600" />
-                            <div>
-                                <p className="text-sm text-gray-600">
-                                    Mã đơn hàng
-                                </p>
-                                <p className="font-semibold text-gray-800">
-                                    #{dataOrderDetail?.id}
-                                </p>
-                            </div>
-                        </div>
-                        <div className="flex items-center space-x-3">
-                            <Calendar className="w-5 h-5 text-gray-600" />
-                            <div>
-                                <p className="text-sm text-gray-600">
-                                    Thời gian đặt hàng
-                                </p>
-                                <p className="font-semibold text-gray-800">
-                                    {formatDateToVietnamese(
-                                        dataOrderDetail?.created_at
-                                    )}
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Customer Info */}
-                    <div className="border-t pt-6">
-                        <h4 className="font-semibold text-gray-800 mb-4 flex items-center">
-                            <User className="w-5 h-5 mr-2" />
-                            Thông tin nhận hàng
-                        </h4>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div className="space-y-3">
+                            </>
+                        ) : dataOrderDetail?.order_state.code == 2 ? (
+                            <>
                                 <div>
-                                    <p className="text-sm text-gray-600">
-                                        Người nhận:
-                                    </p>
-                                    <p className="font-semibold text-gray-800">
-                                        {
-                                            dataOrderDetail?.shipping_address
-                                                ?.full_name
-                                        }
-                                    </p>
-                                </div>
-                                <div>
-                                    <p className="text-sm text-gray-600">
-                                        Số điện thoại:
-                                    </p>
-                                    <p className="text-gray-800 font-semibold">
-                                        {
-                                            dataOrderDetail?.shipping_address
-                                                .phone_num
-                                        }
-                                    </p>
-                                </div>
-                                <div>
-                                    <p className="text-sm text-gray-600 mb-1">
-                                        Địa chỉ:
-                                    </p>
-                                    <p className="text-gray-800 font-semibold">
-                                        {dataOrderDetail?.shipping_address
-                                            ?.detail &&
-                                            `${dataOrderDetail?.shipping_address?.detail},`}{" "}
-                                        {
-                                            dataOrderDetail?.shipping_address
-                                                ?.ward
-                                        }
-                                        ,{" "}
-                                        {
-                                            dataOrderDetail?.shipping_address
-                                                ?.district
-                                        }
-                                        ,{" "}
-                                        {
-                                            dataOrderDetail?.shipping_address
-                                                ?.city
-                                        }
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Products */}
-                <div className="bg-white rounded-lg shadow-sm p-6">
-                    <h4 className="font-semibold text-gray-800 mb-4 flex items-center">
-                        <Package className="w-5 h-5 mr-2" />
-                        Sản phẩm
-                    </h4>
-
-                    {/* Product Table Header */}
-                    <div className="bg-green-600 text-white px-4 py-3 rounded-t-lg">
-                        <div className="grid grid-cols-12 gap-4 font-medium">
-                            <div className="col-span-6">Sản phẩm</div>
-                            <div className="col-span-2 text-center">
-                                Số lượng
-                            </div>
-                            <div className="col-span-2 text-center">
-                                Đơn giá
-                            </div>
-                            <div className="col-span-2 text-center">
-                                Thành tiền
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Product Items */}
-                    <div className="border-l border-r border-gray-200">
-                        {/* Product  */}
-                        {dataOrderDetail?.items.map((item) => (
-                            <div
-                                key={item.id}
-                                className="grid grid-cols-12 gap-4 p-4 border-b border-gray-200 items-center"
-                            >
-                                <div className="col-span-6 flex items-center space-x-3">
-                                    <img
-                                        src={`https://admin.wewatch.com:4090${item.image}`}
-                                        alt="Product"
-                                        className="w-15 h-15 object-cover rounded-lg bg-gray-100 cursor-pointer"
+                                    <button
+                                        className="bg-yellow-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-yellow-600 transition-colors cursor-pointer"
                                         onClick={() =>
-                                            navigate(
-                                                `/products/edit/${item.id}`
+                                            handleReturnOrder(
+                                                dataOrderDetail?.id
                                             )
                                         }
-                                    />
+                                    >
+                                        Trả hàng
+                                    </button>{" "}
+                                    <button
+                                        className="bg-green-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-600 transition-colors cursor-pointer"
+                                        onClick={() =>
+                                            handleCompleteOrder(
+                                                dataOrderDetail?.id
+                                            )
+                                        }
+                                    >
+                                        Hoàn thành
+                                    </button>
+                                </div>
+                            </>
+                        ) : (
+                            <></>
+                        )}
+                    </div>
+
+                    {/* Order Info */}
+                    <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                            <div className="flex items-center space-x-3">
+                                <Package className="w-5 h-5 text-gray-600" />
+                                <div>
+                                    <p className="text-sm text-gray-600">
+                                        Mã đơn hàng
+                                    </p>
+                                    <p className="font-semibold text-gray-800">
+                                        #{dataOrderDetail?.id}
+                                    </p>
+                                </div>
+                            </div>
+                            <div className="flex items-center space-x-3">
+                                <Calendar className="w-5 h-5 text-gray-600" />
+                                <div>
+                                    <p className="text-sm text-gray-600">
+                                        Thời gian đặt hàng
+                                    </p>
+                                    <p className="font-semibold text-gray-800">
+                                        {formatDateToVietnamese(
+                                            dataOrderDetail?.created_at
+                                        )}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Customer Info */}
+                        <div className="border-t pt-6">
+                            <h4 className="font-semibold text-gray-800 mb-4 flex items-center">
+                                <User className="w-5 h-5 mr-2" />
+                                Thông tin nhận hàng
+                            </h4>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="space-y-3">
                                     <div>
-                                        <p className="font-medium text-gray-800">
-                                            {item.name}
+                                        <p className="text-sm text-gray-600">
+                                            Người nhận:
+                                        </p>
+                                        <p className="font-semibold text-gray-800">
+                                            {
+                                                dataOrderDetail
+                                                    ?.shipping_address
+                                                    ?.full_name
+                                            }
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <p className="text-sm text-gray-600">
+                                            Số điện thoại:
+                                        </p>
+                                        <p className="text-gray-800 font-semibold">
+                                            {
+                                                dataOrderDetail
+                                                    ?.shipping_address.phone_num
+                                            }
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <p className="text-sm text-gray-600 mb-1">
+                                            Địa chỉ:
+                                        </p>
+                                        <p className="text-gray-800 font-semibold">
+                                            {dataOrderDetail?.shipping_address
+                                                ?.detail &&
+                                                `${dataOrderDetail?.shipping_address?.detail},`}{" "}
+                                            {
+                                                dataOrderDetail
+                                                    ?.shipping_address?.ward
+                                            }
+                                            ,{" "}
+                                            {
+                                                dataOrderDetail
+                                                    ?.shipping_address?.district
+                                            }
+                                            ,{" "}
+                                            {
+                                                dataOrderDetail
+                                                    ?.shipping_address?.city
+                                            }
                                         </p>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Products */}
+                    <div className="bg-white rounded-lg shadow-sm p-6">
+                        <h4 className="font-semibold text-gray-800 mb-4 flex items-center">
+                            <Package className="w-5 h-5 mr-2" />
+                            Sản phẩm
+                        </h4>
+
+                        {/* Product Table Header */}
+                        <div className="bg-green-600 text-white px-4 py-3 rounded-t-lg">
+                            <div className="grid grid-cols-12 gap-4 font-medium">
+                                <div className="col-span-6">Sản phẩm</div>
                                 <div className="col-span-2 text-center">
-                                    <span className="font-medium">
-                                        {item.quantity}
-                                    </span>
+                                    Số lượng
                                 </div>
                                 <div className="col-span-2 text-center">
-                                    <span className="font-medium">
-                                        {item.price.toLocaleString("vi-VN")}₫
-                                    </span>
+                                    Đơn giá
                                 </div>
                                 <div className="col-span-2 text-center">
-                                    <span className="font-semibold text-red-600">
-                                        {(
-                                            item.quantity * item.price
-                                        ).toLocaleString("vi-VN")}
+                                    Thành tiền
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Product Items */}
+                        <div className="border-l border-r border-gray-200">
+                            {/* Product  */}
+                            {dataOrderDetail?.items.map((item) => (
+                                <div
+                                    key={item.id}
+                                    className="grid grid-cols-12 gap-4 p-4 border-b border-gray-200 items-center"
+                                >
+                                    <div className="col-span-6 flex items-center space-x-3">
+                                        <img
+                                            src={`https://admin.wewatch.com:4090${item.image}`}
+                                            alt="Product"
+                                            className="w-15 h-15 object-cover rounded-lg bg-gray-100 cursor-pointer"
+                                            onClick={() =>
+                                                navigate(
+                                                    `/products/edit/${item.id}`
+                                                )
+                                            }
+                                        />
+                                        <div>
+                                            <p className="font-medium text-gray-800">
+                                                {item.name}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div className="col-span-2 text-center">
+                                        <span className="font-medium">
+                                            {item.quantity}
+                                        </span>
+                                    </div>
+                                    <div className="col-span-2 text-center">
+                                        <span className="font-medium">
+                                            {item.price.toLocaleString("vi-VN")}
+                                            ₫
+                                        </span>
+                                    </div>
+                                    <div className="col-span-2 text-center">
+                                        <span className="font-semibold text-red-600">
+                                            {(
+                                                item.quantity * item.price
+                                            ).toLocaleString("vi-VN")}
+                                            ₫
+                                        </span>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* Payment Summary */}
+                        <div className="bg-gray-50 p-4 rounded-b-lg">
+                            <h5 className="font-semibold text-gray-800 mb-4">
+                                Thanh toán
+                            </h5>
+                            <div className="space-y-3">
+                                <div className="flex justify-between">
+                                    <span className="text-gray-600">
+                                        Phương thức thanh toán
+                                    </span>
+                                    <span className="font-medium">
+                                        {dataOrderDetail?.payment_method.text}
+                                    </span>
+                                </div>
+                                <div className="flex justify-between">
+                                    <span className="text-gray-600">
+                                        Trạng thái đơn hàng
+                                    </span>
+                                    <span className="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-sm font-medium">
+                                        {dataOrderDetail?.order_state.text}
+                                    </span>
+                                </div>
+                                <div className="flex justify-between text-lg font-semibold pt-2 border-t">
+                                    <span>Tổng thanh toán</span>
+                                    <span className="text-red-600">
+                                        {dataOrderDetail?.total_price.toLocaleString(
+                                            "vi-VN"
+                                        )}
                                         ₫
                                     </span>
                                 </div>
+                                <p className="text-sm text-gray-500">
+                                    (Đã bao gồm VAT & Giảm giá)
+                                </p>
                             </div>
-                        ))}
-                    </div>
-
-                    {/* Payment Summary */}
-                    <div className="bg-gray-50 p-4 rounded-b-lg">
-                        <h5 className="font-semibold text-gray-800 mb-4">
-                            Thanh toán
-                        </h5>
-                        <div className="space-y-3">
-                            <div className="flex justify-between">
-                                <span className="text-gray-600">
-                                    Phương thức thanh toán
-                                </span>
-                                <span className="font-medium">
-                                    {dataOrderDetail?.payment_method.text}
-                                </span>
-                            </div>
-                            <div className="flex justify-between">
-                                <span className="text-gray-600">
-                                    Trạng thái đơn hàng
-                                </span>
-                                <span className="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-sm font-medium">
-                                    {dataOrderDetail?.order_state.text}
-                                </span>
-                            </div>
-                            <div className="flex justify-between text-lg font-semibold pt-2 border-t">
-                                <span>Tổng thanh toán</span>
-                                <span className="text-red-600">
-                                    {dataOrderDetail?.total_price.toLocaleString(
-                                        "vi-VN"
-                                    )}
-                                    ₫
-                                </span>
-                            </div>
-                            <p className="text-sm text-gray-500">
-                                (Đã bao gồm VAT & Giảm giá)
-                            </p>
                         </div>
                     </div>
                 </div>
-            </div>
+            )}
         </>
     );
 }

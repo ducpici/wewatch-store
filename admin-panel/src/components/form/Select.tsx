@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 interface Option {
     id: number;
     name: string;

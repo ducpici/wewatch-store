@@ -13,13 +13,6 @@ import { useNavigate } from "react-router";
 export default function AuthorPosition() {
     const { id } = useParams();
 
-    type Role = {
-        id: BigInt;
-        name: string;
-        url: string;
-        description: string;
-    };
-
     type Position = {
         id: BigInt;
         name: string;

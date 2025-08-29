@@ -1,10 +1,5 @@
-import {
-    ArrowDownIcon,
-    ArrowUpIcon,
-    BoxIconLine,
-    GroupIcon,
-} from "../../icons";
-import Badge from "../ui/badge/Badge";
+import { BoxIconLine, GroupIcon } from "../../icons";
+
 import { useEffect, useState } from "react";
 import axios from "../../lib/axiosConfig";
 interface Metrics {

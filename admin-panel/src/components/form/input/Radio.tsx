@@ -4,7 +4,8 @@ interface RadioProps {
     value: string; // Value of the radio button
     checked: boolean; // Whether the radio button is checked
     label: string; // Label for the radio button
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void; // Handler for value change
+    // onChange: (e: React.ChangeEvent<HTMLInputElement>) => void; // Handler for value change
+    onChange: (value: string) => void;
     className?: string; // Optional additional classes
     disabled?: boolean; // Optional disabled state for the radio button
 }
@@ -34,7 +35,8 @@ const Radio: React.FC<RadioProps> = ({
                 type="radio"
                 value={value}
                 checked={checked}
-                onChange={(e) => !disabled && onChange(e)} // Prevent onChange when disabled
+                // onChange={(e) => !disabled && onChange(e)} // Prevent onChange when disabled
+                onChange={(e) => onChange(e.target.value)}
                 className="sr-only"
                 disabled={disabled} // Disable input
             />

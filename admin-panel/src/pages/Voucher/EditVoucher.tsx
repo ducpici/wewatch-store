@@ -10,7 +10,6 @@ import axios from "../../lib/axiosConfig";
 import { toast } from "react-toastify";
 import { useNavigate, useParams } from "react-router";
 import formatDate from "../../lib/formatDate";
-import getVoucherStatus from "../../lib/getVoucherStatus";
 
 export default function EditVoucher() {
     const { id } = useParams();
@@ -256,7 +255,7 @@ export default function EditVoucher() {
                             label="Ngày bắt đầu:"
                             placeholder="Nhập ngày bắt đầu"
                             defaultDate={voucherData.start_date}
-                            onChange={(dates, currentDateString) => {
+                            onChange={(_, currentDateString) => {
                                 setVoucherData({
                                     ...voucherData,
                                     start_date: currentDateString,
@@ -270,7 +269,7 @@ export default function EditVoucher() {
                             label="Ngày hết hạn:"
                             placeholder="Nhập ngày hết hạn"
                             defaultDate={voucherData.end_date}
-                            onChange={(dates, currentDateString) => {
+                            onChange={(_, currentDateString) => {
                                 setVoucherData({
                                     ...voucherData,
                                     end_date: currentDateString,

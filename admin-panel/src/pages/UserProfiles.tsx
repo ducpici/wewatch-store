@@ -1,7 +1,4 @@
 import PageBreadcrumb from "../components/common/PageBreadCrumb";
-import UserMetaCard from "../components/UserProfile/UserMetaCard";
-import UserInfoCard from "../components/UserProfile/UserInfoCard";
-import UserAddressCard from "../components/UserProfile/UserAddressCard";
 import PageMeta from "../components/common/PageMeta";
 import useSession from "../hooks/useSession";
 import axios from "../lib/axiosConfig";
@@ -59,11 +56,11 @@ export default function UserProfiles() {
         new_pass: "",
     });
     const [activeTab, setActiveTab] = useState("info");
-    const handleRadioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setSelectedValue(e.target.value);
+    const handleRadioChange = (value: string) => {
+        setSelectedValue(value);
         setUserData({
             ...userData,
-            gender: e.target.value,
+            gender: value,
         });
     };
     const handleUpdateUser = async () => {
@@ -337,7 +334,7 @@ export default function UserProfiles() {
                                                 "dd-MM-yyyy"
                                             )}
                                             onChange={(
-                                                dates,
+                                                _,
                                                 currentDateString
                                             ) => {
                                                 setUserData({

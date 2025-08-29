@@ -72,8 +72,6 @@ export default function EditProduct() {
     const [functionData, setFunctionData] = useState([]);
     const [prdFunctionData, setPrdFunctionData] = useState([]);
     const [isEnabled, setIsEnabled] = useState(true);
-    const [selectedValue, setSelectedValue] = useState<string>();
-    const [selectedValues, setSelectedValues] = useState<string[]>([]);
 
     const breadcrumbItems = [
         { label: "Trang chủ", path: "/" },
@@ -228,8 +226,8 @@ export default function EditProduct() {
         }
     };
 
-    const getBrands = () => {
-        let res = axios
+    const getBrands = async () => {
+        await axios
             .get("/brands")
             .then((response) => {
                 const data = response.data.data;
@@ -257,8 +255,8 @@ export default function EditProduct() {
             .finally(() => {});
     };
 
-    const getCategories = () => {
-        let res = axios
+    const getCategories = async () => {
+        await axios
             .get("/categories")
             .then((response) => {
                 const data = response.data.data;
@@ -270,8 +268,8 @@ export default function EditProduct() {
             .finally(() => {});
     };
 
-    const getFunctions = () => {
-        let res = axios
+    const getFunctions = async () => {
+        await axios
             .get("/functions")
             .then((response) => {
                 const data = response.data.data;
@@ -287,8 +285,8 @@ export default function EditProduct() {
             .finally(() => {});
     };
 
-    const getProductFunction = () => {
-        let res = axios
+    const getProductFunction = async () => {
+        await axios
             .get(`/product_function/${id}`)
             .then((response) => {
                 console.log(response);

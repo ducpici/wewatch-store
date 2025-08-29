@@ -27,7 +27,6 @@ export default function Roles() {
     const [roles, setRoles] = useState<Role[]>([]);
     const [searchValue, setSearchValue] = useState("");
     const [loading, setLoading] = useState(false);
-    const [totalUser, setTotalUser] = useState(0);
     const [totalPage, setTotalPage] = useState(0);
     const [page, setPage] = useState(1);
     const [limitData, setLimitData] = useState(10);
@@ -42,6 +41,7 @@ export default function Roles() {
         try {
             const res = await axios.get(`/roles?page=${page}&limit=${limit}`);
             setRoles(res.data.data);
+            setPage(page);
             setLimitData(res.data.pagination.limit);
             setTotalPage(res.data.pagination.totalPages);
         } catch (err) {
@@ -117,122 +117,122 @@ export default function Roles() {
                             handleSearch(searchValue);
                         }}
                     />
-                    {/* {loading ? (
-                        <div>Đang tải danh sách nhân viên...</div>
-                    ) : ( */}
-                    <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
-                        <div className="max-w-full overflow-x-auto">
-                            <Table>
-                                {/* Table Header */}
-                                <TableHeader className="text-left border-b border-gray-100 dark:border-white/[0.05]">
-                                    <TableRow>
-                                        <TableCell
-                                            isHeader
-                                            className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
-                                        >
-                                            #
-                                        </TableCell>
-                                        <TableCell
-                                            isHeader
-                                            className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
-                                        >
-                                            Mã quyền hạn
-                                        </TableCell>
-                                        <TableCell
-                                            isHeader
-                                            className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
-                                        >
-                                            Tên quyền hạn
-                                        </TableCell>
-                                        <TableCell
-                                            isHeader
-                                            className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
-                                        >
-                                            Url
-                                        </TableCell>
-                                        <TableCell
-                                            isHeader
-                                            className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
-                                        >
-                                            Mô tả
-                                        </TableCell>
-                                        <TableCell
-                                            isHeader
-                                            className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
-                                        >
-                                            Thao tác
-                                        </TableCell>
-                                    </TableRow>
-                                </TableHeader>
-
-                                {/* Table Body */}
-                                <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
-                                    {roles.map((role, index) => (
-                                        <TableRow key={role.id}>
-                                            <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                {index + 1}
+                    {loading ? (
+                        <div>Đang tải danh sách...</div>
+                    ) : (
+                        <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
+                            <div className="max-w-full overflow-x-auto">
+                                <Table>
+                                    {/* Table Header */}
+                                    <TableHeader className="text-left border-b border-gray-100 dark:border-white/[0.05]">
+                                        <TableRow>
+                                            <TableCell
+                                                isHeader
+                                                className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
+                                            >
+                                                #
                                             </TableCell>
-                                            <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                {role.id}
+                                            <TableCell
+                                                isHeader
+                                                className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
+                                            >
+                                                Mã quyền hạn
                                             </TableCell>
-                                            <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                {role.name}
+                                            <TableCell
+                                                isHeader
+                                                className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
+                                            >
+                                                Tên quyền hạn
                                             </TableCell>
-                                            <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                {role.url}
+                                            <TableCell
+                                                isHeader
+                                                className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
+                                            >
+                                                Url
                                             </TableCell>
-                                            <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                {role.description}
+                                            <TableCell
+                                                isHeader
+                                                className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
+                                            >
+                                                Mô tả
                                             </TableCell>
-                                            <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                <Actions
-                                                    // onView={() =>
-                                                    //     navigate(
-                                                    //         `/roles/${role.id_user}`
-                                                    //     )
-                                                    // }
-                                                    onEdit={() =>
-                                                        navigate(
-                                                            `/roles/edit/${role.id}`
-                                                        )
-                                                    }
-                                                    onDelete={() =>
-                                                        handleDeleteRole(
-                                                            role.id
-                                                        )
-                                                    }
-                                                />
+                                            <TableCell
+                                                isHeader
+                                                className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
+                                            >
+                                                Thao tác
                                             </TableCell>
                                         </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
+                                    </TableHeader>
+
+                                    {/* Table Body */}
+                                    <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
+                                        {roles.map((role, index) => (
+                                            <TableRow key={role.id}>
+                                                <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                                    {index + 1}
+                                                </TableCell>
+                                                <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                                    {role.id}
+                                                </TableCell>
+                                                <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                                    {role.name}
+                                                </TableCell>
+                                                <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                                    {role.url}
+                                                </TableCell>
+                                                <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                                    {role.description}
+                                                </TableCell>
+                                                <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                                    <Actions
+                                                        // onView={() =>
+                                                        //     navigate(
+                                                        //         `/roles/${role.id_user}`
+                                                        //     )
+                                                        // }
+                                                        onEdit={() =>
+                                                            navigate(
+                                                                `/roles/edit/${role.id}`
+                                                            )
+                                                        }
+                                                        onDelete={() =>
+                                                            handleDeleteRole(
+                                                                role.id
+                                                            )
+                                                        }
+                                                    />
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </div>
+                            <div className="flex justify-between m-5">
+                                <div></div>
+                                <ReactPaginate
+                                    nextLabel="next >"
+                                    onPageChange={handlePageClick}
+                                    pageRangeDisplayed={3}
+                                    marginPagesDisplayed={2}
+                                    pageCount={totalPage}
+                                    previousLabel="< previous"
+                                    pageClassName="page-item"
+                                    pageLinkClassName="page-link p-2"
+                                    previousClassName="page-item"
+                                    previousLinkClassName="page-link"
+                                    nextClassName="page-item"
+                                    nextLinkClassName="page-link"
+                                    breakLabel="..."
+                                    breakClassName="page-item"
+                                    breakLinkClassName="page-link"
+                                    containerClassName="pagination flex font-semibol text-gray-500 text-theme-md dark:text-gray-400"
+                                    activeClassName="active text-blue-600"
+                                    renderOnZeroPageCount={null}
+                                />
+                            </div>
                         </div>
-                        <div className="flex justify-between m-5">
-                            <div></div>
-                            <ReactPaginate
-                                nextLabel="next >"
-                                onPageChange={handlePageClick}
-                                pageRangeDisplayed={3}
-                                marginPagesDisplayed={2}
-                                pageCount={totalPage}
-                                previousLabel="< previous"
-                                pageClassName="page-item"
-                                pageLinkClassName="page-link p-2"
-                                previousClassName="page-item"
-                                previousLinkClassName="page-link"
-                                nextClassName="page-item"
-                                nextLinkClassName="page-link"
-                                breakLabel="..."
-                                breakClassName="page-item"
-                                breakLinkClassName="page-link"
-                                containerClassName="pagination flex font-semibol text-gray-500 text-theme-md dark:text-gray-400"
-                                activeClassName="active text-blue-600"
-                                renderOnZeroPageCount={null}
-                            />
-                        </div>
-                    </div>
-                    {/* )} */}
+                    )}
                 </div>
             </div>
         </>

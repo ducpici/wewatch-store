@@ -26,7 +26,6 @@ export default function Categories() {
     const [categories, setCategories] = useState<Category[]>([]);
     const [searchValue, setSearchValue] = useState("");
     const [loading, setLoading] = useState(false);
-    const [totalUser, setTotalUser] = useState(0);
     const [totalPage, setTotalPage] = useState(0);
     const [page, setPage] = useState(1);
     const [limitData, setLimitData] = useState(10);
@@ -37,14 +36,15 @@ export default function Categories() {
     ];
 
     const fetchCategories = async (page: number, limit: number) => {
-        setLoading(true);
         try {
             const res = await axios.get(
                 `/categories?page=${page}&limit=${limit}`
             );
+            setLoading(true);
             setCategories(res.data.data);
             setLimitData(res.data.pagination.limit);
             setTotalPage(res.data.pagination.totalPages);
+            setPage(page);
         } catch (err) {
             toast.error("Lỗi khi tải danh sách");
         } finally {
@@ -116,113 +116,113 @@ export default function Categories() {
                             handleSearch(searchValue);
                         }}
                     />
-                    {/* {loading ? (
-                        <div>Đang tải danh sách nhân viên...</div>
-                    ) : ( */}
-                    <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
-                        <div className="max-w-full overflow-x-auto">
-                            <Table>
-                                {/* Table Header */}
-                                <TableHeader className="text-left border-b border-gray-100 dark:border-white/[0.05]">
-                                    <TableRow>
-                                        <TableCell
-                                            isHeader
-                                            className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
-                                        >
-                                            #
-                                        </TableCell>
-                                        <TableCell
-                                            isHeader
-                                            className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
-                                        >
-                                            Mã nhà cung cấp
-                                        </TableCell>
-                                        <TableCell
-                                            isHeader
-                                            className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
-                                        >
-                                            Tên nhà cung cấp
-                                        </TableCell>
-                                        <TableCell
-                                            isHeader
-                                            className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
-                                        >
-                                            Mô tả
-                                        </TableCell>
-                                        <TableCell
-                                            isHeader
-                                            className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
-                                        >
-                                            Thao tác
-                                        </TableCell>
-                                    </TableRow>
-                                </TableHeader>
-
-                                {/* Table Body */}
-                                <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
-                                    {categories.map((data, index) => (
-                                        <TableRow key={data.id}>
-                                            <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                {index + 1}
+                    {loading ? (
+                        <div>Đang tải danh sách...</div>
+                    ) : (
+                        <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
+                            <div className="max-w-full overflow-x-auto">
+                                <Table>
+                                    {/* Table Header */}
+                                    <TableHeader className="text-left border-b border-gray-100 dark:border-white/[0.05]">
+                                        <TableRow>
+                                            <TableCell
+                                                isHeader
+                                                className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
+                                            >
+                                                #
                                             </TableCell>
-                                            <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                {data.id}
+                                            <TableCell
+                                                isHeader
+                                                className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
+                                            >
+                                                Mã nhà cung cấp
                                             </TableCell>
-                                            <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                {data.name}
+                                            <TableCell
+                                                isHeader
+                                                className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
+                                            >
+                                                Tên nhà cung cấp
                                             </TableCell>
-                                            <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                {data.description}
+                                            <TableCell
+                                                isHeader
+                                                className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
+                                            >
+                                                Mô tả
                                             </TableCell>
-                                            <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                <Actions
-                                                    // onView={() =>
-                                                    //     navigate(
-                                                    //         `/categories/${data.id_user}`
-                                                    //     )
-                                                    // }
-                                                    onEdit={() =>
-                                                        navigate(
-                                                            `/categories/edit/${data.id}`
-                                                        )
-                                                    }
-                                                    onDelete={() =>
-                                                        handleDeleteCategory(
-                                                            data.id
-                                                        )
-                                                    }
-                                                />
+                                            <TableCell
+                                                isHeader
+                                                className="px-5 py-3 font-medium text-gray-500 text-left text-theme-xs dark:text-gray-400"
+                                            >
+                                                Thao tác
                                             </TableCell>
                                         </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
+                                    </TableHeader>
+
+                                    {/* Table Body */}
+                                    <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
+                                        {categories.map((data, index) => (
+                                            <TableRow key={data.id}>
+                                                <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                                    {index + 1}
+                                                </TableCell>
+                                                <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                                    {data.id}
+                                                </TableCell>
+                                                <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                                    {data.name}
+                                                </TableCell>
+                                                <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                                    {data.description}
+                                                </TableCell>
+                                                <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                                    <Actions
+                                                        // onView={() =>
+                                                        //     navigate(
+                                                        //         `/categories/${data.id_user}`
+                                                        //     )
+                                                        // }
+                                                        onEdit={() =>
+                                                            navigate(
+                                                                `/categories/edit/${data.id}`
+                                                            )
+                                                        }
+                                                        onDelete={() =>
+                                                            handleDeleteCategory(
+                                                                data.id
+                                                            )
+                                                        }
+                                                    />
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </div>
+                            <div className="flex justify-between m-5">
+                                <div></div>
+                                <ReactPaginate
+                                    nextLabel="next >"
+                                    onPageChange={handlePageClick}
+                                    pageRangeDisplayed={3}
+                                    marginPagesDisplayed={2}
+                                    pageCount={totalPage}
+                                    previousLabel="< previous"
+                                    pageClassName="page-item"
+                                    pageLinkClassName="page-link p-2"
+                                    previousClassName="page-item"
+                                    previousLinkClassName="page-link"
+                                    nextClassName="page-item"
+                                    nextLinkClassName="page-link"
+                                    breakLabel="..."
+                                    breakClassName="page-item"
+                                    breakLinkClassName="page-link"
+                                    containerClassName="pagination flex font-semibol text-gray-500 text-theme-md dark:text-gray-400"
+                                    activeClassName="active text-blue-600"
+                                    renderOnZeroPageCount={null}
+                                />
+                            </div>
                         </div>
-                        <div className="flex justify-between m-5">
-                            <div></div>
-                            <ReactPaginate
-                                nextLabel="next >"
-                                onPageChange={handlePageClick}
-                                pageRangeDisplayed={3}
-                                marginPagesDisplayed={2}
-                                pageCount={totalPage}
-                                previousLabel="< previous"
-                                pageClassName="page-item"
-                                pageLinkClassName="page-link p-2"
-                                previousClassName="page-item"
-                                previousLinkClassName="page-link"
-                                nextClassName="page-item"
-                                nextLinkClassName="page-link"
-                                breakLabel="..."
-                                breakClassName="page-item"
-                                breakLinkClassName="page-link"
-                                containerClassName="pagination flex font-semibol text-gray-500 text-theme-md dark:text-gray-400"
-                                activeClassName="active text-blue-600"
-                                renderOnZeroPageCount={null}
-                            />
-                        </div>
-                    </div>
-                    {/* )} */}
+                    )}
                 </div>
             </div>
         </>

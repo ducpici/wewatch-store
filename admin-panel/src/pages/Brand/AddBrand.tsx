@@ -9,7 +9,6 @@ import axios from "../../lib/axiosConfig";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router";
 import { isValidEmail } from "../../lib/validationEmail";
-import { isValidName } from "../../lib/validateName";
 import { isValidPhoneNum } from "../../lib/validatePhoneNum";
 
 export default function AddBrand() {
