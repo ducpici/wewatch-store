@@ -14,8 +14,6 @@ app.use(express.urlencoded({ extended: true }));
 configViewEngine(app);
 checkConnection();
 
-app.use(express.static("./public/"));
-
 app.use(
     cors({
         origin: true,
@@ -23,6 +21,22 @@ app.use(
     })
 );
 
+app.use(
+    session({
+        secret: process.env.SESSION_SECRET,
+        resave: false,
+        saveUninitialized: false,
+        cookie: {
+            httpOnly: true,
+            secure: true, // production phải HTTPS
+            sameSite: "none", // cross-site cookie
+            domain: ".westore.site", // nếu muốn chia sẻ giữa subdomain
+            maxAge: 24 * 60 * 60 * 1000,
+        },
+    })
+);
+
+app.use(express.static("./public/"));
 app.use(require("./routes"));
 
 module.exports = app;

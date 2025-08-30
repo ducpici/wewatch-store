@@ -97,7 +97,7 @@ class Footer extends React.Component {
                         <input type="text" placeholder="Email của bạn" />
                         <button>Đăng ký</button>
                         <div className="footer-cards">
-                            <img src="/public/images/visa.jpg" alt="" />
+                            <img src="/images/visa.jpg" alt="" />
                         </div>
                     </div>
                 </div>

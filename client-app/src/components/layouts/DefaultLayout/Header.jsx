@@ -5,7 +5,6 @@ import { Link } from "react-router";
 import useSession from "../../../hooks/useSession";
 import axios from "../../../libs/axiosConfig";
 import { User, Tag, LogOut, Package } from "lucide-react";
-
 export default function Header() {
     const navigate = useNavigate();
     const { user } = useSession();
@@ -40,7 +39,7 @@ export default function Header() {
                     <Link to="">
                         <img
                             className="w-20 md:w-30"
-                            src="../../public/images/mylogo.png"
+                            src="/images/mylogo.png"
                             alt="logo"
                         />
                     </Link>
