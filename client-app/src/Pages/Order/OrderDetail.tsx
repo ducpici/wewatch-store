@@ -280,7 +280,7 @@ export default function OrderDetail() {
     return (
         <>
             <PageBreadcrumb items={breadcrumbItems} />
-            <div className="max-w-6xl mx-auto p-6 bg-gray-50 min-h-screen">
+            <div className="max-w-6xl mx-auto md:p-6 min-h-screen">
                 {/* Header Alert */}
                 <div className="bg-white rounded-lg shadow-sm p-4 mb-6 flex items-center justify-between">
                     <div className="flex items-center space-x-3">
@@ -399,57 +399,108 @@ export default function OrderDetail() {
                         Sản phẩm
                     </h4>
 
-                    {/* Product Table Header */}
-                    <div className="bg-green-600 text-white px-4 py-3 rounded-t-lg">
-                        <div className="grid grid-cols-12 gap-4 font-medium">
-                            <div className="col-span-6">Sản phẩm</div>
-                            <div className="col-span-2 text-center">
-                                Số lượng
+                    {/*Desktop Card View*/}
+                    <div className="cardDesktop hidden md:block">
+                        {/* Product Table Header */}
+                        <div className="bg-green-600 text-white px-4 py-3 rounded-t-lg">
+                            <div className="grid grid-cols-12 gap-4 font-medium">
+                                <div className="col-span-6">Sản phẩm</div>
+                                <div className="col-span-2 text-center">
+                                    Số lượng
+                                </div>
+                                <div className="col-span-2 text-center">
+                                    Đơn giá
+                                </div>
+                                <div className="col-span-2 text-center">
+                                    Thành tiền
+                                </div>
                             </div>
-                            <div className="col-span-2 text-center">
-                                Đơn giá
-                            </div>
-                            <div className="col-span-2 text-center">
-                                Thành tiền
-                            </div>
+                        </div>
+
+                        {/* Product Items */}
+                        <div className="border-l border-r border-gray-200">
+                            {/* Product  */}
+                            {dataOrderDetail?.items.map((item) => (
+                                <div
+                                    key={item.id}
+                                    className="grid grid-cols-12 gap-4 p-4 border-b border-gray-200 items-center"
+                                >
+                                    <div className="col-span-6 flex items-center space-x-3">
+                                        <img
+                                            src={`${BASE_URL}${item.image}`}
+                                            alt="Product"
+                                            className="w-15 h-15 object-cover rounded-lg bg-gray-100 cursor-pointer"
+                                            onClick={() =>
+                                                navigate(
+                                                    `/san-pham/${item.slug}`
+                                                )
+                                            }
+                                        />
+                                        <div>
+                                            <p className="font-medium text-gray-800">
+                                                {item.name}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div className="col-span-2 text-center">
+                                        <span className="font-medium">
+                                            {item.quantity}
+                                        </span>
+                                    </div>
+                                    <div className="col-span-2 text-center">
+                                        <span className="font-medium">
+                                            {item.price.toLocaleString("vi-VN")}
+                                            ₫
+                                        </span>
+                                    </div>
+                                    <div className="col-span-2 text-center">
+                                        <span className="font-semibold text-red-600">
+                                            {(
+                                                item.quantity * item.price
+                                            ).toLocaleString("vi-VN")}
+                                            ₫
+                                        </span>
+                                    </div>
+                                </div>
+                            ))}
                         </div>
                     </div>
 
-                    {/* Product Items */}
-                    <div className="border-l border-r border-gray-200">
-                        {/* Product  */}
+                    {/* Mobile Card View */}
+                    <div className="block md:hidden space-y-4">
                         {dataOrderDetail?.items.map((item) => (
                             <div
                                 key={item.id}
-                                className="grid grid-cols-12 gap-4 p-4 border-b border-gray-200 items-center"
+                                className="border border-gray-200 rounded-lg p-4 space-y-3"
                             >
-                                <div className="col-span-6 flex items-center space-x-3">
+                                <div className="flex items-center gap-3">
                                     <img
                                         src={`${BASE_URL}${item.image}`}
                                         alt="Product"
-                                        className="w-15 h-15 object-cover rounded-lg bg-gray-100 cursor-pointer"
+                                        className="w-16 h-16 object-cover rounded-lg bg-gray-100 cursor-pointer"
                                         onClick={() =>
                                             navigate(`/san-pham/${item.slug}`)
                                         }
                                     />
-                                    <div>
-                                        <p className="font-medium text-gray-800">
-                                            {item.name}
-                                        </p>
-                                    </div>
+                                    <p className="font-medium text-gray-800">
+                                        {item.name}
+                                    </p>
                                 </div>
-                                <div className="col-span-2 text-center">
+                                <div className="flex justify-between text-sm">
+                                    <span>Số lượng:</span>
                                     <span className="font-medium">
                                         {item.quantity}
                                     </span>
                                 </div>
-                                <div className="col-span-2 text-center">
-                                    <span className="font-medium">
+                                <div className="flex justify-between text-sm">
+                                    <span>Đơn giá:</span>
+                                    <span>
                                         {item.price.toLocaleString("vi-VN")}₫
                                     </span>
                                 </div>
-                                <div className="col-span-2 text-center">
-                                    <span className="font-semibold text-red-600">
+                                <div className="flex justify-between text-sm font-semibold text-red-600">
+                                    <span>Thành tiền:</span>
+                                    <span>
                                         {(
                                             item.quantity * item.price
                                         ).toLocaleString("vi-VN")}
@@ -459,42 +510,41 @@ export default function OrderDetail() {
                             </div>
                         ))}
                     </div>
-
-                    {/* Payment Summary */}
-                    <div className="bg-gray-50 p-4 rounded-b-lg">
-                        <h5 className="font-semibold text-gray-800 mb-4">
-                            Thanh toán
-                        </h5>
-                        <div className="space-y-3">
-                            <div className="flex justify-between">
-                                <span className="text-gray-600">
-                                    Phương thức thanh toán
-                                </span>
-                                <span className="font-medium">
-                                    {dataOrderDetail?.payment_method.text}
-                                </span>
-                            </div>
-                            <div className="flex justify-between">
-                                <span className="text-gray-600">
-                                    Trạng thái đơn hàng
-                                </span>
-                                <span className="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-sm font-medium">
-                                    {dataOrderDetail?.order_state.text}
-                                </span>
-                            </div>
-                            <div className="flex justify-between text-lg font-semibold pt-2 border-t">
-                                <span>Tổng thanh toán</span>
-                                <span className="text-red-600">
-                                    {dataOrderDetail?.total_price.toLocaleString(
-                                        "vi-VN"
-                                    )}
-                                    ₫
-                                </span>
-                            </div>
-                            <p className="text-sm text-gray-500">
-                                (Đã bao gồm VAT & Giảm giá)
-                            </p>
+                </div>
+                {/* Payment Summary */}
+                <div className="bg-gray-50 p-4 rounded-b-lg mt-2">
+                    <h5 className="font-semibold text-gray-800 mb-4">
+                        Thanh toán
+                    </h5>
+                    <div className="space-y-3">
+                        <div className="flex justify-between">
+                            <span className="text-gray-600">
+                                Phương thức thanh toán
+                            </span>
+                            <span className="font-medium">
+                                {dataOrderDetail?.payment_method.text}
+                            </span>
                         </div>
+                        <div className="flex justify-between">
+                            <span className="text-gray-600">
+                                Trạng thái đơn hàng
+                            </span>
+                            <span className="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-sm font-medium">
+                                {dataOrderDetail?.order_state.text}
+                            </span>
+                        </div>
+                        <div className="flex justify-between text-lg font-semibold pt-2 border-t">
+                            <span>Tổng thanh toán</span>
+                            <span className="text-red-600">
+                                {dataOrderDetail?.total_price.toLocaleString(
+                                    "vi-VN"
+                                )}
+                                ₫
+                            </span>
+                        </div>
+                        <p className="text-sm text-gray-500">
+                            (Đã bao gồm VAT & Giảm giá)
+                        </p>
                     </div>
                 </div>
             </div>

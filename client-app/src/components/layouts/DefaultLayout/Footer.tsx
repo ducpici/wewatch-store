@@ -10,7 +10,7 @@ class Footer extends React.Component {
                         <a href="">
                             <img
                                 className="w-20"
-                                src="/public/images/mylogo.png"
+                                src="/images/mylogo.png"
                                 alt=""
                             />
                         </a>

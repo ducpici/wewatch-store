@@ -107,7 +107,7 @@ const Checkout = () => {
     }, [user]);
 
     return (
-        <div className="p-6 max-w-md mx-auto">
+        <div className="max-w-md mx-auto">
             <PageBreadcrumb items={breadcrumbItems} />
             <h1 className="text-xl font-bold mb-4">Xác nhận đơn hàng</h1>
 
@@ -124,9 +124,9 @@ const Checkout = () => {
                                 className="w-16 h-16 object-cover"
                             />
                             <div>
-                                <p>{item.name}</p>
+                                <p className="text-justify">{item.name}</p>
                                 <p>Số lượng: {item.quantity}</p>
-                                <p>
+                                <p className="font-bold">
                                     Giá:{" "}
                                     {(
                                         item.price * item.quantity

@@ -65,8 +65,8 @@ export default function FeatureProduct({
             <h2 className="my-5 text-center uppercase font-semibold text-2xl">
                 {title}
             </h2>
-            <div className="grid grid-cols-2 gap-5 md:grid-cols-3 md:gap-10 lg:grid-cols-5 lg:gap-10">
-                {products.slice(0, 5).map((product) => {
+            <div className="grid grid-cols-2 gap-5 md:grid-cols-3 md:gap-10 lg:grid-cols-3 lg:gap-10">
+                {products.slice(0, 6).map((product) => {
                     const nameProduct =
                         product.brand.name +
                         " " +
@@ -88,7 +88,7 @@ export default function FeatureProduct({
                             <div className="box-image">
                                 <Link to={`/san-pham/${product.slug}`}>
                                     <img
-                                        className="w-60"
+                                        className="w-30 md:w-60"
                                         src={`${BASE_URL}${product.image}`}
                                         alt="ảnh"
                                     />

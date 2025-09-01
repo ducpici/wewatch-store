@@ -160,25 +160,28 @@ export default function Order() {
             <PageBreadcrumb items={breadcrumbItems} />
             <div className="max-w-6xl mx-auto bg-white">
                 {/* Tabs */}
-                <div className="flex border-b border-gray-200">
-                    {tabs.map((tab) => (
-                        <button
-                            key={tab.id}
-                            onClick={() => handleTabChange(tab)}
-                            disabled={loading}
-                            className={`cursor-pointer px-6 py-4 text-sm font-medium border-b-2 transition-colors ${
-                                activeTab === tab.label
-                                    ? "border-green-500 text-green-600"
-                                    : "border-transparent text-gray-500 hover:text-gray-700"
-                            } ${
-                                loading ? "opacity-50 cursor-not-allowed" : ""
-                            }`}
-                        >
-                            {tab.label}
-                        </button>
-                    ))}
+                <div className="overflow-x-auto max-w-max mb-3">
+                    <div className="flex border-b border-gray-200 w-full">
+                        {tabs.map((tab) => (
+                            <button
+                                key={tab.id}
+                                onClick={() => handleTabChange(tab)}
+                                disabled={loading}
+                                className={`cursor-pointer px-6 py-4 text-sm whitespace-nowrap font-medium border-b-2 transition-colors ${
+                                    activeTab === tab.label
+                                        ? "border-green-500 text-green-600"
+                                        : "border-transparent text-gray-500 hover:text-gray-700"
+                                } ${
+                                    loading
+                                        ? "opacity-50 cursor-not-allowed"
+                                        : ""
+                                }`}
+                            >
+                                {tab.label}
+                            </button>
+                        ))}
+                    </div>
                 </div>
-
                 {/* Loading State */}
                 {loading && (
                     <div className="flex justify-center items-center py-8">
@@ -201,7 +204,7 @@ export default function Order() {
                         {orders.map((order) => (
                             <div
                                 key={order.id}
-                                className="p-6 cursor-pointer hover:bg-gray-50 transition duration-200 ease-in-out"
+                                className="p-3 md:p-6 cursor-pointer hover:bg-gray-50 transition duration-200 ease-in-out"
                                 onClick={() =>
                                     navigate(`/don-hang/chi-tiet/${order.id}`)
                                 }
@@ -229,7 +232,7 @@ export default function Order() {
                                             key={item.id}
                                             className="flex items-start space-x-4"
                                         >
-                                            <div className="w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center">
+                                            <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center">
                                                 <img
                                                     src={`${BASE_URL}${item.image}`}
                                                     alt=""
@@ -237,7 +240,7 @@ export default function Order() {
                                             </div>
 
                                             <div className="flex-1">
-                                                <h3 className="text-gray-900 font-medium mb-1">
+                                                <h3 className="text-gray-900 font-medium mb-1 text-justify">
                                                     {item.name}
                                                 </h3>
                                                 {/* <div className="flex items-center space-x-4 text-sm text-gray-500">

@@ -68,7 +68,7 @@ export default function SameProduct({ title, slug }: SameProduct) {
                             <Link to={`/san-pham/${product.slug}`}>
                                 <div className="box-image">
                                     <img
-                                        className="w-60 h-60"
+                                        className="w-30 md:w-60"
                                         src={`${BASE_URL}${product.image}`}
                                         alt="ảnh"
                                     />

@@ -98,12 +98,12 @@ export default function ProductDetail() {
             </nav> */}
             <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-8">
                 <div className="">
-                    <div className="mainImg relative flex">
+                    <div className="mainImg relative flex justify-center items-center">
                         {/* <SlArrowLeft className="absolute left-0 top-1/2 -translate-y-1/2 cursor-pointer text-2xl" /> */}
                         <img
                             src={`${BASE_URL}${product.image}`}
                             alt="Black Link Watch"
-                            className="w-full rounded-lg"
+                            className="w-70 md:w-full rounded-lg"
                         />
                         {/* <SlArrowRight className="absolute right-0 top-1/2 -translate-y-1/2 cursor-pointer text-2xl" /> */}
                     </div>
@@ -132,7 +132,9 @@ export default function ProductDetail() {
                     </div> */}
                 </div>
                 <div>
-                    <h1 className="text-2xl font-bold">{product.name}</h1>
+                    <h1 className="text-md md:text-2xl font-bold">
+                        {product.name}
+                    </h1>
                     <p className="text-2xl font-semibold text-red-600 mt-2">
                         {product.price.toLocaleString("vi-VN")} <span>₫</span>
                     </p>
@@ -156,7 +158,7 @@ export default function ProductDetail() {
                 </div>
             </div>{" "}
             {/* Tabs */}
-            <div className="mt-10">
+            <div className="mt-5 md:mt-10">
                 <div className="flex text-sm font-medium">
                     <button
                         className={`pb-2 mr-6 border-b-2 cursor-pointer ${

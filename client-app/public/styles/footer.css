@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 .footer {
-    @apply md:max-w-5xl m-auto mb-5 pt-10 border-t-1 border-gray-300;
+    @apply md:max-w-5xl m-auto mb-2 md:mb-5 md:pt-10 border-t-1 border-gray-300;
     .footer-block {
         @apply px-3 mb-2;
         .list-contact li {

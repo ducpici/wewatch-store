@@ -38,7 +38,7 @@ export default function Header() {
         };
     }, [menuOpen]);
     return (
-        <header className="px-4 md:max-w-6xl m-auto">
+        <header className="px-3 md:max-w-6xl m-auto">
             {/* Top header */}
             <div className="grid grid-cols-3 items-center">
                 <div className="flex items-center">

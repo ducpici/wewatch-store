@@ -247,110 +247,198 @@ const Cart = () => {
                 </div>
             ) : cartItems.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {/* Cart Table */}
                     <div className="md:col-span-2">
-                        <table className="w-full text-left border-t border-gray-200">
-                            <thead>
-                                <tr className="bg-green-600 text-white px-4 py-3 rounded-t-lg">
-                                    <th className="p-2">Sản phẩm</th>
-                                    <th className="p-2">Giá</th>
-                                    <th className="p-2">Số lượng</th>
-                                    <th className="p-2">Tạm tính</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {cartItems.map((item) => (
-                                    <tr
-                                        key={item.id}
-                                        className="border-b border-gray-200"
-                                    >
-                                        <td className="flex items-center gap-4 p-2">
-                                            <input
-                                                type="checkbox"
-                                                name=""
-                                                id=""
-                                                checked={selectedItems.includes(
-                                                    item.id
-                                                )}
-                                                onChange={() =>
-                                                    toggleSelectItem(item.id)
-                                                }
-                                            />
-                                            <button
-                                                className="cursor-pointer"
-                                                onClick={() =>
-                                                    removeItem(item.id)
-                                                }
-                                            >
-                                                ❌
-                                            </button>
-
-                                            <img
-                                                src={`${BASE_URL}${item.image}`}
-                                                // alt={item.name}
-                                                className="w-20 h-20 cursor-pointer"
-                                                onClick={() =>
-                                                    navigate(
-                                                        `/san-pham/${item.slug}`
-                                                    )
-                                                }
-                                            />
-
-                                            <span>{item.name}</span>
-                                        </td>
-                                        <td className="p-2 font-semibold text-black">
-                                            {item.price.toLocaleString("vi-VN")}{" "}
-                                            ₫
-                                        </td>
-                                        <td className="p-2">
-                                            <div className="flex items-center border border-gray-300 rounded w-max">
-                                                <button
-                                                    className="px-2"
-                                                    onClick={() =>
-                                                        updateQuantity(
-                                                            item.id,
-                                                            -1
+                        {/* Cart Table Desktop */}
+                        <div className="hidden md:block overflow-x-auto">
+                            <table className="min-w-full text-left border-t border-gray-200">
+                                <thead>
+                                    <tr className="bg-green-600 text-white px-4 py-3 rounded-t-lg">
+                                        <th className="p-2">Sản phẩm</th>
+                                        <th className="p-2">Giá</th>
+                                        <th className="p-2">Số lượng</th>
+                                        <th className="p-2">Tạm tính</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {cartItems.map((item) => (
+                                        <tr
+                                            key={item.id}
+                                            className="border-b border-gray-200"
+                                        >
+                                            <td className="flex items-center gap-4 p-2">
+                                                <input
+                                                    type="checkbox"
+                                                    name=""
+                                                    id=""
+                                                    checked={selectedItems.includes(
+                                                        item.id
+                                                    )}
+                                                    onChange={() =>
+                                                        toggleSelectItem(
+                                                            item.id
                                                         )
                                                     }
-                                                >
-                                                    -
-                                                </button>
-                                                <input
-                                                    type="text"
-                                                    value={item.quantity}
-                                                    readOnly
-                                                    className="w-10 text-center border-l border-r border-gray-300"
                                                 />
                                                 <button
-                                                    className="px-2"
+                                                    className="cursor-pointer"
                                                     onClick={() =>
-                                                        updateQuantity(
-                                                            item.id,
-                                                            1
-                                                        )
+                                                        removeItem(item.id)
                                                     }
                                                 >
-                                                    +
+                                                    ❌
                                                 </button>
-                                            </div>
-                                        </td>
-                                        <td className="p-2 font-semibold text-black">
+                                                <img
+                                                    src={`${BASE_URL}${item.image}`}
+                                                    // alt={item.name}
+                                                    className="w-16 h-16 cursor-pointer"
+                                                    onClick={() =>
+                                                        navigate(
+                                                            `/san-pham/${item.slug}`
+                                                        )
+                                                    }
+                                                />{" "}
+                                                <span className="text-justify">
+                                                    {item.name}
+                                                </span>
+                                            </td>
+
+                                            <td className="p-2 font-semibold text-black whitespace-nowrap ">
+                                                {item.price.toLocaleString(
+                                                    "vi-VN"
+                                                )}{" "}
+                                                ₫
+                                            </td>
+                                            <td className="p-2">
+                                                <div className="flex items-center border border-gray-300 rounded w-max">
+                                                    <button
+                                                        className="px-2"
+                                                        onClick={() =>
+                                                            updateQuantity(
+                                                                item.id,
+                                                                -1
+                                                            )
+                                                        }
+                                                    >
+                                                        -
+                                                    </button>
+                                                    <input
+                                                        type="text"
+                                                        value={item.quantity}
+                                                        readOnly
+                                                        className="w-10 text-center border-l border-r border-gray-300"
+                                                    />
+                                                    <button
+                                                        className="px-2"
+                                                        onClick={() =>
+                                                            updateQuantity(
+                                                                item.id,
+                                                                1
+                                                            )
+                                                        }
+                                                    >
+                                                        +
+                                                    </button>
+                                                </div>
+                                            </td>
+                                            <td className="p-2 font-semibold text-black whitespace-nowrap ">
+                                                {(
+                                                    item.price * item.quantity
+                                                ).toLocaleString("vi-VN")}{" "}
+                                                ₫
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        {/* Mobile Card View */}
+                        <div className="block md:hidden space-y-4">
+                            {cartItems.map((item) => (
+                                <div
+                                    key={item.id}
+                                    className="border border-gray-200 rounded-lg p-4 flex flex-col gap-2"
+                                >
+                                    <div className="flex items-center gap-3">
+                                        <input
+                                            type="checkbox"
+                                            checked={selectedItems.includes(
+                                                item.id
+                                            )}
+                                            onChange={() =>
+                                                toggleSelectItem(item.id)
+                                            }
+                                        />
+                                        <button
+                                            onClick={() => removeItem(item.id)}
+                                        >
+                                            ❌
+                                        </button>
+                                        <img
+                                            src={`${BASE_URL}${item.image}`}
+                                            className="w-16 h-16 cursor-pointer"
+                                            onClick={() =>
+                                                navigate(
+                                                    `/san-pham/${item.slug}`
+                                                )
+                                            }
+                                        />
+                                        <span className="font-semibold">
+                                            {item.name}
+                                        </span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                        <span>Giá:</span>
+                                        <span>
+                                            {item.price.toLocaleString("vi-VN")}{" "}
+                                            ₫
+                                        </span>
+                                    </div>
+                                    <div className="flex justify-between items-center">
+                                        <span>Số lượng:</span>
+                                        <div className="flex items-center border border-gray-300 rounded">
+                                            <button
+                                                className="px-2"
+                                                onClick={() =>
+                                                    updateQuantity(item.id, -1)
+                                                }
+                                            >
+                                                -
+                                            </button>
+                                            <input
+                                                type="text"
+                                                value={item.quantity}
+                                                readOnly
+                                                className="w-10 text-center border-l border-r border-gray-300"
+                                            />
+                                            <button
+                                                className="px-2"
+                                                onClick={() =>
+                                                    updateQuantity(item.id, 1)
+                                                }
+                                            >
+                                                +
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div className="flex justify-between font-semibold">
+                                        <span>Tạm tính:</span>
+                                        <span>
                                             {(
                                                 item.price * item.quantity
                                             ).toLocaleString("vi-VN")}{" "}
                                             ₫
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-
+                                        </span>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
                         <div className="flex justify-between items-center mt-4">
-                            {/* <button className="border border-black px-4 py-2">
-                            ← TIẾP TỤC XEM SẢN PHẨM
-                        </button> */}
+                            <button className="text-black text-xs whitespace-normal px-4 py-2 cursor-pointer">
+                                ← TIẾP TỤC XEM SẢN PHẨM
+                            </button>
                             <button
-                                className="bg-gray-700 text-white px-4 py-2 cursor-pointer"
+                                className="bg-gray-700 text-white text-xs px-4 py-2 cursor-pointer"
                                 onClick={handleUpdateCart}
                             >
                                 CẬP NHẬT GIỎ HÀNG
@@ -359,7 +447,7 @@ const Cart = () => {
                     </div>
 
                     {/* Cart Summary */}
-                    <div className="border border-gray-300 rounded p-6">
+                    <div className="border border-gray-200 rounded p-6">
                         <h2 className="text-lg font-semibold mb-4">
                             CỘNG GIỎ HÀNG
                         </h2>

@@ -175,7 +175,7 @@ export default function Profile() {
     return (
         <>
             <PageBreadcrumb items={breadcrumbItems} />
-            <div className="flex">
+            <div className="flex mb-1">
                 <button
                     className={`cursor-pointer px-6 py-4 text-sm font-medium border-b-2 transition-colors ${
                         activeTab === "info"

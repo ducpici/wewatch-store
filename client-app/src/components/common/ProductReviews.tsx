@@ -266,11 +266,11 @@ const ProductReviews: React.FC<ProductReviewsProps> = ({
     };
 
     return (
-        <div className="max-w-2xl mx-auto p-6 bg-white">
+        <div className="max-w-2xl mx-auto p-2 bg-white">
             {/* Header */}
             <div className="flex items-center justify-between mb-8">
                 <div>
-                    <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                    <h2 className="text-md md:text-2xl font-bold text-gray-900 mb-2">
                         Đánh giá chung
                     </h2>
                     <div className="flex items-center gap-3">

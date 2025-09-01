@@ -12,7 +12,7 @@ const LayoutContent: React.FC = () => {
                 </p>
             </div>
             <Header />
-            <div className="container px-3 md:max-w-6xl m-auto mb-10">
+            <div className="container px-3 md:max-w-6xl m-auto mb-5 md:mb-10">
                 <Outlet />
             </div>
             <Footer />
