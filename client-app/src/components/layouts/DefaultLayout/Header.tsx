@@ -13,10 +13,11 @@ import {
     X,
     Search,
 } from "lucide-react";
+import { toast } from "react-toastify";
 
 export default function Header() {
     const navigate = useNavigate();
-    const { user } = useSession();
+    const { user, clearSession } = useSession();
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [value, setValue] = useState("");
     const [menuOpen, setMenuOpen] = useState(false);
@@ -70,7 +71,7 @@ export default function Header() {
                 <div className="flex items-center justify-end">
                     <ul className="flex items-center relative">
                         <li>
-                            <div className=" mx-2">
+                            <div className="mx-2">
                                 <div
                                     className="user flex items-center font-semibold cursor-pointer hover:text-black"
                                     onClick={() =>
@@ -81,7 +82,7 @@ export default function Header() {
                                 </div>
 
                                 {dropdownOpen && (
-                                    <div className="userDropdown absolute right-0 left-auto md:left-0 md:right-auto bg-white rounded shadow-lg border border-gray-300 py-1 min-w-max mt-2 z-10">
+                                    <div className="userDropdown absolute right-0 left-auto md:left-0 md:right-auto bg-white rounded shadow-lg border border-gray-300 min-w-max mt-2 z-10">
                                         {/* Mũi tên */}
                                         {/* <div className="absolute -top-2 left-1/2 transform -translate-x-1/2 md:left-2 md:transform-none w-4 h-4 rotate-45 bg-gray-200 border-l border-t border-gray-300 rounded-tl-sm z-10" /> */}
                                         <ul className="">
@@ -116,36 +117,33 @@ export default function Header() {
                                                         </Link>
                                                     </li>
                                                     <li className="border-t border-gray-300">
-                                                        <button
-                                                            className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center text-red-500"
+                                                        <Link
+                                                            to="/"
+                                                            className="px-4 py-2 hover:bg-gray-100 flex items-center text-red-500"
                                                             onClick={() => {
-                                                                localStorage.removeItem(
-                                                                    "token"
+                                                                clearSession();
+                                                                setDropdownOpen(
+                                                                    false
                                                                 );
-                                                                localStorage.removeItem(
-                                                                    "user"
+                                                                toast.success(
+                                                                    "Đăng xuất thành công"
                                                                 );
-                                                                window.location.href =
-                                                                    "/";
                                                             }}
                                                         >
                                                             <LogOut className="mr-1 text-red-500" />{" "}
                                                             Đăng xuất
-                                                        </button>
+                                                        </Link>
                                                     </li>
                                                 </>
                                             ) : (
                                                 <li className="">
-                                                    <button
+                                                    <Link
+                                                        to="/signin"
                                                         className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center"
-                                                        onClick={() => {
-                                                            window.location.href =
-                                                                "/signin";
-                                                        }}
                                                     >
-                                                        <LogIn className="mr-1 text-blue-500" />{" "}
+                                                        <LogIn className="mr-1 text-blue-500" />
                                                         Đăng nhập/Đăng ký
-                                                    </button>
+                                                    </Link>
                                                 </li>
                                             )}
                                         </ul>

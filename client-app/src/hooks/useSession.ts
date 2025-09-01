@@ -20,5 +20,11 @@ export default function useSession() {
         }
     }, []);
 
-    return { user };
+    const clearSession = () => {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        setUser(null);
+    };
+
+    return { user, clearSession };
 }
