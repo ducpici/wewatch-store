@@ -62,7 +62,7 @@ export default function SameProduct({ title, slug }: SameProduct) {
                 {title}
             </h2>
             <div className="grid grid-cols-2 gap-5 md:grid-cols-3 md:gap-10 lg:grid-cols-5 lg:gap-10">
-                {products.slice(0, 5).map((product) => {
+                {products.slice(0, 6).map((product) => {
                     return (
                         <div className="product" key={product.id}>
                             <Link to={`/san-pham/${product.slug}`}>
