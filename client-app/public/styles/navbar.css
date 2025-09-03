@@ -14,11 +14,12 @@
 }
 
 .dropdown-list {
+    @apply px-2;
 }
 
 /* Dropdown items */
 .dropdown-item {
-    @apply block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-colors whitespace-nowrap;
+    @apply block p-2 md:px-4 md:py-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-colors whitespace-nowrap;
 }
 
 /* List styles */

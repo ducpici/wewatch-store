@@ -243,16 +243,20 @@ export default function Brand() {
         <>
             <PageBreadcrumb items={breadcrumbItems} />
             <div className="intro">
-                <ProductIntroBanner
-                    title={`Thương hiệu ${products[0]?.brand?.name ?? ""}`}
-                    subtitle={`Đồng hồ ${
-                        products[0]?.brand?.name ?? ""
-                    } chính hãng`}
-                    imageUrl={"/images/default-brand-banner.jpg"}
-                    description={`Khám phá bộ sưu tập đồng hồ ${
-                        products[0]?.brand?.description ?? ""
-                    } chính hãng, thiết kế thanh lịch, chất lượng Nhật Bản với mức giá ưu đãi.`}
-                />
+                {products.length > 0 ? (
+                    <ProductIntroBanner
+                        title={`Thương hiệu ${products[0]?.brand?.name ?? ""}`}
+                        subtitle={`Đồng hồ ${
+                            products[0]?.brand?.name ?? ""
+                        } chính hãng`}
+                        imageUrl={"/images/default-brand-banner.jpg"}
+                        description={`Khám phá bộ sưu tập đồng hồ ${
+                            products[0]?.brand?.description ?? ""
+                        } chính hãng, thiết kế thanh lịch, chất lượng Nhật Bản với mức giá ưu đãi.`}
+                    />
+                ) : (
+                    ""
+                )}
             </div>
             <div className="filters">
                 <ProductFilters

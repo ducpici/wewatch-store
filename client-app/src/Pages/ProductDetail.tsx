@@ -142,7 +142,7 @@ export default function ProductDetail() {
                     {/* Quantity and Add to Cart */}
                     <div className="flex items-center mt-4 space-x-2">
                         <button
-                            className="mt-4 w-full bg-amber-800 text-white px-6 py-3 rounded cursor-pointer"
+                            className="md:mt-4 w-full bg-amber-800 text-white px-6 py-3 rounded cursor-pointer"
                             onClick={() => handleAddToCart(product.id)}
                         >
                             THÊM VÀO GIỎ HÀNG
@@ -163,8 +163,8 @@ export default function ProductDetail() {
                     <button
                         className={`pb-2 mr-6 border-b-2 cursor-pointer ${
                             activeTab === "description"
-                                ? "border-black text-black"
-                                : "text-gray-500 border-transparent"
+                                ? "border-green-500 text-green-600"
+                                : "border-transparent text-gray-500 hover:text-gray-700"
                         }`}
                         onClick={() => setActiveTab("description")}
                     >
@@ -173,8 +173,8 @@ export default function ProductDetail() {
                     <button
                         className={`pb-2 mr-6 border-b-2 cursor-pointer ${
                             activeTab === "review"
-                                ? "border-black text-black"
-                                : "text-gray-500 border-transparent"
+                                ? "border-green-500 text-green-600"
+                                : "border-transparent text-gray-500 hover:text-gray-700"
                         }`}
                         onClick={() => setActiveTab("review")}
                     >
@@ -188,7 +188,7 @@ export default function ProductDetail() {
                         </div>
                     )}
                     {activeTab === "description" && (
-                        <table className="mt-4 w[800px] text-sm text-left">
+                        <table className="mt-4 w[800px] text-sm text-left whitespace-nowrap">
                             <tbody>
                                 <tr className="">
                                     <td className="p-2 w-1/3">Thương hiệu:</td>

@@ -62,7 +62,7 @@ export default function FeatureProduct({
     }, [categoryId]);
     return (
         <section className="CategoryProductSection">
-            <h2 className="my-5 text-center uppercase font-semibold text-2xl">
+            <h2 className="my-5 text-center uppercase font-semibold text-lg md:text-2xl">
                 {title}
             </h2>
             <div className="grid grid-cols-2 gap-5 md:grid-cols-3 md:gap-10 lg:grid-cols-3 lg:gap-10">

@@ -58,7 +58,7 @@ export default function SameProduct({ title, slug }: SameProduct) {
     }, []);
     return (
         <section className="CategoryProductSection">
-            <h2 className="my-5 text-center uppercase font-semibold text-xl">
+            <h2 className="my-5 text-center uppercase font-semibold text-lg md:text-2xl">
                 {title}
             </h2>
             <div className="grid grid-cols-2 gap-5 md:grid-cols-3 md:gap-10 lg:grid-cols-5 lg:gap-10">

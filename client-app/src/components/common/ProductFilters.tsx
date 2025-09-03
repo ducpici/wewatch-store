@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 // Interface cho filter item với key riêng
 interface FilterItem {
@@ -77,7 +77,20 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
     const [selectedFilters, setSelectedFilters] = useState<{
         [key: string]: string;
     }>({});
+    const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 1024);
     const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+    useEffect(() => {
+        if (isMobile) {
+            if (openDropdown) {
+                document.body.style.overflow = "hidden"; // khóa scroll
+            } else {
+                document.body.style.overflow = ""; // mở lại
+            }
+        }
+        return () => {
+            document.body.style.overflow = ""; // cleanup khi unmount
+        };
+    }, [openDropdown, isMobile]);
 
     const handleSelect = (key: string, value: string) => {
         const newFilters = { ...selectedFilters, [key]: value };
@@ -121,19 +134,65 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
         (key) => key !== "sort"
     ).length;
 
+    const renderDropdown = (key: string, options: string[]) => {
+        if (!openDropdown || openDropdown !== key) return null;
+
+        // Mobile: fixed overlay
+        if (isMobile) {
+            return (
+                <div
+                    className="fixed inset-0 z-50 bg-black/30 flex items-start justify-center"
+                    onClick={() => setOpenDropdown(null)}
+                >
+                    <div
+                        className="bg-white shadow-lg border mt-16 rounded text-sm max-h-[80vh] overflow-y-auto w-[90%]"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        {options.map((option) => (
+                            <div
+                                key={option}
+                                onClick={() => handleSelect(key, option)}
+                                className={`px-4 py-2 hover:bg-gray-100 cursor-pointer whitespace-nowrap ${
+                                    selectedFilters[key] === option
+                                        ? "bg-blue-50 text-blue-600"
+                                        : ""
+                                }`}
+                            >
+                                {option}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            );
+        }
+
+        // Desktop: absolute dropdown
+        return (
+            <div className="absolute right-0 left-auto md:left-0 md:right-auto bg-white shadow-lg border mt-1 z-20 rounded text-sm min-w-max max-h-[60vh] overflow-y-auto">
+                {options.map((option) => (
+                    <div
+                        key={option}
+                        onClick={() => handleSelect(key, option)}
+                        className={`px-4 py-2 hover:bg-gray-100 cursor-pointer whitespace-nowrap ${
+                            selectedFilters[key] === option
+                                ? "bg-blue-50 text-blue-600"
+                                : ""
+                        }`}
+                    >
+                        {option}
+                    </div>
+                ))}
+            </div>
+        );
+    };
+
     return (
         <div
             className={`flex flex-wrap items-center gap-2 relative z-10 ${className}`}
         >
             {/* Bộ lọc tổng */}
             {showAdvancedFilter && (
-                <button
-                    onClick={
-                        onAdvancedFilterClick ||
-                        (() => alert("Hiện modal lọc nâng cao"))
-                    }
-                    className=" px-3 py-1 text-sm flex items-center gap-1 hover:bg-gray-50 transition-colors cursor-pointer"
-                >
+                <button className=" px-3 py-1 text-sm flex items-center gap-1 hover:bg-gray-50 transition-colors cursor-pointer">
                     <svg
                         className="w-4 h-4"
                         fill="none"
@@ -187,9 +246,9 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
                             </button>
                         )}
                     </button>
-
-                    {openDropdown === key && (
-                        <div className="absolute top-full left-0 bg-white shadow-lg border mt-1 z-20 rounded text-sm min-w-max">
+                    {renderDropdown(key, options)}
+                    {/* {openDropdown === key && (
+                        <div className="absolute md:left-0 bg-white shadow-lg border mt-1 z-20 rounded text-sm min-w-max">
                             {options.map((option) => (
                                 <div
                                     key={option}
@@ -204,7 +263,28 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
                                 </div>
                             ))}
                         </div>
-                    )}
+                    )} */}
+                    {/* {openDropdown === key && (
+                        <div className="fixed inset-0 z-50 bg-black/20 flex items-center justify-center">
+                            <div className="bg-white shadow-lg border rounded text-sm max-h-[80vh] overflow-y-auto w-[90%]">
+                                {options.map((option) => (
+                                    <div
+                                        key={option}
+                                        onClick={() =>
+                                            handleSelect(key, option)
+                                        }
+                                        className={`px-4 py-2 hover:bg-gray-100 cursor-pointer whitespace-nowrap ${
+                                            selectedFilters[key] === option
+                                                ? "bg-blue-50 text-blue-600"
+                                                : ""
+                                        }`}
+                                    >
+                                        {option}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )} */}
                 </div>
             ))}
 

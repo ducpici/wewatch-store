@@ -64,7 +64,7 @@ export default function Navbar({
                             <AccordionContent className="md:absolute">
                                 {/* Dropdown Menu*/}
                                 <div className="dropdown-menu">
-                                    <ul className="dropdown-list grid grid-cols-4 md:grid-cols-3 gap-2">
+                                    <ul className="dropdown-list grid grid-cols-4 md:grid-cols-3 md:gap-2">
                                         {brands.map((item, index) => (
                                             <li key={index}>
                                                 <Link
@@ -126,7 +126,7 @@ export default function Navbar({
                             </AccordionTrigger>
                             <AccordionContent className="md:absolute">
                                 <div className="dropdown-menu">
-                                    <ul className="">
+                                    <ul className="dropdown-list">
                                         <li>
                                             <Link
                                                 to="/gioi-thieu"

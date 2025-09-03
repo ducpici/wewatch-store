@@ -34,9 +34,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                 localStorage.removeItem("user");
                 setUser(null);
             }
-        } else {
-            toast.error("Chưa đăng nhập");
         }
+        // else {
+        //     toast.error("Chưa đăng nhập");
+        // }
 
         setLoading(false);
     };
