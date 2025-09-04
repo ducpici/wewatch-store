@@ -64,14 +64,14 @@ export default function SignUp() {
     };
     return (
         <div className="flex flex-col justify-center flex-1 w-full max-w-md mx-auto h-200">
-            <div className="brands flex items-center justify-center">
-                <img
-                    src="/images/mylogo.png"
-                    className="w-20 h-20"
-                    alt="wewatch"
-                />
-            </div>
             <div className="mx-2 p-4 border border-gray-300 rounded-2xl">
+                <div className="brands flex items-center justify-center">
+                    <img
+                        src="/images/mylogo.png"
+                        className="w-20 h-20"
+                        alt="wewatch"
+                    />
+                </div>
                 <div className="mb-5 sm:mb-8">
                     <h1 className="mb-2 text-center text-2xl font-semibold text-gray-800 text-title-sm dark:text-white/90 sm:text-title-md">
                         Đăng ký
@@ -83,10 +83,8 @@ export default function SignUp() {
                         <div className="space-y-6">
                             <div>
                                 <Label>
-                                    Tên đăng nhập
-                                    <span className="text-error-500">
-                                        *
-                                    </span>{" "}
+                                    Tên đăng nhập{" "}
+                                    <span className="text-error-500">*</span>{" "}
                                 </Label>
                                 <Input
                                     required

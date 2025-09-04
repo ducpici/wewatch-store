@@ -241,6 +241,7 @@ export default function Brand() {
 
     return (
         <>
+            {console.log(products)}
             <PageBreadcrumb items={breadcrumbItems} />
             <div className="intro">
                 {products.length > 0 ? (
@@ -251,6 +252,8 @@ export default function Brand() {
                         } chính hãng`}
                         imageUrl={"/images/default-brand-banner.jpg"}
                         description={`Khám phá bộ sưu tập đồng hồ ${
+                            products[0]?.brand?.name ?? ""
+                        }, ${
                             products[0]?.brand?.description ?? ""
                         } chính hãng, thiết kế thanh lịch, chất lượng Nhật Bản với mức giá ưu đãi.`}
                     />

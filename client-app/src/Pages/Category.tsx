@@ -245,12 +245,20 @@ export default function Category() {
         <>
             <PageBreadcrumb items={breadcrumbItems} />
             <div className="intro">
-                <ProductIntroBanner
-                    title={`Thương hiệu ${products[0]?.category?.name ?? ""}`}
-                    subtitle={`${products[0]?.category?.name ?? ""} chính hãng`}
-                    imageUrl={"/images/default-brand-banner.jpg"}
-                    description={products[0]?.category?.description ?? ""}
-                />
+                {products.length > 0 ? (
+                    <ProductIntroBanner
+                        title={`Thương hiệu ${
+                            products[0]?.category?.name ?? ""
+                        }`}
+                        subtitle={`${
+                            products[0]?.category?.name ?? ""
+                        } chính hãng`}
+                        imageUrl={"/images/default-brand-banner.jpg"}
+                        description={products[0]?.category?.description ?? ""}
+                    />
+                ) : (
+                    ""
+                )}
             </div>
             <div className="filter">
                 <ProductFilters

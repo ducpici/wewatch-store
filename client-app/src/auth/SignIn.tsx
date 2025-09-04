@@ -75,14 +75,14 @@ export default function SignIn() {
     return (
         <>
             <div className="flex flex-col justify-center flex-1 w-full max-w-md mx-auto h-200">
-                <div className="brands flex items-center justify-center">
-                    <img
-                        src="/images/mylogo.png"
-                        className="w-20 h-20"
-                        alt="wewatch"
-                    />
-                </div>
                 <div className="mx-2 p-4 border border-gray-300 rounded-2xl">
+                    <div className="brands flex items-center justify-center">
+                        <img
+                            src="/images/mylogo.png"
+                            className="w-20 h-20"
+                            alt="wewatch"
+                        />
+                    </div>
                     <div className="mb-5 sm:mb-8">
                         <h1 className="text-center text-2xl mb-2 font-semibold text-gray-800 text-title-sm dark:text-white/90 sm:text-title-md">
                             Đăng nhập

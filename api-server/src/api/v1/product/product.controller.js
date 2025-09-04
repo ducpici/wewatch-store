@@ -896,7 +896,7 @@ const getProductByBrand = async (req, res) => {
                     id: data.id_brand,
                     name: data.brand_name,
                     slug: data.brand_slug,
-                    description: data.description,
+                    description: data.brand_description,
                 },
                 origin: data.origin,
                 crystal_material: data.crystal_material,
@@ -991,6 +991,7 @@ const getDataByBrandWithFilters = async (slug, limit, offset, filters) => {
             p.*, 
             b.*, 
             c.*, 
+            b.description AS brand_description,
             p.slug AS product_slug, 
             b.slug AS brand_slug, 
             c.slug AS category_slug
