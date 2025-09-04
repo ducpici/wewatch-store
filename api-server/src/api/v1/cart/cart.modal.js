@@ -67,6 +67,12 @@ const getVoucherByCode = async (code) => {
     return rows[0] || null;
 };
 
+const deleteCart = async (userId) => {
+    const sql = `
+        DELETE FROM carts WHERE user_id = ?
+    `;
+    return await connection.execute(sql, [userId]);
+};
 module.exports = {
     getUserCart,
     checkProductExist,
@@ -74,4 +80,5 @@ module.exports = {
     deleteCartItems,
     getProductIdsByUser,
     getVoucherByCode,
+    deleteCart,
 };

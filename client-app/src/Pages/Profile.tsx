@@ -51,7 +51,7 @@ type Account = {
 };
 
 export default function Profile() {
-    const { user } = useSession();
+    const { user, updateSession } = useSession();
     const navigate = useNavigate();
     const [userData, setUserData] = useState<User>(initialUser);
     const [selectedValue, setSelectedValue] = useState<string>("1");
@@ -118,6 +118,15 @@ export default function Profile() {
             await axios.put(`/users/${userData.id}`, userData);
 
             toast.success("Cập nhật thành công!");
+
+            // ✅ Cập nhật luôn session
+            updateSession({
+                id: user?.id,
+                username: userData.username,
+                name: userData.name,
+                email: userData.email,
+            });
+
             navigate("/");
         } catch (error) {
             console.error("Lỗi khi cập nhật:", error);

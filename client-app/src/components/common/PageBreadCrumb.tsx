@@ -11,7 +11,7 @@ interface BreadcrumbProps {
 
 const PageBreadcrumb: React.FC<BreadcrumbProps> = ({ items }) => {
     return (
-        <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-2 md:mb-6">
             <nav>
                 <ol className="flex items-center gap-1.5">
                     {items.map((item, index) => (

@@ -8,6 +8,7 @@ import axios from "../../libs/axiosConfig";
 import { toast } from "react-toastify";
 import { isValidName } from "../../libs/validateName";
 import { isValidPhoneNum } from "../../libs/validatePhoneNum";
+import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 type Address = {
     id_ship: bigint;
     user_id: bigint;
@@ -31,7 +32,10 @@ const initAddr: Address = {
     detail: "",
     is_default: true,
 };
-
+const breadcrumbItems = [
+    { label: "Trang chủ", path: "/" },
+    { label: "Cập nhật địa chỉ nhận hàng" },
+];
 const EditAddress = () => {
     const { state } = useLocation();
     const idShip = state?.idShip;
@@ -110,14 +114,17 @@ const EditAddress = () => {
     }, [idShip]);
 
     return (
-        <div className="max-w-md mx-auto p-4 bg-white min-h-screen">
+        <div className="max-w-md mx-auto bg-white">
+            <PageBreadcrumb items={breadcrumbItems} />
             {/* Header */}
             <div className="flex justify-between items-center mb-4">
                 <IoIosArrowBack
-                    className="text-xl cursor-pointer"
+                    className="cursor-pointer"
                     onClick={() => navigate(-1)}
                 />
-                <h1 className="text-lg font-semibold">Chỉnh sửa địa chỉ</h1>
+                <h1 className="text-sm md:text-lg font-semibold">
+                    Chỉnh sửa địa chỉ
+                </h1>
                 <FaTrash
                     className="text-red-500 cursor-pointer"
                     onClick={handleDeleteAddr}

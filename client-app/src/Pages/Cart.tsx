@@ -60,8 +60,49 @@ const Cart = () => {
         toast.info("Đã huỷ mã giảm giá");
     };
 
-    const removeItem = (id: number) => {
-        setCartItems((prev) => prev.filter((item) => item.id !== id));
+    // const removeItem = async (id: number) => {
+    //     if (!user?.id) return;
+
+    //     setCartItems((prev) => prev.filter((item) => item.id !== id));
+    //     if (cartItems.length === 0) {
+    //         console.log("cart empty");
+    //         // Nếu giỏ trống thì gọi API xoá toàn bộ cart
+    //         await axios.delete(`/cart/${user.id}`);
+    //         toast.info("Giỏ hàng đã được làm trống");
+    //         return;
+    //     }
+    // };
+
+    const removeItem = async (id: number) => {
+        if (!user?.id) return;
+
+        // Giỏ hàng sau khi xoá
+        const updatedCart = cartItems.filter((item) => item.id !== id);
+        setCartItems(updatedCart);
+
+        if (updatedCart.length === 0) {
+            // Nếu giỏ rỗng thì xoá luôn trên server
+            try {
+                await axios.delete(`/cart/${user.id}`);
+                toast.info("Giỏ hàng đã được làm trống");
+            } catch (error) {
+                console.error(error);
+                toast.error("Không thể xoá giỏ hàng");
+            }
+        }
+        // else {
+        //     // Nếu vẫn còn item thì cập nhật lại server
+        //     try {
+        //         const newCart = updatedCart.map((item) => ({
+        //             id: item.id,
+        //             modal_num: item.modal_num,
+        //             quantity: item.quantity,
+        //         }));
+        //         await axios.put(`/cart/${user.id}`, newCart);
+        //     } catch (error) {
+        //         console.error(error);
+        //     }
+        // }
     };
 
     // const subtotal = cartItems.reduce(
@@ -77,6 +118,8 @@ const Cart = () => {
 
     const handleUpdateCart = async () => {
         try {
+            if (!user?.id) return;
+
             const newCart = cartItems.map((item) => ({
                 id: item.id,
                 modal_num: item.modal_num,
@@ -369,11 +412,7 @@ const Cart = () => {
                                                 toggleSelectItem(item.id)
                                             }
                                         />
-                                        <button
-                                            onClick={() => removeItem(item.id)}
-                                        >
-                                            ❌
-                                        </button>
+
                                         <img
                                             src={`${BASE_URL}${item.image}`}
                                             className="w-16 h-16 cursor-pointer"
@@ -383,9 +422,14 @@ const Cart = () => {
                                                 )
                                             }
                                         />
-                                        <span className="font-semibold">
+                                        <span className="font-semibold text-justify">
                                             {item.name}
                                         </span>
+                                        <button
+                                            onClick={() => removeItem(item.id)}
+                                        >
+                                            ❌
+                                        </button>
                                     </div>
                                     <div className="flex justify-between">
                                         <span>Giá:</span>
@@ -434,7 +478,10 @@ const Cart = () => {
                             ))}
                         </div>
                         <div className="flex justify-between items-center mt-4">
-                            <button className="text-black text-xs whitespace-normal px-4 py-2 cursor-pointer">
+                            <button
+                                className="text-black text-xs whitespace-normal px-4 py-2 cursor-pointer"
+                                onClick={() => navigate("/")}
+                            >
                                 ← TIẾP TỤC XEM SẢN PHẨM
                             </button>
                             <button

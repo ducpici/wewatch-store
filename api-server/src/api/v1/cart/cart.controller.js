@@ -5,6 +5,7 @@ import {
     deleteCartItems,
     getProductIdsByUser,
     getVoucherByCode,
+    deleteCart,
 } from "./cart.modal";
 import { connection } from "../../../config/database";
 
@@ -196,10 +197,21 @@ const checkProductAvailability = async (req, res) => {
         res.status(500).json({ success: false, message: "Server error" });
     }
 };
+
+const deleteCartUser = async (req, res) => {
+    try {
+        const user_id = req.user.id;
+        const result = await deleteCart(user_id);
+    } catch (err) {
+        console.error("Lỗi xóa giỏ hàng:", err);
+        res.status(500).json({ success: false, message: "Server error" });
+    }
+};
 module.exports = {
     getCart,
     postAddCart,
     putEditCart,
     applyVoucher,
     checkProductAvailability,
+    deleteCartUser,
 };

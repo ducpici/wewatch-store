@@ -4,6 +4,12 @@ import { IoIosArrowBack } from "react-icons/io";
 import { LuPlus } from "react-icons/lu";
 import { IoIosArrowForward } from "react-icons/io";
 import axios from "../libs/axiosConfig";
+import PageBreadcrumb from "@/components/common/PageBreadCrumb";
+
+const breadcrumbItems = [
+    { label: "Trang chủ", path: "/" },
+    { label: "Địa chỉ của tôi" },
+];
 
 type Address = {
     id_ship: number;
@@ -42,21 +48,29 @@ const AddressList = () => {
         navigate("/cap-nhat-dia-chi", { state: { ...state, idShip } });
     };
 
-    const handleChooseAddr = () => {};
+    const handleChooseAddr = async (idShip: number) => {
+        try {
+            await axios.put(`/address/choose-default/${idShip}`);
+            handleBack();
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
     useEffect(() => {
         fetchAddress();
     }, []);
 
     return (
-        <div className="max-w-md mx-auto p-4 min-h-screen">
+        <div className="max-w-md mx-auto">
+            <PageBreadcrumb items={breadcrumbItems} />
             {/* Header */}
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between">
                 <IoIosArrowBack
                     className="cursor-pointer"
                     onClick={handleBack}
                 />
-                <h1 className="text-lg font-semibold">Địa chỉ của bạn</h1>
+                <h1 className="text-lg font-semibold">Địa chỉ của tôi</h1>
                 <div></div>
             </div>
 
@@ -72,12 +86,12 @@ const AddressList = () => {
             </div>
 
             {/* Danh sách địa chỉ */}
-            <div className="mt-4 space-y-4">
+            <div className="mt-4">
                 {addresses.map((addr) => (
                     <div
                         key={addr.id_ship}
-                        className="border-gray-300 border-b pb-4 cursor-pointer"
-                        onClick={handleChooseAddr}
+                        className="border-gray-300 p-2 rounded-sm cursor-pointer hover:bg-gray-50"
+                        onClick={() => handleChooseAddr(addr.id_ship)}
                     >
                         <div className="flex justify-between items-center">
                             <div>
@@ -90,7 +104,10 @@ const AddressList = () => {
                             </div>
                             <button
                                 className="text-red-500 font-medium cursor-pointer"
-                                onClick={() => handleEditAddr(addr.id_ship)}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleEditAddr(addr.id_ship);
+                                }}
                             >
                                 Chỉnh sửa
                             </button>

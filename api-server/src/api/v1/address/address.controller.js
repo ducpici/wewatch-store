@@ -5,6 +5,7 @@ import {
     createData,
     deleteData,
     setIsDefaultFalse,
+    setAddressDefault,
 } from "./address.modal";
 
 const getAddressByUserId = async (req, res) => {
@@ -84,10 +85,24 @@ const deleteAddress = async (req, res) => {
     }
 };
 
+const chooseDefault = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const { idShip } = req.params;
+        await setIsDefaultFalse(userId);
+        await setAddressDefault(idShip, userId);
+        res.json({ message: "Chọn địa chỉ mặc định thành công" });
+    } catch (error) {
+        console.error("Error:", error);
+        res.status(500).json({ message: "Server error" });
+    }
+};
+
 module.exports = {
     getAddressByUserId,
     getAddressById,
     putUpdateAddress,
     postAddAddress,
     deleteAddress,
+    chooseDefault,
 };

@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { IoIosArrowBack } from "react-icons/io";
 import { FaTrash } from "react-icons/fa";
 import Input from "../../components/form/input/InputField";
-
+import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import axios from "../../libs/axiosConfig";
 
 import { toast } from "react-toastify";
@@ -30,6 +30,10 @@ const initAddr: Address = {
     detail: "",
     is_default: false,
 };
+const breadcrumbItems = [
+    { label: "Trang chủ", path: "/" },
+    { label: "Thêm địa chỉ nhận hàng" },
+];
 
 const AddAddress = () => {
     const { state } = useLocation();
@@ -77,14 +81,17 @@ const AddAddress = () => {
     };
 
     return (
-        <div className="max-w-md mx-auto p-4 bg-white min-h-screen">
+        <div className="max-w-md mx-auto bg-white">
+            <PageBreadcrumb items={breadcrumbItems} />
             {/* Header */}
             <div className="flex justify-between items-center mb-4">
                 <IoIosArrowBack
-                    className="text-xl cursor-pointer"
+                    className="cursor-pointer"
                     onClick={() => navigate(-1)}
                 />
-                <h1 className="text-lg font-semibold">Thêm địa chỉ</h1>
+                <h1 className="text-sm md:text-lg font-semibold">
+                    Thêm địa chỉ
+                </h1>
                 <FaTrash className="text-red-500 cursor-pointer" />
             </div>
 

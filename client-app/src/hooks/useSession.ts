@@ -20,11 +20,21 @@ export default function useSession() {
         }
     }, []);
 
+    const updateSession = (newUser: {
+        id?: number;
+        username: string;
+        name: string;
+        email: string;
+    }) => {
+        localStorage.setItem("user", JSON.stringify(newUser));
+        setUser(newUser); // ✅ cập nhật ngay state => UI đổi liền
+    };
+
     const clearSession = () => {
         localStorage.removeItem("token");
         localStorage.removeItem("user");
         setUser(null);
     };
 
-    return { user, clearSession };
+    return { user, updateSession, clearSession };
 }

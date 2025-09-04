@@ -60,6 +60,14 @@ const setIsDefaultFalse = async (userId) => {
     return result;
 };
 
+const setAddressDefault = async (idShip, userId) => {
+    const sql =
+        "UPDATE shipping_address SET is_default = 1 WHERE user_id = ? and id_ship = ?";
+    const values = [userId, idShip];
+    const [result] = await connection.execute(sql, values);
+    return result;
+};
+
 module.exports = {
     getDataByUserId,
     getDataById,
@@ -67,4 +75,5 @@ module.exports = {
     createData,
     deleteData,
     setIsDefaultFalse,
+    setAddressDefault,
 };

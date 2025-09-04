@@ -71,7 +71,7 @@ const Checkout = () => {
 
         const res = await axios.post("/orders", payload);
         toast.success(res.data.message);
-        navigate("/");
+        navigate("/don-hang");
     };
 
     const handleClickAddress = () => {
@@ -109,21 +109,24 @@ const Checkout = () => {
     return (
         <div className="max-w-md mx-auto">
             <PageBreadcrumb items={breadcrumbItems} />
-            <h1 className="text-xl font-bold mb-4">Xác nhận đơn hàng</h1>
+            <h1 className="text-lg text-center md:text-xl font-bold mb-4">
+                Xác nhận đơn hàng
+            </h1>
 
             <div className="mb-6">
-                <h2 className="font-semibold">Sản phẩm</h2>
+                <h2 className="font-semibold mb-2">Sản phẩm</h2>
                 <ul>
                     {items.map((item: any) => (
                         <li
                             key={item.id}
-                            className="flex gap-4 py-2 border-gray-300 border-b"
+                            className="flex py-2 border-gray-300 border-b"
                         >
                             <img
                                 src={`${BASE_URL}${item.image}`}
-                                className="w-16 h-16 object-cover"
+                                className="w-16 h-16"
                             />
-                            <div>
+
+                            <div className="product-detail pl-2">
                                 <p className="text-justify">{item.name}</p>
                                 <p>Số lượng: {item.quantity}</p>
                                 <p className="font-bold">
@@ -145,11 +148,11 @@ const Checkout = () => {
                     className="flex cursor-pointer"
                     onClick={handleClickAddress}
                 >
-                    <div className="m-2">
+                    <div className="flex items-center">
                         <HiOutlineLocationMarker />
                     </div>
 
-                    <div className="flex justify-between w-full">
+                    <div className="flex justify-between w-full px-2">
                         {address ? (
                             <div className="address">
                                 <h3 className="font-semibold">
@@ -162,11 +165,13 @@ const Checkout = () => {
                                 </p>
                             </div>
                         ) : (
-                            <p className="text-red-500 text-sm">
+                            <p className="text-red-500 text-sm whitespace-nowrap px-2">
                                 Bạn chưa có địa chỉ nhận hàng. Bấm để chọn hoặc
                                 thêm mới.
                             </p>
                         )}
+                    </div>
+                    <div className="flex items-center">
                         <IoIosArrowForward />
                     </div>
                 </div>
@@ -194,14 +199,17 @@ const Checkout = () => {
                 </label>
                 {paymentMethod === "1" && (
                     <div className="mt-4 border border-gray-300 p-4 rounded bg-gray-50">
-                        <p className="font-semibold text-lg mb-2">
+                        <p className="font-semibold text-lg mb-2 text-center">
                             Thông tin chuyển khoản
                         </p>
-                        <img
-                            src="/images/qrcode.jpg"
-                            alt="QR chuyển khoản"
-                            className="w-40 h-40 mb-4"
-                        />
+                        <div className="flex justify-center items-center">
+                            <img
+                                src="/images/qrcode.jpg"
+                                alt="QR chuyển khoản"
+                                className="w-40 h-40 mb-4"
+                            />
+                        </div>
+
                         <p>
                             <strong>Ngân hàng:</strong> Vietcombank (VCB)
                         </p>
@@ -224,13 +232,20 @@ const Checkout = () => {
             </div>
 
             <div className="text-right">
-                <p>Tạm tính: {subtotal.toLocaleString("vi-VN")} ₫</p>
-                <p>Giảm giá: - {discount.toLocaleString("vi-VN")} ₫</p>
-                <p className="text-lg font-bold">
-                    Tổng cộng: {total.toLocaleString("vi-VN")} ₫
-                </p>
+                <li className="flex justify-between">
+                    <span className="font-bold">Tạm tính: </span>
+                    <span>{subtotal.toLocaleString("vi-VN")} ₫</span>
+                </li>
+                <li className="flex justify-between">
+                    <span className="font-bold">Giảm giá: </span>
+                    <span>- {discount.toLocaleString("vi-VN")} ₫</span>
+                </li>
+                <li className="flex justify-between text-lg font-bold">
+                    <span>Tổng: </span>
+                    <span>{total.toLocaleString("vi-VN")} ₫</span>
+                </li>
                 <button
-                    className="bg-green-500 text-white px-6 py-2 mt-4 cursor-pointer hover:bg-red-400 rounded"
+                    className="bg-red-600 text-white px-6 py-2 mt-4 font-semibold cursor-pointer hover:bg-red-700 transition-all duration-500 rounded w-full"
                     onClick={handlePlaceOrder}
                 >
                     Đặt hàng
