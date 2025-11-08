@@ -1,0 +1,11 @@
+.slick-slider {
+  margin: 0 -8px; /* Âm bằng nửa padding của slide */
+}
+
+.slick-slide > div {
+  padding: 0 8px; /* Tạo khoảng cách giữa các slide */
+}
+
+.slick-list {
+  margin: 0 -8px; /* Giữ khoảng cách đều 2 bên */
+}
