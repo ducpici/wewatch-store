@@ -1,4 +1,4 @@
-import "/public/styles/App.css";
+import "@/styles/App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router";
 import AppLayout from "./components/layouts/AppLayout";
 import Home from "./Pages/Home";
@@ -21,45 +21,38 @@ import UserVoucher from "./Pages/UserVoucher";
 import ShopVoucher from "./Pages/ShopVoucher.";
 import Contact from "./Pages/Contact";
 import AboutPage from "./Pages/AboutPage";
+import ScrollToTop from "./components/common/ScrollToTop";
 function App() {
-    return (
-        <Router>
-            <ToastContainer position="top-right" autoClose={3000} />
-            <Routes>
-                <Route path="/signin" element={<SignIn />} />
-                <Route path="/signup" element={<SignUp />} />
-                <Route element={<AppLayout />}>
-                    <Route index path="/" element={<Home />} />
-                    <Route path="/thuong-hieu/:slug" element={<Brand />} />
-                    <Route path="/danh-muc/:slug" element={<Category />} />
-                    <Route path="/san-pham/:slug" element={<ProductDetail />} />
-                    <Route path="/gio-hang" element={<Cart />} />
-                    <Route path="/thong-tin-ca-nhan" element={<Profile />} />
-                    <Route path="/don-hang" element={<Order />} />
-                    <Route path="/dat-hang" element={<Checkout />} />
-                    <Route
-                        path="/danh-sach-dia-chi"
-                        element={<AddressList />}
-                    />
-                    <Route path="/them-dia-chi" element={<AddAddress />} />
-                    <Route path="/cap-nhat-dia-chi" element={<EditAddress />} />
-                    <Route path="/don-hang" element={<Order />} />
-                    <Route
-                        path="/don-hang/chi-tiet/:id"
-                        element={<OrderDetail />}
-                    />
-                    <Route path="/tim-kiem" element={<SearchResult />} />
-                    <Route
-                        path="/khuyen-mai-cua-toi"
-                        element={<UserVoucher />}
-                    />
-                    <Route path="/khuyen-mai" element={<ShopVoucher />} />
-                    <Route path="/lien-he" element={<Contact />} />
-                    <Route path="/gioi-thieu" element={<AboutPage />} />
-                </Route>
-            </Routes>
-        </Router>
-    );
+  return (
+    <Router>
+      <ScrollToTop />
+      <ToastContainer position="top-right" autoClose={3000} />
+      <Routes>
+        <Route path="/signin" element={<SignIn />} />
+        <Route path="/signup" element={<SignUp />} />
+        <Route element={<AppLayout />}>
+          <Route index path="/" element={<Home />} />
+          <Route path="/thuong-hieu/:slug" element={<Brand />} />
+          <Route path="/danh-muc/:slug" element={<Category />} />
+          <Route path="/san-pham/:slug" element={<ProductDetail />} />
+          <Route path="/gio-hang" element={<Cart />} />
+          <Route path="/thong-tin-ca-nhan" element={<Profile />} />
+          <Route path="/don-hang" element={<Order />} />
+          <Route path="/dat-hang" element={<Checkout />} />
+          <Route path="/danh-sach-dia-chi" element={<AddressList />} />
+          <Route path="/them-dia-chi" element={<AddAddress />} />
+          <Route path="/cap-nhat-dia-chi" element={<EditAddress />} />
+          <Route path="/don-hang" element={<Order />} />
+          <Route path="/don-hang/chi-tiet/:id" element={<OrderDetail />} />
+          <Route path="/tim-kiem" element={<SearchResult />} />
+          <Route path="/khuyen-mai-cua-toi" element={<UserVoucher />} />
+          <Route path="/khuyen-mai" element={<ShopVoucher />} />
+          <Route path="/lien-he" element={<Contact />} />
+          <Route path="/gioi-thieu" element={<AboutPage />} />
+        </Route>
+      </Routes>
+    </Router>
+  );
 }
 
 export default App;

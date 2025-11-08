@@ -1,106 +1,97 @@
 import { connection } from "../../../config/database";
 
 const getDataPaginated = async (limit, offset, state) => {
-    let sql = `
+  let sql = `
         SELECT * FROM banners
     `;
-    const values = [];
-    if (state !== null) {
-        sql += ` WHERE state = ?`;
-        values.push(state);
-    }
+  const values = [];
+  if (state !== null) {
+    sql += ` WHERE state = ?`;
+    values.push(state);
+  }
 
-    if (limit && offset !== null) {
-        sql += ` LIMIT ? OFFSET ?`;
-        values.push(limit, offset);
-    }
+  if (limit && offset !== null) {
+    sql += ` LIMIT ? OFFSET ?`;
+    values.push(limit, offset);
+  }
 
-    const [result] = await connection.execute(sql, values);
-    return result;
+  const [result] = await connection.execute(sql, values);
+  return result;
 };
 
 const getDataById = async (id) => {
-    const sql = `
+  const sql = `
         SELECT * FROM banners WHERE id_banner = ?
     `;
-    const values = [id];
-    const [result] = await connection.execute(sql, values);
-    return result;
+  const values = [id];
+  const [result] = await connection.execute(sql, values);
+  return result;
 };
 
 const countItem = async (state) => {
-    let sql = `SELECT COUNT(*) AS total FROM banners`;
-    const values = [];
+  let sql = `SELECT COUNT(*) AS total FROM banners`;
+  const values = [];
 
-    if (state !== null) {
-        sql += ` WHERE state = ?`;
-        values.push(state);
-    }
+  if (state !== null) {
+    sql += ` WHERE state = ?`;
+    values.push(state);
+  }
 
-    const [result] = await connection.execute(sql, values);
-    return result[0].total;
+  const [result] = await connection.execute(sql, values);
+  return result[0].total;
 };
 
 const createData = async (data) => {
-    const sql = `
+  const sql = `
         INSERT INTO banners (image_name, state) values (?,?)
     `;
-    const values = [data.image_name, data.state];
-    const [result] = await connection.execute(sql, values);
-    return result;
+  const values = [data.image_name, data.state];
+  const [result] = await connection.execute(sql, values);
+  return result;
 };
 
 const updateData = async (id, data) => {
-    const fields = [];
-    const values = [];
+  const fields = [];
+  const values = [];
 
-    for (const key in data) {
-        fields.push(`${key} = ?`);
-        values.push(data[key]);
-    }
+  for (const key in data) {
+    fields.push(`${key} = ?`);
+    values.push(data[key]);
+  }
 
-    const sql = `UPDATE banners SET ${fields.join(", ")} WHERE id_banner = ?`;
-    values.push(id);
+  const sql = `UPDATE banners SET ${fields.join(", ")} WHERE id_banner = ?`;
+  values.push(id);
 
-    return connection.execute(sql, values);
+  return connection.execute(sql, values);
 };
 
 const deleteData = async (id) => {
-    const sql = `
+  const sql = `
         DELETE FROM banners WHERE id_banner = ?
     `;
-    const values = [id];
-    const [result] = await connection.execute(sql, values);
-    return result;
+  const values = [id];
+  const [result] = await connection.execute(sql, values);
+  return result;
 };
 
 const searchData = async (keyword) => {
-    const sql = `
+  const sql = `
             SELECT * FROM banners
             WHERE name_position LIKE ?
         `;
 
-    const value = `%${keyword}%`;
-    const values = [value];
-    const [result] = await connection.execute(sql, values);
-    return result;
-};
-
-const setStateFalse = async () => {
-    const sql = `
-            UPDATE banners SET state = 0 WHERE state = 1
-        `;
-    const [result] = await connection.execute(sql);
-    return result;
+  const value = `%${keyword}%`;
+  const values = [value];
+  const [result] = await connection.execute(sql, values);
+  return result;
 };
 
 module.exports = {
-    getDataPaginated,
-    countItem,
-    createData,
-    updateData,
-    getDataById,
-    deleteData,
-    searchData,
-    setStateFalse,
+  getDataPaginated,
+  countItem,
+  createData,
+  updateData,
+  getDataById,
+  deleteData,
+  searchData,
 };

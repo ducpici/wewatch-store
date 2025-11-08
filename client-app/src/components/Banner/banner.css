@@ -1,0 +1,8 @@
+.slick-dots {
+  bottom: 20px !important; /* đưa dots lên trong vùng ảnh */
+  z-index: 1;
+}
+.slick-dots li button:before {
+  color: black !important; /* màu dots */
+  font-size: 10px;
+}

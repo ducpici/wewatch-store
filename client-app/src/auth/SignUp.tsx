@@ -1,172 +1,175 @@
 import { useState } from "react";
-import { Link } from "react-router";
-import { ChevronLeftIcon, EyeCloseIcon, EyeIcon } from "../icons";
-import Input from "../components/form/input/InputField";
-import Label from "../components/form/Label";
-import Button from "../components/ui/button/Button";
-import axios from "../libs/axiosConfig";
+import { EyeCloseIcon, EyeIcon } from "@/icons";
+import { Button } from "@/components/ui/button";
+import axios from "@/libs/axiosConfig";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router";
-import { isValidUsername, isValidPassword } from "../libs/validateData";
+import { isValidUsername, isValidPassword } from "@/libs/validateData";
+import * as z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Controller, useForm } from "react-hook-form";
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+const signUpSchema = z.object({
+  username: z.string().min(1, "Vui lòng nhập tên đăng nhập"),
+  password: z.string().min(6, "Mật khẩu phải có ít nhất 6 ký tự"),
+  type: z.string(),
+});
 export default function SignUp() {
-    const navigate = useNavigate();
-    type Account = {
-        username: string;
-        password: string;
-    };
-    const [data, setData] = useState<Account>({
-        username: "",
-        password: "",
-    });
-    const [showPassword, setShowPassword] = useState(false);
-    const [isChecked, setIsChecked] = useState(false);
-    const handleSignUp = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!data.username) {
-            toast.error("Vui lòng nhập tên đăng nhập");
-            return;
-        }
-        if (!isValidUsername(data.username)) {
-            toast.error("Tên đăng nhập không hợp lệ");
-            return;
-        }
-        if (data.password.length < 6) {
-            toast.error("Mật khẩu phải từ 6 ký tự trở lên");
-            return;
-        }
-        if (!isValidPassword(data.password)) {
-            toast.error("Mật khẩu không hợp lệ");
-            return;
-        }
+  const form = useForm<z.infer<typeof signUpSchema>>({
+    resolver: zodResolver(signUpSchema),
+    defaultValues: {
+      username: "",
+      password: "",
+      type: "user",
+    },
+  });
+  const navigate = useNavigate();
 
-        if (!data.password) {
-            toast.error("Vui lòng nhập mật khẩu");
-            return;
-        }
+  const [showPassword, setShowPassword] = useState(false);
 
-        try {
-            let res = await axios.post("/signup", data);
-            console.log(res);
-            toast.success(res.data.message);
-            navigate("/signin");
-        } catch (err: any) {
-            if (err.response) {
-                // Khi server trả về mã lỗi như 401, 403, 500...
-                const msg = err.response.data?.message || "Đã có lỗi xảy ra";
-                toast.error(msg);
-                console.error("Lỗi server:", err.response);
-            } else {
-                toast.error("Không thể kết nối tới máy chủ");
-                console.error("Lỗi kết nối:", err);
-            }
-        } finally {
-        }
-    };
-    return (
-        <div className="flex flex-col justify-center flex-1 w-full max-w-md mx-auto h-200">
-            <div className="mx-2 p-4 border border-gray-300 rounded-2xl">
-                <div className="brands flex items-center justify-center">
-                    <img
-                        src="/images/mylogo.png"
-                        className="w-20 h-20"
-                        alt="wewatch"
+  const handleSignUp = async (data: z.infer<typeof signUpSchema>) => {
+    if (!isValidUsername(data.username)) {
+      toast.error("Tên đăng nhập không hợp lệ");
+      return;
+    }
+
+    if (!isValidPassword(data.password)) {
+      toast.error("Mật khẩu không hợp lệ");
+      return;
+    }
+
+    try {
+      let res = await axios.post("/signup", data);
+      console.log(res);
+      toast.success(res.data.message);
+      navigate("/signin");
+    } catch (err: any) {
+      if (err.response) {
+        // Khi server trả về mã lỗi như 401, 403, 500...
+        const msg = err.response.data?.message || "Đã có lỗi xảy ra";
+        toast.error(msg);
+        console.error("Lỗi server:", err.response);
+      } else {
+        toast.error("Không thể kết nối tới máy chủ");
+        console.error("Lỗi kết nối:", err);
+      }
+    } finally {
+    }
+  };
+  return (
+    <div className="flex flex-col justify-center flex-1 w-full max-w-md mx-auto h-200 px-2">
+      <div className="flex justify-center p-2">
+        <img src="/images/mylogo.png" className="w-20" />
+      </div>
+      <Card className="w-full sm:max-w-md">
+        <CardHeader>
+          <CardTitle>Đăng ký</CardTitle>
+          <CardDescription>
+            Nhập tên đăng nhập và mật khẩu để đăng ký một tài khoản mới
+          </CardDescription>
+          <CardAction>
+            <Button variant="link" onClick={() => navigate("/signin")}>
+              Đăng nhập
+            </Button>
+          </CardAction>
+        </CardHeader>
+        <CardContent>
+          <form id="form-rhf-signin" onSubmit={form.handleSubmit(handleSignUp)}>
+            <FieldGroup>
+              <Controller
+                name="username"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid} className="gap-2">
+                    <FieldLabel htmlFor="form-rhf-username">
+                      Tên đăng nhập
+                    </FieldLabel>
+                    <Input
+                      {...field}
+                      id="form-rhf-username"
+                      aria-invalid={fieldState.invalid}
+                      placeholder="Nhập tên đăng nhập"
+                      autoComplete="off"
+                      onChange={(e) =>
+                        field.onChange(e.target.value.toLowerCase())
+                      }
                     />
-                </div>
-                <div className="mb-5 sm:mb-8">
-                    <h1 className="mb-2 text-center text-2xl font-semibold text-gray-800 text-title-sm dark:text-white/90 sm:text-title-md">
-                        Đăng ký
-                    </h1>
-                </div>
-                <div>
-                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-5"></div>
-                    <form onSubmit={handleSignUp}>
-                        <div className="space-y-6">
-                            <div>
-                                <Label>
-                                    Tên đăng nhập{" "}
-                                    <span className="text-error-500">*</span>{" "}
-                                </Label>
-                                <Input
-                                    required
-                                    type="text"
-                                    value={data.username}
-                                    placeholder="Nhập tên đăng nhập"
-                                    onChange={(e) =>
-                                        setData({
-                                            ...data,
-                                            username:
-                                                e.target.value.toLowerCase(),
-                                        })
-                                    }
-                                />
-                            </div>
-                            <div>
-                                <Label>
-                                    Mật khẩu{" "}
-                                    <span className="text-error-500">*</span>{" "}
-                                </Label>
-                                <div className="relative">
-                                    <Input
-                                        required
-                                        type={
-                                            showPassword ? "text" : "password"
-                                        }
-                                        placeholder="Nhập mật khẩu"
-                                        onChange={(e) =>
-                                            setData({
-                                                ...data,
-                                                password: e.target.value,
-                                            })
-                                        }
-                                    />
-                                    <span
-                                        onClick={() =>
-                                            setShowPassword(!showPassword)
-                                        }
-                                        className="absolute z-30 -translate-y-1/2 cursor-pointer right-4 top-1/2"
-                                    >
-                                        {showPassword ? (
-                                            <EyeIcon className="fill-gray-500 dark:fill-gray-400 size-5" />
-                                        ) : (
-                                            <EyeCloseIcon className="fill-gray-500 dark:fill-gray-400 size-5" />
-                                        )}
-                                    </span>
-                                </div>
-                            </div>
-                            <div className="flex items-center justify-between"></div>
-                            <div>
-                                <Button
-                                    className="w-full bg-blue-500 cursor-pointer"
-                                    size="sm"
-                                >
-                                    Đăng ký
-                                </Button>
-                            </div>
-                        </div>
-                    </form>
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
+                )}
+              />
+              <Controller
+                name="password"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid} className="gap-2">
+                    <FieldLabel htmlFor="form-rhf-password">
+                      Mật khẩu
+                    </FieldLabel>
+                    <div className="relative">
+                      <Input
+                        {...field}
+                        id="form-rhf-password"
+                        type={showPassword ? "text" : "password"}
+                        placeholder="Nhập mật khẩu"
+                        aria-invalid={fieldState.invalid}
+                        onChange={(e) =>
+                          field.onChange(e.target.value.toLowerCase())
+                        }
+                      />
+                      <span
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute z-30 -translate-y-1/2 cursor-pointer right-4 top-1/2"
+                      >
+                        {showPassword ? (
+                          <EyeIcon className="fill-gray-500 dark:fill-gray-400 size-5" />
+                        ) : (
+                          <EyeCloseIcon className="fill-gray-500 dark:fill-gray-400 size-5" />
+                        )}
+                      </span>
+                    </div>
 
-                    <div className="mt-5">
-                        <p className="text-sm font-normal text-center text-gray-700 dark:text-gray-400 sm:text-start">
-                            Đã có tài khoản ? {""}
-                            <Link
-                                to="/signin"
-                                className="text-brand-500 hover:text-brand-600 dark:text-brand-400"
-                            >
-                                Đăng nhập
-                            </Link>
-                        </p>
-                    </div>
-                    <div className="w-full max-w-md pt-10 mx-auto">
-                        <Link
-                            to="/"
-                            className="inline-flex items-center text-sm text-gray-500 transition-colors hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-                        >
-                            <ChevronLeftIcon className="size-5" />
-                            Quay về trang chủ
-                        </Link>
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
+                )}
+              />
+            </FieldGroup>
+          </form>
+        </CardContent>
+        <CardFooter>
+          <Field orientation="vertical">
+            <Button type="submit" form="form-rhf-signin">
+              Đăng ký
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => navigate("/")}
+            >
+              Quay về trang chủ
+            </Button>
+          </Field>
+        </CardFooter>
+      </Card>
+    </div>
+  );
 }
