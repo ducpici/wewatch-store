@@ -2,9 +2,11 @@ import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { IoIosArrowBack } from "react-icons/io";
 import { LuPlus } from "react-icons/lu";
+import { Trash2, SquarePen } from "lucide-react";
 import { IoIosArrowForward } from "react-icons/io";
 import axios from "../libs/axiosConfig";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
+import { toast } from "react-toastify";
 
 const breadcrumbItems = [
   { label: "Trang chủ", path: "/" },
@@ -48,6 +50,17 @@ const AddressList = () => {
     navigate("/cap-nhat-dia-chi", { state: { ...state, idShip } });
   };
 
+  const handleDeleteAddr = async (id: number) => {
+    try {
+      const res = await axios.delete(`/address/${id}`);
+      toast.success(res.data.message);
+      fetchAddress();
+    } catch (error) {
+      console.error("Lỗi khi xóa địa chỉ:", error);
+      toast.error("Thất bại");
+    }
+  };
+
   const handleChooseAddr = async (idShip: number) => {
     try {
       await axios.put(`/address/choose-default/${idShip}`);
@@ -82,7 +95,7 @@ const AddressList = () => {
       </div>
 
       {/* Danh sách địa chỉ */}
-      <div className="mt-4 space-y-2">
+      <div className="mt-4 space-y-2 h-auto">
         {addresses.map((addr) => (
           <div
             key={addr.id_ship}
@@ -94,15 +107,24 @@ const AddressList = () => {
                 <p className="font-semibold">{addr.full_name}</p>
                 <p className="text-gray-600">{addr.phone_num}</p>
               </div>
-              <button
-                className="text-red-500 font-medium cursor-pointer"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleEditAddr(addr.id_ship);
-                }}
-              >
-                Chỉnh sửa
-              </button>
+              <div className="flex items-center gap-3">
+                <SquarePen
+                  size={16}
+                  className="cursor-pointer hover:text-blue-500"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleEditAddr(addr.id_ship);
+                  }}
+                />
+                <Trash2
+                  size={16}
+                  className="cursor-pointer hover:text-red-500"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDeleteAddr(addr.id_ship);
+                  }}
+                />
+              </div>
             </div>
             <p className="text-gray-700 mt-1">
               {addr.detail && `${addr.detail}, `}

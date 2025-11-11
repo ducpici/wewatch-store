@@ -2,8 +2,8 @@ import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import ComponentCard from "@/components/common/ComponentCard";
-import Input from "@/components/form/input/InputField";
 import Radio from "@/components/form/input/Radio";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import DatePicker from "@/components/form/date-picker";
 import formatDate from "@/libs/formatDate";
 import axios from "@/libs/axiosConfig";
@@ -18,18 +18,29 @@ import { ChevronDownIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Label } from "@/components/ui/label";
+import * as z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Controller, useForm } from "react-hook-form";
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from "@/components/ui/field";
 import {
   Popover,
-  PopoverContent,
   PopoverTrigger,
+  PopoverContent,
 } from "@/components/ui/popover";
+import { Input } from "@/components/ui/input";
 
 const breadcrumbItems = [
   { label: "Trang chủ", path: "/" },
   { label: "Thông tin cá nhân" },
 ];
+
 const initialUser: User = {
-  id: BigInt(0),
+  id: 0,
   name: "",
   dob: "",
   gender: "",
@@ -41,78 +52,86 @@ const initialUser: User = {
   state: true,
 };
 
+const profileSchema = z.object({
+  id: z.number(),
+  name: z.string().min(2, "Vui lòng nhập họ tên"),
+  email: z.string().min(1, "Vui lòng nhập email").email("Email không hợp lệ"),
+  address: z.string().min(1, "Vui lòng nhập địa chỉ"),
+  gender: z.string("Vui lòng chọn giới tính"),
+  dob: z.string("Vui lòng chọn ngày sinh"),
+  phone_number: z
+    .string()
+    .min(1, "Vui lòng nhập số điện thoại")
+    .regex(/^\d{10}$/, "Số điện thoại phải gồm đúng 10 chữ số"),
+  state: z.boolean(),
+  username: z.string(),
+});
+const passwordSchema = z.object({
+  old_pass: z
+    .string()
+    .min(1, "Nhập mật khẩu cũ")
+    .min(6, "Mật khẩu cũ phải ít nhất 6 ký tự"),
+  new_pass: z
+    .string()
+    .min(1, "Nhập mật khẩu mới")
+    .min(6, "Mật khẩu mới phải ít nhất 6 ký tự"),
+});
+
 export default function Profile() {
   const { user, updateSession } = useSession();
   const navigate = useNavigate();
   const [userData, setUserData] = useState<User>(initialUser);
-  const [selectedValue, setSelectedValue] = useState<string>("1");
   const [showPassword, setShowPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
-  const [dataChange, setDataChange] = useState<Account>({
-    old_pass: "",
-    new_pass: "",
-  });
   const [activeTab, setActiveTab] = useState("info");
   const [open, setOpen] = useState(false);
   const [date, setDate] = useState<Date | undefined>(undefined);
-  const handleRadioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSelectedValue(e.target.value);
-    setUserData({
-      ...userData,
-      gender: e.target.value,
-    });
-  };
-  const handleUpdateUser = async () => {
-    if (
-      !userData.name ||
-      !userData.dob ||
-      userData.gender === undefined ||
-      userData.gender === "" ||
-      !userData.email ||
-      !userData.address ||
-      !userData.phone_number
-    ) {
-      toast.error("Các trường không được để trống!");
-      return;
+  const profileForm = useForm<z.infer<typeof profileSchema>>({
+    resolver: zodResolver(profileSchema),
+  });
+  const passwordForm = useForm<z.infer<typeof passwordSchema>>({
+    resolver: zodResolver(passwordSchema),
+    defaultValues: {
+      old_pass: "",
+      new_pass: "",
+    },
+  });
+
+  useEffect(() => {
+    if (userData) {
+      profileForm.reset({
+        ...userData,
+        gender: String(userData.gender ?? "1"),
+        // dob: new Date(userData.dob),
+      });
     }
-    if (!isValidName(userData.name)) {
-      toast.error("Họ tên không hợp lệ!");
-      return;
-    }
-    if (!isValidPhoneNum(userData.phone_number)) {
-      toast.error("Số điện thoại không hợp lệ!");
-      return;
-    }
-    if (!isValidEmail(userData.email)) {
-      toast.error("Email không hợp lệ!");
-      return;
-    }
+  }, [userData, profileForm]);
+
+  const handleUpdateUser = async (values: z.infer<typeof profileSchema>) => {
+    console.log("test");
     try {
       // 👇 Gọi API kiểm tra email và username
-      const { email, username, id } = userData;
-
+      const { email, id } = values;
       const { data } = await axios.get("/users/check", {
         params: {
           email,
-          username,
           id,
         },
       });
-
       if (data.emailExists) {
         toast.error("Email đã được sử dụng!");
         return;
       }
-
       if (data.usernameExists) {
         toast.error("Username đã tồn tại!");
         return;
       }
-
-      await axios.put(`/users/${userData.id}`, userData);
-
+      const payload = {
+        ...values,
+        gender: Number(values.gender),
+      };
+      await axios.put(`/users/${userData.id}`, payload);
       toast.success("Cập nhật thành công!");
-
       // ✅ Cập nhật luôn session
       updateSession({
         id: user?.id,
@@ -120,7 +139,6 @@ export default function Profile() {
         name: userData.name,
         email: userData.email,
       });
-
       navigate("/");
     } catch (error) {
       console.error("Lỗi khi cập nhật:", error);
@@ -128,30 +146,23 @@ export default function Profile() {
     }
   };
 
-  const handleUpdatePassword = async () => {
-    if (!dataChange.old_pass || !dataChange.new_pass) {
-      toast.error("Vui lòng nhập đầy đủ thông tin");
-      return;
-    }
-
-    if (dataChange.new_pass.length < 6 || /\s/.test(dataChange.new_pass)) {
-      toast.error(
-        "Mật khẩu mới phải có ít nhất 6 ký tự và không chứa dấu cách"
-      );
-      return;
-    }
-
+  const handleUpdatePassword = async (
+    values: z.infer<typeof passwordSchema>
+  ) => {
     try {
       const payload = {
-        id: userData.id,
-        old_pass: dataChange.old_pass,
-        new_pass: dataChange.new_pass,
+        id: user?.id,
+        old_pass: values.old_pass.split(" ").join("").trim(),
+        new_pass: values.new_pass.split(" ").join("").trim(),
       };
 
       const res = await axios.put("/users/change-password", payload);
 
       toast.success(res.data.message);
-      setDataChange({ old_pass: "", new_pass: "" });
+      passwordForm.reset({
+        old_pass: "",
+        new_pass: "",
+      });
     } catch (error: any) {
       const msg =
         error.response?.data?.message || "Đã xảy ra lỗi khi đổi mật khẩu";
@@ -167,7 +178,6 @@ export default function Profile() {
       .then((response) => {
         const user = response.data[0];
         setUserData(user);
-        setSelectedValue(String(user.gender));
       })
       .catch((err) => {
         console.error(err);
@@ -201,206 +211,342 @@ export default function Profile() {
           </button>
         </div>
         {activeTab === "account" && (
-          <div>
-            <ComponentCard title="Thông tin tài khoản">
+          <form onSubmit={passwordForm.handleSubmit(handleUpdatePassword)}>
+            <div className="space-y-2">
               <div>
-                <Label htmlFor="username">Tên đăng nhập:</Label>
-                <Input
-                  disabled
-                  type="text"
-                  id="username"
-                  value={userData.username}
-                />
-                {/* <strong className="mx-4">{userData.username}</strong> */}
+                <ComponentCard title="Thông tin tài khoản">
+                  <div>
+                    <Controller
+                      name="username"
+                      control={profileForm.control}
+                      render={({ field, fieldState }) => (
+                        <Field
+                          data-invalid={fieldState.invalid}
+                          className="gap-2"
+                        >
+                          <FieldLabel htmlFor="form-rhf-username">
+                            Tên đăng nhập:
+                          </FieldLabel>
+                          <Input
+                            {...field}
+                            disabled
+                            id="form-rhf-name"
+                            aria-invalid={fieldState.invalid}
+                            autoComplete="off"
+                          />
+                          {fieldState.invalid && (
+                            <FieldError errors={[fieldState.error]} />
+                          )}
+                        </Field>
+                      )}
+                    />
+                  </div>
+
+                  <div>
+                    <Controller
+                      name="old_pass"
+                      control={passwordForm.control}
+                      render={({ field, fieldState }) => (
+                        <Field
+                          data-invalid={fieldState.invalid}
+                          className="gap-2"
+                        >
+                          <FieldLabel htmlFor="form-rhf-old_pass">
+                            Mật khẩu cũ:
+                          </FieldLabel>
+                          <div className="relative">
+                            <Input
+                              {...field}
+                              id="form-rhf-old_pass"
+                              type={showPassword ? "text" : "password"}
+                              aria-invalid={fieldState.invalid}
+                              placeholder="Nhập mật khẩu cũ"
+                              autoComplete="off"
+                              onChange={(e) => field.onChange(e.target.value)}
+                            />{" "}
+                            <span
+                              onClick={() => setShowPassword(!showPassword)}
+                              className="absolute z-30 -translate-y-1/2 cursor-pointer right-4 top-1/2"
+                            >
+                              {showPassword ? (
+                                <EyeIcon className="fill-gray-500 dark:fill-gray-400 size-5" />
+                              ) : (
+                                <EyeCloseIcon className="fill-gray-500 dark:fill-gray-400 size-5" />
+                              )}
+                            </span>
+                          </div>
+                          {fieldState.invalid && (
+                            <FieldError errors={[fieldState.error]} />
+                          )}
+                        </Field>
+                      )}
+                    />
+                  </div>
+                  <div>
+                    <Controller
+                      name="new_pass"
+                      control={passwordForm.control}
+                      render={({ field, fieldState }) => (
+                        <Field
+                          data-invalid={fieldState.invalid}
+                          className="gap-2"
+                        >
+                          <FieldLabel htmlFor="form-rhf-new_pass">
+                            Mật khẩu mới:
+                          </FieldLabel>
+                          <div className="relative">
+                            <Input
+                              {...field}
+                              id="form-rhf-new_pass"
+                              type={showNewPassword ? "text" : "password"}
+                              aria-invalid={fieldState.invalid}
+                              placeholder="Nhập mật mới"
+                              autoComplete="off"
+                              onChange={(e) => field.onChange(e.target.value)}
+                            />{" "}
+                            <span
+                              onClick={() =>
+                                setShowNewPassword(!showNewPassword)
+                              }
+                              className="absolute z-30 -translate-y-1/2 cursor-pointer right-4 top-1/2"
+                            >
+                              {showNewPassword ? (
+                                <EyeIcon className="fill-gray-500 dark:fill-gray-400 size-5" />
+                              ) : (
+                                <EyeCloseIcon className="fill-gray-500 dark:fill-gray-400 size-5" />
+                              )}
+                            </span>
+                          </div>
+
+                          {fieldState.invalid && (
+                            <FieldError errors={[fieldState.error]} />
+                          )}
+                        </Field>
+                      )}
+                    />
+                  </div>
+                </ComponentCard>
               </div>
-              <div>
-                <Label htmlFor="pasword">Mật khẩu cũ:</Label>
-                <div className="relative">
-                  <Input
-                    type={showPassword ? "text" : "password"}
-                    placeholder="Nhập mật khẩu cũ"
-                    onChange={(e) =>
-                      setDataChange({
-                        ...dataChange,
-                        old_pass: e.target.value,
-                      })
-                    }
-                  />
-                  <span
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute z-1 -translate-y-1/2 cursor-pointer right-4 top-1/2"
-                  >
-                    {showPassword ? (
-                      <EyeIcon className="fill-gray-500 dark:fill-gray-400 size-5" />
-                    ) : (
-                      <EyeCloseIcon className="fill-gray-500 dark:fill-gray-400 size-5" />
-                    )}
-                  </span>
-                </div>
+              <div className="w-full flex items-center justify-center">
+                <Button type="submit" className="cursor-pointer font-semibold">
+                  Cập nhật
+                </Button>
               </div>
-              <div>
-                <Label htmlFor="pasword_new">Mật khẩu mới:</Label>
-                <div className="relative">
-                  <Input
-                    type={showNewPassword ? "text" : "password"}
-                    placeholder="Nhập mật khẩu mới"
-                    onChange={(e) =>
-                      setDataChange({
-                        ...dataChange,
-                        new_pass: e.target.value,
-                      })
-                    }
-                  />
-                  <span
-                    onClick={() => setShowNewPassword(!showNewPassword)}
-                    className="absolute z-1 -translate-y-1/2 cursor-pointer right-4 top-1/2"
-                  >
-                    {showNewPassword ? (
-                      <EyeIcon className="fill-gray-500 dark:fill-gray-400 size-5" />
-                    ) : (
-                      <EyeCloseIcon className="fill-gray-500 dark:fill-gray-400 size-5" />
-                    )}
-                  </span>
-                </div>
-              </div>
-            </ComponentCard>
-          </div>
+            </div>
+          </form>
         )}
         {activeTab === "info" && (
-          <div>
-            <div className="profile grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">
-              <ComponentCard title="Thông tin cá nhân">
-                <div>
-                  <Label htmlFor="name">Họ tên:</Label>
-                  <Input
-                    type="text"
-                    id="name"
-                    value={userData.name}
-                    onChange={(e) =>
-                      setUserData({
-                        ...userData,
-                        name: e.target.value,
-                      })
-                    }
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="date">Ngày sinh:</Label>
-                  <DatePicker
-                    id="date-picker"
-                    placeholder="Select a date"
-                    defaultDate={formatDate(
-                      userData.dob,
-                      "yyyy-MM-dd",
-                      "dd-MM-yyyy"
-                    )}
-                    onChange={(dates, currentDateString) => {
-                      setUserData({
-                        ...userData,
-                        dob: formatDate(
-                          currentDateString,
-                          "dd-MM-yyyy",
-                          "yyyy-MM-dd"
-                        ),
-                      });
-                    }}
-                  />
-                  {/* <Label htmlFor="date">Date of birth:</Label>
-                  <Popover open={open} onOpenChange={setOpen}>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant="outline"
-                        id="date"
-                        className="w-full justify-between font-normal"
+          <form onSubmit={profileForm.handleSubmit(handleUpdateUser)}>
+            <div className="space-y-2">
+              <div className="profile grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">
+                <ComponentCard title="Thông tin cá nhân">
+                  <Controller
+                    name="name"
+                    control={profileForm.control}
+                    render={({ field, fieldState }) => (
+                      <Field
+                        data-invalid={fieldState.invalid}
+                        className="gap-2"
                       >
-                        {date ? date.toLocaleDateString() : "Select date"}
-                        <ChevronDownIcon />
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent
-                      className="w-auto overflow-hidden p-0"
-                      align="start"
-                    >
-                      <Calendar
-                        mode="single"
-                        selected={date}
-                        captionLayout="dropdown"
-                        onSelect={(date) => {
-                          setDate(date);
-                          setOpen(false);
-                        }}
-                      />
-                    </PopoverContent>
-                  </Popover> */}
-                </div>
-                <div className="flex flex-wrap items-center gap-8">
-                  <Label className="mb-0">Giới tính:</Label>
-                  <Radio
-                    id="male"
-                    name="gender"
-                    value="1"
-                    checked={selectedValue === "1"}
-                    onChange={handleRadioChange}
-                    label="Nam"
+                        <FieldLabel htmlFor="form-rhf-username">
+                          Họ tên:
+                        </FieldLabel>
+                        <Input
+                          {...field}
+                          id="form-rhf-name"
+                          aria-invalid={fieldState.invalid}
+                          placeholder="Nhập họ tên"
+                          autoComplete="off"
+                          onChange={(e) => field.onChange(e.target.value)}
+                        />
+                        {fieldState.invalid && (
+                          <FieldError errors={[fieldState.error]} />
+                        )}
+                      </Field>
+                    )}
                   />
-                  <Radio
-                    id="female"
-                    name="gender"
-                    value="0"
-                    checked={selectedValue === "0"}
-                    onChange={handleRadioChange}
-                    label="Nữ"
-                  />
-                </div>
-              </ComponentCard>
-              <ComponentCard title="Thông tin liên hệ">
-                <div>
-                  <Label htmlFor="email">Email:</Label>
-                  <Input
-                    type="text"
-                    id="email"
-                    value={userData.email}
-                    onChange={(e) =>
-                      setUserData({
-                        ...userData,
-                        email: e.target.value,
-                      })
-                    }
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="phone_num">Số điện thoại:</Label>
-                  <Input
-                    type="number"
-                    id="phone_num"
-                    value={userData.phone_number}
-                    onChange={(e) =>
-                      setUserData({
-                        ...userData,
-                        phone_number: e.target.value,
-                      })
-                    }
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="address">Địa chỉ:</Label>
-                  <Input
-                    type="text"
-                    id="address"
-                    value={userData.address}
-                    onChange={(e) =>
-                      setUserData({
-                        ...userData,
-                        address: e.target.value,
-                      })
-                    }
-                  />
-                </div>
-              </ComponentCard>
+                  <div>
+                    <Controller
+                      name="dob"
+                      control={profileForm.control}
+                      render={({ field, fieldState }) => (
+                        <Field
+                          data-invalid={fieldState.invalid}
+                          className="gap-2"
+                        >
+                          <FieldLabel htmlFor="date">Ngày sinh:</FieldLabel>
+                          <DatePicker
+                            id="date-picker"
+                            placeholder="Chọn ngày sinh"
+                            defaultDate={new Date(field.value)}
+                            onChange={(_, dateStr) =>
+                              field.onChange(
+                                formatDate(dateStr, "dd-MM-yyyy", "yyyy-MM-dd")
+                              )
+                            }
+                          />
+                          {fieldState.invalid && (
+                            <FieldError errors={[fieldState.error]} />
+                          )}
+                        </Field>
+                      )}
+                    />
+                  </div>
+                  {/* <div className="flex flex-col gap-3">
+                    <Label htmlFor="date">Date of birth</Label>
+                    <Popover open={open} onOpenChange={setOpen}>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          id="date"
+                          className="w-48 justify-between font-normal"
+                        >
+                          {date ? date.toLocaleDateString() : "Select date"}
+                          <ChevronDownIcon />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent
+                        className="w-auto overflow-hidden p-0"
+                        align="start"
+                      >
+                        <Calendar
+                          mode="single"
+                          selected={date}
+                          captionLayout="dropdown"
+                          onSelect={(date) => {
+                            setDate(date);
+                            setOpen(false);
+                          }}
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  </div> */}
+                  <div>
+                    <Controller
+                      name="gender"
+                      control={profileForm.control}
+                      render={({ field, fieldState }) => (
+                        <Field
+                          data-invalid={fieldState.invalid}
+                          className="gap-2"
+                        >
+                          <FieldLabel>Giới tính:</FieldLabel>
+                          <RadioGroup
+                            value={field.value}
+                            onValueChange={field.onChange}
+                            className="flex gap-4"
+                          >
+                            <div className="flex items-center space-x-2">
+                              <RadioGroupItem value="1" id="gender-male" />
+                              <Label htmlFor="gender-male">Nam</Label>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <RadioGroupItem value="0" id="gender-female" />
+                              <Label htmlFor="gender-female">Nữ</Label>
+                            </div>
+                          </RadioGroup>
+                          {fieldState.invalid && (
+                            <FieldError errors={[fieldState.error]} />
+                          )}
+                        </Field>
+                      )}
+                    />
+                  </div>
+                </ComponentCard>
+                <ComponentCard title="Thông tin liên hệ">
+                  <div>
+                    <Controller
+                      name="email"
+                      control={profileForm.control}
+                      render={({ field, fieldState }) => (
+                        <Field
+                          data-invalid={fieldState.invalid}
+                          className="gap-2"
+                        >
+                          <FieldLabel htmlFor="form-rhf-email">
+                            Email:
+                          </FieldLabel>
+                          <Input
+                            {...field}
+                            id="form-rhf-email"
+                            aria-invalid={fieldState.invalid}
+                            placeholder="Nhập email"
+                            autoComplete="off"
+                            onChange={(e) => field.onChange(e.target.value)}
+                          />
+                          {fieldState.invalid && (
+                            <FieldError errors={[fieldState.error]} />
+                          )}
+                        </Field>
+                      )}
+                    />
+                  </div>
+                  <div>
+                    <Controller
+                      name="phone_number"
+                      control={profileForm.control}
+                      render={({ field, fieldState }) => (
+                        <Field
+                          data-invalid={fieldState.invalid}
+                          className="gap-2"
+                        >
+                          <FieldLabel htmlFor="form-rhf-phone">
+                            Số điện thoại:
+                          </FieldLabel>
+                          <Input
+                            {...field}
+                            id="form-rhf-phone"
+                            aria-invalid={fieldState.invalid}
+                            placeholder="Nhập số điện thoại"
+                            autoComplete="off"
+                            onChange={(e) => field.onChange(e.target.value)}
+                          />
+                          {fieldState.invalid && (
+                            <FieldError errors={[fieldState.error]} />
+                          )}
+                        </Field>
+                      )}
+                    />
+                  </div>
+                  <div>
+                    <Controller
+                      name="address"
+                      control={profileForm.control}
+                      render={({ field, fieldState }) => (
+                        <Field
+                          data-invalid={fieldState.invalid}
+                          className="gap-2"
+                        >
+                          <FieldLabel htmlFor="form-rhf-address">
+                            Địa chỉ:
+                          </FieldLabel>
+                          <Input
+                            {...field}
+                            id="form-rhf-address"
+                            aria-invalid={fieldState.invalid}
+                            placeholder="Nhập địa chỉ"
+                            autoComplete="off"
+                            onChange={(e) => field.onChange(e.target.value)}
+                          />
+                          {fieldState.invalid && (
+                            <FieldError errors={[fieldState.error]} />
+                          )}
+                        </Field>
+                      )}
+                    />
+                  </div>
+                </ComponentCard>
+              </div>
+
+              <div className="w-full flex items-center justify-center">
+                <Button type="submit" className="cursor-pointer font-semibold">
+                  Cập nhật
+                </Button>
+              </div>
             </div>
-          </div>
+          </form>
         )}
-        <div className="w-full flex items-center justify-center">
+        {/* <div className="w-full flex items-center justify-center">
           <Button
             className=" cursor-pointer font-semibold"
             onClick={
@@ -409,7 +555,7 @@ export default function Profile() {
           >
             Cập nhật
           </Button>
-        </div>
+        </div> */}
       </div>
     </div>
   );

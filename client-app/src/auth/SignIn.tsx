@@ -44,11 +44,11 @@ export default function SignIn() {
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  type Account = {
-    username: string;
-    password: string;
-    type: string;
-  };
+  // type Account = {
+  //   username: string;
+  //   password: string;
+  //   type: string;
+  // };
 
   const [showPassword, setShowPassword] = useState(false);
 
