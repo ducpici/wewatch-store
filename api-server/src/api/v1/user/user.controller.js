@@ -6,14 +6,48 @@ import {
   updateUser,
   getUsersPaginated,
   countAllUsers,
+  countUsersByFilters,
   checkEmailExists,
   checkUsernameExists,
   search,
+  countSearch,
 } from "./user.modal";
 import { formatDate, formatDate2 } from "../../../utils/formatDate";
 import { hashPass } from "../../../utils/hashPass";
 import { connection } from "../../../config/database";
 import bcrypt from "bcrypt";
+
+// const getUsers = async (req, res) => {
+//   try {
+//     const page = parseInt(req.query.page) || 1;
+//     const limit = parseInt(req.query.limit) || 10;
+//     const offset = (page - 1) * limit;
+
+//     // Truy vấn dữ liệu người dùng với giới hạn & phân trang
+//     const users = await getUsersPaginated(limit, offset);
+//     const totalUsers = await countAllUsers();
+
+//     const parsedUsers = users.map((user) => ({
+//       ...user,
+//       state: user.state?.[0] === 1 ? "Hoạt động" : "Chặn",
+//       gender: user.gender === 1 ? "Nam" : "Nữ",
+//       dob: formatDate(user.dob),
+//     }));
+
+//     res.status(200).json({
+//       data: parsedUsers,
+//       pagination: {
+//         total: totalUsers,
+//         page,
+//         limit,
+//         totalPages: Math.ceil(totalUsers / limit),
+//       },
+//     });
+//   } catch (error) {
+//     console.error("Error getting users:", error);
+//     res.status(500).json({ error: "Internal Server Error" });
+//   }
+// };
 
 const getUsers = async (req, res) => {
   try {
@@ -21,9 +55,33 @@ const getUsers = async (req, res) => {
     const limit = parseInt(req.query.limit) || 10;
     const offset = (page - 1) * limit;
 
-    // Truy vấn dữ liệu người dùng với giới hạn & phân trang
-    const users = await getUsersPaginated(limit, offset);
-    const totalUsers = await countAllUsers();
+    // Sort
+    const orderBy = req.query.orderby || "id"; // field
+    const order = req.query.order === "desc" ? "DESC" : "ASC";
+
+    // Filter
+    const filters = {};
+    if (req.query.name) filters.name = req.query.name;
+    if (req.query.gender) filters.gender = req.query.gender;
+    if (req.query.email) filters.email = req.query.email;
+    if (req.query.state) filters.state = req.query.state;
+    if (req.query.keyword) filters.keyword = req.query.keyword;
+
+    // SQL query builder
+    const users = await getUsersPaginated({
+      limit,
+      offset,
+      orderBy,
+      order,
+      filters,
+    });
+
+    let totalUsers = 0;
+    if (Object.keys(filters).length > 0) {
+      totalUsers = await countUsersByFilters(filters);
+    } else {
+      totalUsers = await countAllUsers();
+    }
 
     const parsedUsers = users.map((user) => ({
       ...user,
@@ -47,12 +105,32 @@ const getUsers = async (req, res) => {
   }
 };
 
+// const findUserById = async (req, res) => {
+//   const { id } = req.params;
+//   try {
+//     const user = await findById(id);
+
+//     if (!user) {
+//       return res.status(404).json({ message: "User not found" });
+//     }
+//     const parsedUsers = user.map((user) => ({
+//       ...user,
+//       state: user.state?.[0] === 1 ? true : false,
+//       dob: formatDate2(user.dob),
+//     }));
+
+//     res.status(200).json(parsedUsers);
+//   } catch (error) {
+//     console.error("Lỗi khi lấy user:", error);
+//     res.status(500).json({ message: "Internal Server Error" });
+//   }
+// };
+
 const findUserById = async (req, res) => {
   const { id } = req.params;
   try {
     const user = await findById(id);
-
-    if (!user) {
+    if (!user || user.length === 0) {
       return res.status(404).json({ message: "User not found" });
     }
     const parsedUsers = user.map((user) => ({
@@ -61,7 +139,7 @@ const findUserById = async (req, res) => {
       dob: formatDate2(user.dob),
     }));
 
-    res.status(200).json(parsedUsers);
+    res.status(200).json(parsedUsers[0]);
   } catch (error) {
     console.error("Lỗi khi lấy user:", error);
     res.status(500).json({ message: "Internal Server Error" });
@@ -155,18 +233,48 @@ const checkDuplicate = async (req, res) => {
   }
 };
 
+// const searchUsers = async (req, res) => {
+//   const { keyword } = req.query;
+
+//   try {
+//     const users = await search(keyword);
+//     const parsedUsers = users.map((user) => ({
+//       ...user,
+//       state: user.state?.[0] === 1 ? "Hoạt động" : "Chặn",
+//       gender: user.gender === 1 ? "Nam" : "Nữ",
+//       dob: formatDate(user.dob),
+//     }));
+//     res.status(200).json({ data: parsedUsers });
+//   } catch (err) {
+//     console.error("Lỗi tìm kiếm:", err);
+//     res.status(500).json({ message: "Lỗi server" });
+//   }
+// };
+
 const searchUsers = async (req, res) => {
   const { keyword } = req.query;
-
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const offset = (page - 1) * limit;
+  const totalUsers = await countSearch(keyword);
   try {
-    const users = await search(keyword);
+    const users = await search(keyword, limit, offset);
     const parsedUsers = users.map((user) => ({
       ...user,
       state: user.state?.[0] === 1 ? "Hoạt động" : "Chặn",
       gender: user.gender === 1 ? "Nam" : "Nữ",
       dob: formatDate(user.dob),
     }));
-    res.status(200).json({ data: parsedUsers });
+
+    res.status(200).json({
+      data: parsedUsers,
+      pagination: {
+        total: totalUsers,
+        page,
+        limit,
+        totalPages: Math.ceil(totalUsers / limit),
+      },
+    });
   } catch (err) {
     console.error("Lỗi tìm kiếm:", err);
     res.status(500).json({ message: "Lỗi server" });

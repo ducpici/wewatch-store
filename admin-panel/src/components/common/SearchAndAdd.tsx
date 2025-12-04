@@ -1,56 +1,50 @@
-import Input from "../form/input/InputField";
-import Button from "../ui/button/Button";
+import { Button, Input } from "antd";
+import React, { useState, useEffect } from "react";
 
 interface SearchAndAddBarProps {
-    value: string;
-    onChange: (value: string) => void;
-    onSearch: (value: string) => void;
-    onAdd: () => void;
-    placeholder?: string;
-    addLabel?: string;
+  placeholder?: string;
+  onSearch?: (value: string) => void;
+  onAdd?: () => void;
+  debounceMs?: number; // thời gian debounce (ms)
+  inputWidth?: number | string; // tuỳ chỉnh width input
 }
 
 export const SearchAndAddBar: React.FC<SearchAndAddBarProps> = ({
-    value,
-    onChange,
-    onSearch,
-    onAdd,
-    placeholder = "Tìm kiếm...",
+  placeholder = "Search...",
+  onSearch,
+  onAdd,
+  debounceMs = 1000,
+  inputWidth = 200,
 }) => {
-    return (
-        <div className="flex items-center justify-between">
-            {/* <input
-                type="text"
-                className="input"
-                placeholder={placeholder}
-                value={value}
-                onChange={(e) => setValue(e.target.value)}
-                onKeyDown={(e) => {
-                    if (e.key === "Enter") onSearch(value);
-                }}
-            />
-            <button className="btn btn-primary ml-4" onClick={onAdd}>
-                {addLabel}
-            </button> */}
-            <Input
-                id="search"
-                name="search"
-                value={value}
-                placeholder={placeholder}
-                onChange={(e) => onChange(e.target.value)}
-                onKeyDown={(e) => {
-                    if (e.key === "Enter") onSearch(value);
-                }}
-            />
-            <Button
-                size="sm"
-                variant="primary"
-                onClick={() => {
-                    onAdd();
-                }}
-            >
-                Thêm mới
-            </Button>
-        </div>
-    );
+  const [value, setValue] = useState("");
+
+  // debounce effect
+  useEffect(() => {
+    if (!onSearch) return;
+    const handler = setTimeout(() => {
+      onSearch(value);
+    }, debounceMs);
+
+    return () => clearTimeout(handler);
+  }, [value, debounceMs, onSearch]);
+
+  return (
+    <div className="flex items-center justify-between w-full">
+      <Input
+        id="searchInput"
+        name="searchInput"
+        placeholder={placeholder}
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+        allowClear
+        style={{ width: inputWidth }}
+      />
+
+      {onAdd && (
+        <Button type="primary" onClick={onAdd}>
+          Thêm
+        </Button>
+      )}
+    </div>
+  );
 };

@@ -2,17 +2,18 @@ import express from "express";
 const routes = express.Router();
 
 import {
-    getUsers,
-    findUserById,
-    postAddUser,
-    putUpdateUser,
-    deleleAUser,
-    checkDuplicate,
-    searchUsers,
-    changePassword,
+  getUsers,
+  findUserById,
+  postAddUser,
+  putUpdateUser,
+  deleleAUser,
+  checkDuplicate,
+  searchUsers,
+  changePassword,
 } from "../../api/v1/user/user.controller";
+import authMiddleware from "../../api/v1/middlewares/auth";
 
-routes.get("/users", getUsers);
+routes.get("/users", authMiddleware, getUsers);
 routes.get("/users/check", checkDuplicate);
 routes.get("/users/search", searchUsers);
 routes.get("/users/:id", findUserById);

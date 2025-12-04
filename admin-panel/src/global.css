@@ -1,0 +1,15 @@
+@layer theme, base, antd, components, utilities;
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/preflight.css" layer(base);
+@import "tailwindcss/utilities.css" layer(utilities);
+
+.ant-table-container {
+  scrollbar-size: 100px;
+  scrollbar-width: thin;
+  scrollbar-color: #ccc transparent;
+  scrollbar-gutter: stable;
+}
+
+.ant-tag {
+  margin: 2px;
+}

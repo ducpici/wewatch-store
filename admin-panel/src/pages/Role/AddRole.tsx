@@ -1,109 +1,73 @@
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
-import { useEffect, useState } from "react";
-import Label from "../../components/form/Label";
-import Input from "../../components/form/input/InputField";
-import ComponentCard from "../../components/common/ComponentCard";
-import Button from "../../components/ui/button/Button";
-import TextArea from "../../components/form/input/TextArea";
-import axios from "../../lib/axiosConfig";
+import { useEffect } from "react";
+import { Input, Form } from "antd";
+import UseForm, { FieldConfig } from "@/components/common/UseForm";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router";
+import { useAppDispatch, useAppSelector } from "@/hooks/storeHook";
+import { addRole } from "@/redux/slices/roleSlice";
+import { Role } from "@/types/Role";
 
 export default function AddRole() {
-    type Role = {
-        name: string;
-        url: string;
-        description: string;
+  const dispatch = useAppDispatch();
+  const { message, error } = useAppSelector((state) => state.role);
+  const breadcrumbItems = [
+    { label: "Trang chủ", path: "/" },
+    { label: "Quyền", path: "/roles" },
+    { label: "Thêm mới" },
+  ];
+  const navigate = useNavigate();
+  const [form] = Form.useForm();
+
+  const fields: FieldConfig[] = [
+    {
+      group: "Thông tin quyền",
+      label: "Tên quyền:",
+      name: "name",
+      component: <Input autoFocus />,
+      rules: [{ required: true, message: "Vui lòng nhập tên quyền" }],
+    },
+    {
+      group: "Thông tin quyền",
+      label: "URL:",
+      name: "url",
+      component: <Input />,
+      rules: [{ required: true, message: "Vui lòng nhập url" }],
+    },
+    {
+      group: "Thông tin quyền",
+      label: "Mô tả:",
+      name: "description",
+      component: <Input />,
+    },
+  ];
+
+  const handleCreateRole = (values: Role) => {
+    const payload = {
+      ...values,
+      description: values.description == undefined ? "" : values.description,
     };
-    const initRole: Role = {
-        name: "",
-        url: "",
-        description: "",
-    };
-    const [roleData, setRoleData] = useState<Role>(initRole);
+    dispatch(addRole(payload));
+  };
 
-    const breadcrumbItems = [
-        { label: "Trang chủ", path: "/" },
-        { label: "Quyền", path: "/roles" },
-        { label: "Thêm mới" }, // Không có path => là trang hiện tại
-    ];
+  useEffect(() => {
+    if (message) {
+      toast.success(message);
+      navigate("/roles");
+    }
+  }, [message, navigate]);
+  useEffect(() => {
+    if (error) {
+      toast.error(error);
+    }
+  }, [error]);
 
-    const navigate = useNavigate();
-
-    const handleCreateRole = async () => {
-        if (!roleData.name || !roleData.description || !roleData.url) {
-            toast.error("Các trường không được để trống!");
-            return;
-        }
-        try {
-            await axios.post(`/roles`, roleData);
-            toast.success("Thêm thành công!");
-            navigate("/roles");
-        } catch (error) {
-            console.error("Lỗi khi thêm:", error);
-            toast.error("Thêm thất bại.");
-        }
-    };
-
-    useEffect(() => {}, []);
-
-    return (
-        <>
-            <PageBreadcrumb items={breadcrumbItems} />
-            <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-                <ComponentCard title="Thông tin quyền">
-                    <div>
-                        <Label htmlFor="role">Tên quyền:</Label>
-                        <Input
-                            type="text"
-                            id="role"
-                            onChange={(e) =>
-                                setRoleData({
-                                    ...roleData,
-                                    name: e.target.value,
-                                })
-                            }
-                        />
-                    </div>
-                    <div>
-                        <Label htmlFor="url">Đường dẫn:</Label>
-                        <Input
-                            type="text"
-                            id="url"
-                            onChange={(e) =>
-                                setRoleData({
-                                    ...roleData,
-                                    url: e.target.value,
-                                })
-                            }
-                        />
-                    </div>
-                    <div>
-                        <Label>Mô tả:</Label>
-                        <TextArea
-                            placeholder=""
-                            rows={6}
-                            value={roleData.description}
-                            onChange={(e) =>
-                                setRoleData({
-                                    ...roleData,
-                                    description: e.target.value,
-                                })
-                            }
-                        />
-                    </div>
-                </ComponentCard>
-            </div>
-            <div>
-                <Button
-                    className="mt-6"
-                    size="sm"
-                    variant="primary"
-                    onClick={handleCreateRole}
-                >
-                    Lưu
-                </Button>
-            </div>
-        </>
-    );
+  return (
+    <>
+      <PageBreadcrumb items={breadcrumbItems} />
+      <div className="grid grid-cols-1 md:grid-cols-2">
+        <UseForm form={form} onSubmit={handleCreateRole} fields={fields} />
+      </div>
+    </>
+  );
 }
