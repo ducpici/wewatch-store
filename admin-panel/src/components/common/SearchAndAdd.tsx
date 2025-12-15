@@ -1,6 +1,6 @@
-import { Button, Input } from "antd";
-import React, { useState, useEffect } from "react";
-
+import { Button, Input } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 interface SearchAndAddBarProps {
   placeholder?: string;
   onSearch?: (value: string) => void;
@@ -10,13 +10,14 @@ interface SearchAndAddBarProps {
 }
 
 export const SearchAndAddBar: React.FC<SearchAndAddBarProps> = ({
-  placeholder = "Search...",
+  placeholder = 'Search...',
   onSearch,
   onAdd,
   debounceMs = 1000,
   inputWidth = 200,
 }) => {
-  const [value, setValue] = useState("");
+  const { t } = useTranslation(['common']);
+  const [value, setValue] = useState('');
 
   // debounce effect
   useEffect(() => {
@@ -42,7 +43,7 @@ export const SearchAndAddBar: React.FC<SearchAndAddBarProps> = ({
 
       {onAdd && (
         <Button type="primary" onClick={onAdd}>
-          Thêm
+          {t('common:add')}
         </Button>
       )}
     </div>

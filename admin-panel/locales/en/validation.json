@@ -1,0 +1,8 @@
+{
+  "dataEntry": "Please enter {{field}}",
+  "dataChoose": "Please choose {{field}}",
+  "email": "Invalid email address",
+  "phone": "Invalid phone number",
+  "username": "Invalid username",
+  "minLength": "Minimum {{min}} characters"
+}

@@ -1,0 +1,99 @@
+{
+  "components": {
+    "common": {
+      "BaseTable": {
+        "total": "Total",
+        "item": "Item",
+        "more": "More",
+        "page_size": "Page size",
+        "prev": "Prev",
+        "page": "Page",
+        "next": "Next"
+      },
+      "DeleteModal": {
+        "delete_message": "Are you sure to delete this item \"{{title}}\" ?",
+        "delete_post_modal_title": "Delete post",
+        "delete_reply_modal_title": "Delete reply",
+        "cancel_button": "Cancel",
+        "delete_button": "Delete"
+      }
+    },
+    "sidebar": {
+      "home": "Home",
+      "manager": "Manager",
+      "customer": "Customer",
+      "staff": "Staff",
+      "position": "Position",
+      "role": "Role",
+      "product": "Product",
+      "brand": "Brand",
+      "category": "Category",
+      "watchFunction": "Watch functions",
+      "banner": "Banner",
+      "voucher": "Voucher",
+      "order": "Order",
+      "other": "Other"
+    }
+  },
+  "page": {
+    "settings": {
+      "success_password_update": "Update password success.",
+      "success_profile_update": "Update profile successfully.",
+      "success_sso_remove": "Remove SSO credentials successfully.",
+      "account_information": "Account information",
+      "account_id": "ID",
+      "email": "Email",
+      "password": "Password",
+      "social_account": "Social account",
+      "not_connected": "Not connect",
+      "delete_account": "Delete Account",
+      "about": "Basic information",
+      "full_name": "Full name",
+      "gender": "Gender",
+      "male": "Male",
+      "female": "Female",
+      "rather_not_say": "Rather not to say",
+      "birthday": "Birthday",
+      "address": "Address",
+      "experience": "Experience",
+      "education": "Education",
+      "work_experience": "Work experience",
+      "skills": "Skills",
+      "success_account_delete": "Account deleted successfully.",
+      "confirmation_required": "Confirm delete account",
+      "delete_account_warning": "This action can not be reverted. Are you sure to delete the account.",
+      "skill_confirmed_by": "Skill confirmed by",
+      "skill_unconfirmed": "Skill unconfirmed",
+      "not_provided": "Not provided",
+      "skill_exists_title": "Skill already exists",
+      "change_password": "Change password",
+      "current_password": "Current password",
+      "enter_current_password": "Enter current password",
+      "password_required": "Password is required",
+      "new_password": "New password",
+      "enter_new_password": "Enter new password",
+      "confirm_new_password": "New password Confirm",
+      "confirm_new_password_placeholder": "Enter confirm password",
+      "basic_info": "Information",
+      "accounts": "Accounts",
+      "notification_settings": "Notification settings",
+      "disconnect": "Disconnect",
+      "connect": "Connect"
+    },
+    "login": {
+      "login": "Login",
+      "email": "Email",
+      "username_require_error": "Username is required",
+      "email_placeholder": "Enter email",
+      "invalid_email_error": "Invalid email address",
+      "password": "Password",
+      "password_require_error": "Password is required",
+      "password_placeholder": "Enter password",
+      "login_google": "Login with Google",
+      "use_other_methods": "Use other methods",
+      "login_linkedin": "Login with LinkedIn",
+      "login_github": "Login with GitHub",
+      "privacy_policy": "Privacy policy"
+    }
+  }
+}

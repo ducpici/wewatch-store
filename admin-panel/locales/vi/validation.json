@@ -1,0 +1,8 @@
+{
+  "dataEntry": "Vui lòng nhập {{field}}",
+  "dataChoose": "Vui lòng chọn {{field}}",
+  "email": "Email không hợp lệ",
+  "phone": "Số điện thoại không hợp lệ",
+  "username": "Username không hợp lệ",
+  "minLength": "Tối thiểu {{min}} ký tự"
+}

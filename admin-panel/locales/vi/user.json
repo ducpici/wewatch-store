@@ -1,0 +1,20 @@
+{
+  "title": {
+    "personal": "Thông tin cá nhân",
+    "contact": "Thông tin liên hệ",
+    "account": "Tài khoản"
+  },
+  "field": {
+    "name": "Họ tên",
+    "dob": "Ngày sinh",
+    "gender": "Giới tính",
+    "phone": "Số điện thoại",
+    "address": "Địa chỉ",
+    "username": "Tên đăng nhập",
+    "password": "Mật khẩu"
+  },
+  "gender": {
+    "male": "Nam",
+    "female": "Nữ"
+  }
+}

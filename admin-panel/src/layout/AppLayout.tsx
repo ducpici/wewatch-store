@@ -1,8 +1,8 @@
-import { SidebarProvider, useSidebar } from "../context/SidebarContext";
-import { Outlet } from "react-router";
-import AppHeader from "./AppHeader";
-import Backdrop from "./Backdrop";
-import AppSidebar from "./AppSidebar";
+import { SidebarProvider, useSidebar } from '../context/SidebarContext';
+import { Outlet } from 'react-router';
+import AppHeader from './AppHeader';
+import Backdrop from './Backdrop';
+import AppSidebar from './AppSidebar';
 
 const LayoutContent: React.FC = () => {
   const { isExpanded, isHovered, isMobileOpen } = useSidebar();
@@ -15,12 +15,12 @@ const LayoutContent: React.FC = () => {
       </div>
       <div
         className={`flex flex-col flex-1 transition-all duration-300 ease-in-out min-w-0 ${
-          isExpanded || isHovered ? "lg:ml-[290px]" : "lg:ml-[90px]"
-        } ${isMobileOpen ? "ml-0" : ""}`}
+          isExpanded || isHovered ? 'lg:ml-[290px]' : 'lg:ml-[90px]'
+        } ${isMobileOpen ? 'ml-0' : ''}`}
       >
         <AppHeader />
-        <div className="flex-1 overflow-y-auto custom-scrollbar min-w-0">
-          <div className="p-2 mx-auto max-w-(--breakpoint-2xl) md:p-6">
+        <div className="flex flex-col flex-1 h-full overflow-y-auto overflow-x-hidden custom-scrollbar min-w-0">
+          <div className="p-2 w-full md:p-6 flex flex-col flex-1">
             <Outlet />
           </div>
         </div>

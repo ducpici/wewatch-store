@@ -1,0 +1,83 @@
+{
+  "components": {
+    "common": {
+      "BaseTable": {
+        "total": "Tổng",
+        "item": "Mục",
+        "more": "Thêm",
+        "page_size": "Số lượng mỗi trang",
+        "prev": "Trước",
+        "page": "Trang",
+        "next": "Tiếp"
+      },
+      "DeleteModal": {
+        "delete_message": "Bạn có chắc chắn muốn xóa \"{{title}}\" này không?",
+        "delete_post_modal_title": "Xóa \"{{title}}\"",
+        "cancel_button": "Hủy",
+        "delete_button": "Xóa"
+      }
+    },
+    "sidebar": {}
+  },
+  "page": {
+    "settings": {
+      "success_password_update": "Cập nhật mật khẩu thành công.",
+      "success_profile_update": "Cập nhật hồ sơ thành công.",
+      "success_sso_remove": "Huỷ bỏ SSO thành công.",
+      "account_information": "Thông tin tài khoản",
+      "account_id": "ID",
+      "email": "Email",
+      "password": "Mật khẩu",
+      "social_account": "Tài khoản mạng xã hội",
+      "not_connected": "Chưa kết nối",
+      "delete_account": "Xoá tài khoản",
+      "about": "Thông tin cơ bản",
+      "full_name": "Họ và tên",
+      "gender": "Giới tính",
+      "male": "Nam",
+      "female": "Nữ",
+      "rather_not_say": "Không chia sẻ",
+      "birthday": "Ngày sinh",
+      "address": "Địa chỉ",
+      "experience": "Kinh nghiệm",
+      "education": "Học vấn",
+      "work_experience": "Kinh nghiệm công việc",
+      "skills": "Kĩ năng",
+      "success_account_delete": "Xoá tài khoản thành công.",
+      "confirmation_required": "Xác nhận xoá tài khoản",
+      "delete_account_warning": "Hành động này không thể hoàn tác. Bạn vẫn muốn tiếp tục?",
+      "skill_confirmed_by": "Kỹ năng đã được xác nhận bởi",
+      "skill_unconfirmed": "Kỹ năng chưa được xác nhận",
+      "not_provided": "Chưa cung cấp",
+      "skill_exists_title": "Kỹ năng này đã tồn tại",
+      "change_password": "Thay đổi mật khẩu",
+      "current_password": "Mật khẩu hiện tại",
+      "enter_current_password": "Hãy nhập mật khẩu hiện tại",
+      "password_required": "Cần mật khẩu",
+      "new_password": "Mật khẩu mới",
+      "enter_new_password": "Hãy nhập mật khẩu mới",
+      "confirm_new_password": "Nhập lại mật khẩu",
+      "confirm_new_password_placeholder": "Hãy nhập lại mật khẩu mới",
+      "basic_info": "Thông tin",
+      "accounts": "Tài khoản",
+      "notification_settings": "Thiết lập thông báo",
+      "disconnect": "Ngắt kết nối",
+      "connect": "Kết nối"
+    },
+    "login": {
+      "login": "Đăng nhập",
+      "email": "Email",
+      "username_require_error": "Tên người dùng không được trống",
+      "email_placeholder": "Nhập email",
+      "invalid_email_error": "Email không hợp lệ",
+      "password": "Mật khẩu",
+      "password_require_error": "Mật khẩu không được trống",
+      "password_placeholder": "Nhập mật khẩu",
+      "login_google": "Đăng nhập bằng Google",
+      "use_other_methods": "Đăng nhập phương thức khác",
+      "login_linkedin": "Đăng nhập bằng LinkedIn",
+      "login_github": "Đăng nhập bằng GitHub",
+      "privacy_policy": "Chính sách bảo mật"
+    }
+  }
+}

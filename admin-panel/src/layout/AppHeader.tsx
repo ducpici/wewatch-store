@@ -1,13 +1,16 @@
-import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router";
-import { useSidebar } from "../context/SidebarContext";
-import { ThemeToggleButton } from "../components/common/ThemeToggleButton";
-import UserDropdown from "../components/header/UserDropdown";
+import { useEffect, useRef, useState } from 'react';
+import { Link } from 'react-router';
+import { useSidebar } from '../context/SidebarContext';
+import { ThemeToggleButton } from '../components/common/ThemeToggleButton';
+import UserDropdown from '../components/header/UserDropdown';
+import { useTranslation } from 'react-i18next';
+import { Button } from 'antd';
+import NotificationDropdown from '@/components/header/NotificationDropdown';
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const AppHeader: React.FC = () => {
+  const { t, i18n } = useTranslation();
   const [isApplicationMenuOpen, setApplicationMenuOpen] = useState(false);
-
   const { isMobileOpen, toggleSidebar, toggleMobileSidebar } = useSidebar();
 
   const handleToggle = () => {
@@ -22,20 +25,25 @@ const AppHeader: React.FC = () => {
     setApplicationMenuOpen(!isApplicationMenuOpen);
   };
 
+  const toggleLang = () => {
+    const nextLang = i18n.language === 'en' ? 'vi' : 'en';
+    i18n.changeLanguage(nextLang);
+  };
+
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if ((event.metaKey || event.ctrlKey) && event.key === "k") {
+      if ((event.metaKey || event.ctrlKey) && event.key === 'k') {
         event.preventDefault();
         inputRef.current?.focus();
       }
     };
 
-    document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener('keydown', handleKeyDown);
 
     return () => {
-      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener('keydown', handleKeyDown);
     };
   }, []);
 
@@ -152,18 +160,21 @@ const AppHeader: React.FC = () => {
         </div>
         <div
           className={`${
-            isApplicationMenuOpen ? "flex" : "hidden"
-          } items-center justify-between w-full gap-4 px-5 py-4 lg:flex shadow-theme-md lg:justify-end lg:px-0 lg:shadow-none`}
+            isApplicationMenuOpen ? 'flex' : 'hidden'
+          } items-center justify-between w-full gap-2 px-5 py-4 lg:flex shadow-theme-md lg:justify-end lg:px-0 lg:shadow-none`}
         >
-          <div className="flex items-center gap-2 2xsm:gap-3">
+          <div className="flex items-center gap-3 2xsm:gap-3">
+            <Button onClick={toggleLang}>
+              {i18n.language === 'en' ? 'VI 🇻🇳' : 'EN 🇺🇸'}
+            </Button>
             {/* <!-- Dark Mode Toggler --> */}
             <ThemeToggleButton />
             {/* <!-- Dark Mode Toggler --> */}
-            {/* <NotificationDropdown /> */}
+            <NotificationDropdown />
             {/* <!-- Notification Menu Area --> */}
+            {/* <!-- User Area --> */}
+            <UserDropdown />
           </div>
-          {/* <!-- User Area --> */}
-          <UserDropdown />
         </div>
       </div>
     </header>

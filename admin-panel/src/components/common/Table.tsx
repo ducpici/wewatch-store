@@ -1,19 +1,20 @@
-import { useState, useEffect, useRef } from "react";
-import { Table, Button, Input, Space } from "antd";
-import type { TableColumnType, InputRef, TableProps } from "antd";
-import type { FilterDropdownProps } from "antd/es/table/interface";
-import { SearchOutlined } from "@ant-design/icons";
-import Highlighter from "react-highlight-words";
-import type { ColumnsType } from "antd/es/table";
-import { TableParams } from "@/types/Table";
-import type { Columns } from "@/types/Table";
-import { RootState } from "@/redux/store";
-import { AnyAction } from "redux";
-
-import { useAppDispatch, useAppSelector } from "@/hooks/storeHook";
+import { useState, useEffect, useRef } from 'react';
+import { Table, Button, Input, Space, Pagination } from 'antd';
+import type { TableColumnType, InputRef, TableProps } from 'antd';
+import type { FilterDropdownProps } from 'antd/es/table/interface';
+import { SearchOutlined } from '@ant-design/icons';
+import Highlighter from 'react-highlight-words';
+import type { ColumnsType } from 'antd/es/table';
+import { TableParams } from '@/types/Table';
+import type { Columns } from '@/types/Table';
+import { RootState } from '@/redux/store';
+import { AnyAction } from 'redux';
+import { useTranslation } from 'react-i18next';
+import { useAppDispatch, useAppSelector } from '@/hooks/storeHook';
+import TablePagination from './TablePagination';
 
 type TableRowSelection<T extends object = object> =
-  TableProps<T>["rowSelection"];
+  TableProps<T>['rowSelection'];
 type DataIndex<T> = keyof T;
 interface TableDataProps<T extends object> {
   columns: Columns<T>;
@@ -33,19 +34,20 @@ export default function TableData<T extends object>({
   selector,
   actionFetch,
   actionSetParams,
-  rowKey = "id",
+  rowKey = 'id',
 }: TableDataProps<T>) {
+  const { t } = useTranslation(['user', 'common', 'translation']);
   const dispatch = useAppDispatch();
   const { list, loading, tableParams } = useAppSelector(selector);
   const { keyword } = useAppSelector((state) => state.user);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
-  const [searchText, setSearchText] = useState("");
-  const [searchedColumn, setSearchedColumn] = useState<keyof T | string>("");
+  const [searchText, setSearchText] = useState('');
+  const [searchedColumn, setSearchedColumn] = useState<keyof T | string>('');
   const searchInput = useRef<InputRef>(null);
 
   // ---------- SEARCH COLUMN ----------
   const getColumnSearchProps = (
-    dataIndex: DataIndex<T>
+    dataIndex: DataIndex<T>,
   ): TableColumnType<T> => ({
     filterDropdown: ({
       setSelectedKeys,
@@ -64,7 +66,7 @@ export default function TableData<T extends object>({
           onPressEnter={() =>
             handleSearch(selectedKeys as string[], confirm, dataIndex)
           }
-          style={{ marginBottom: 8, display: "block" }}
+          style={{ marginBottom: 8, display: 'block' }}
         />
         <Space>
           <Button
@@ -85,7 +87,7 @@ export default function TableData<T extends object>({
     ),
 
     filterIcon: (filtered) => (
-      <SearchOutlined style={{ color: filtered ? "#1677ff" : undefined }} />
+      <SearchOutlined style={{ color: filtered ? '#1677ff' : undefined }} />
     ),
 
     onFilter: (value, record) => {
@@ -98,9 +100,9 @@ export default function TableData<T extends object>({
     render: (text) =>
       searchedColumn === dataIndex ? (
         <Highlighter
-          highlightStyle={{ backgroundColor: "#ffc069" }}
+          highlightStyle={{ backgroundColor: '#ffc069' }}
           searchWords={[searchText]}
-          textToHighlight={text ? text.toString() : ""}
+          textToHighlight={text ? text.toString() : ''}
         />
       ) : (
         text
@@ -109,8 +111,8 @@ export default function TableData<T extends object>({
 
   const handleSearch = (
     selectedKeys: string[],
-    confirm: FilterDropdownProps["confirm"],
-    dataIndex: DataIndex<T>
+    confirm: FilterDropdownProps['confirm'],
+    dataIndex: DataIndex<T>,
   ) => {
     confirm();
     setSearchText(selectedKeys[0]);
@@ -118,10 +120,10 @@ export default function TableData<T extends object>({
   };
 
   // ---------- TABLE CHANGE ----------
-  const handleChange: TableProps<T>["onChange"] = async (
+  const handleChange: TableProps<T>['onChange'] = async (
     pagination,
     filters,
-    sorter
+    sorter,
   ) => {
     const params: Partial<TableParams<T>> = {
       pagination,
@@ -135,7 +137,7 @@ export default function TableData<T extends object>({
   };
 
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
-    console.log("selectedRowKeys changed: ", newSelectedRowKeys);
+    console.log('selectedRowKeys changed: ', newSelectedRowKeys);
     setSelectedRowKeys(newSelectedRowKeys);
   };
 
@@ -147,8 +149,8 @@ export default function TableData<T extends object>({
       Table.SELECTION_INVERT,
       Table.SELECTION_NONE,
       {
-        key: "odd",
-        text: "Select Odd Row",
+        key: 'odd',
+        text: 'Select Odd Row',
         onSelect: (changeableRowKeys) => {
           let newSelectedRowKeys = [];
           newSelectedRowKeys = changeableRowKeys.filter((_, index) => {
@@ -161,8 +163,8 @@ export default function TableData<T extends object>({
         },
       },
       {
-        key: "even",
-        text: "Select Even Row",
+        key: 'even',
+        text: 'Select Even Row',
         onSelect: (changeableRowKeys) => {
           let newSelectedRowKeys = [];
           newSelectedRowKeys = changeableRowKeys.filter((_, index) => {
@@ -186,7 +188,7 @@ export default function TableData<T extends object>({
   const applySearchToColumns = (cols: Columns<T>): ColumnsType<T> => {
     return cols.map((col) => {
       // Nếu có children thì xử lý theo dạng group
-      if ("children" in col && col.children) {
+      if ('children' in col && col.children) {
         return {
           ...col,
           children: applySearchToColumns(col.children as Columns<T>),
@@ -205,25 +207,51 @@ export default function TableData<T extends object>({
     });
   };
   const mappedColumns = applySearchToColumns(columns);
-
+  const handlePaginationChange = (page: number, pageSize: number) => {
+    dispatch(
+      actionSetParams({
+        pagination: {
+          ...tableParams.pagination,
+          current: page,
+          pageSize,
+        },
+      }),
+    );
+    dispatch(actionFetch());
+  };
   return (
-    <Table<T>
-      rowKey={rowKey}
-      columns={mappedColumns}
-      dataSource={Array.isArray(list) ? list : []}
-      loading={loading}
-      locale={{
-        emptyText: loading ? "Loading..." : "No data",
-      }}
-      size="middle"
-      rowSelection={rowSelection}
-      bordered
-      scroll={{ x: "max-content" }}
-      pagination={{
-        ...tableParams.pagination,
-        showTotal: (total) => `Tổng: ${total} mục`,
-      }}
-      onChange={handleChange}
-    />
+    <>
+      <div className="flex flex-col flex-1 justify-between">
+        <div className="overflow-y-auto max-h-[600px]">
+          <Table<T>
+            rowKey={rowKey}
+            columns={mappedColumns}
+            dataSource={Array.isArray(list) ? list : []}
+            loading={loading}
+            locale={{
+              emptyText: loading ? 'Loading...' : 'No data',
+            }}
+            size="middle"
+            rowSelection={rowSelection}
+            bordered
+            scroll={{ x: 'max-content' }}
+            // pagination={{
+            //   ...tableParams.pagination,
+            //   showTotal: (total) =>
+            //     `${t(
+            //       'translation:components.common.BaseTable.total',
+            //     )}: ${total} ${t('translation:components.common.BaseTable.item')}`,
+            // }}
+            pagination={false}
+            onChange={handleChange}
+          />
+        </div>
+        <TablePagination
+          pagination={tableParams.pagination}
+          loading={loading}
+          onChange={handlePaginationChange}
+        />
+      </div>
+    </>
   );
 }

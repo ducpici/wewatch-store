@@ -1,0 +1,20 @@
+{
+  "title": {
+    "personal": "Personal Information",
+    "contact": "Contact Information",
+    "account": "Account"
+  },
+  "field": {
+    "name": "Full name",
+    "dob": "Date of birth",
+    "gender": "Gender",
+    "phone": "Phone number",
+    "address": "Address",
+    "username": "Username",
+    "password": "Password"
+  },
+  "gender": {
+    "male": "Male",
+    "female": "Female"
+  }
+}
